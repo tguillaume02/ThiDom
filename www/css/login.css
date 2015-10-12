@@ -1,0 +1,73 @@
+body {
+	color: #FFFFFF;	
+	/*background-image : url('../pic/login_background.jpg');*/
+	/*background: url(http://www.domosynergies.com/wp-content/uploads/exterieur-piscine-domotique-lyon-1-1603x1080.jpeg)no-repeat !important;*/
+	background: url('../pic/Background/bg_login.jpeg')no-repeat !important;
+	-webkit-background-size: cover!important;
+	-moz-background-size: cover!important;
+	-o-background-size: cover!important;
+	background-size: cover!important;
+}
+
+.ui-body-c/*, .ui-overlay-c*/{
+	/*background-image : url('../pic/login_background.jpg');*/
+	background: rgba(0, 0, 0, 0.62);
+	color : #FFFFFF;
+}
+
+div.numpad_key {
+	background-image: url('../pic/button_login.png');
+	width: 69px;
+	height: 57px;
+	margin: auto;
+	font-size:2em;
+	padding-top: 11px;
+}
+
+.section table {
+	height: 100%;
+	width: 100%;
+}
+
+.section table td {
+	text-align: center;
+}
+
+td.numpad_result {
+	height: 55px;
+}
+div#numpad_result {
+	font-size: 2.5em;
+}
+
+.ui-input-text 
+{
+	background: transparent!important;
+	border-top: transparent!important;
+	border-right: transparent!important;
+	border-left: transparent!important;
+	border-radius :0 !important;
+}
+
+#user
+{
+	color:white !important;
+	background: url("../pic/icone-login.png") 0 no-repeat !important;
+	padding-left:30px;
+}
+
+#pass_user
+{
+	color:white !important;
+	background: url("../pic/icone-cadena.png") 0 no-repeat !important;
+	padding-left:30px;
+}
+
+#login
+{	
+	margin-top: 5%;
+}
+#header_logo_login
+{
+	margin-top: 3%;	
+}
