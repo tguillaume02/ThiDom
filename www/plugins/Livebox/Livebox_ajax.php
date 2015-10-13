@@ -5,9 +5,9 @@ header('Content-Type: application/json');
 
 
   // Variable Connexion  
-  $host       = "192.168.1.1";
-  $user       = "admin";
-  $pass       = "317E8C4A";
+  $host       = ""; // IP DE LA LIVEBOX
+  $user       = ""; // USE DE LA LIVEBOX PAR DEFAUT ADMIN
+  $pass       = ""; // MOT DE PASSE DE LA LIVEBOX
   
   // Variable Configuration   
   $cookieDir  = sys_get_temp_dir() ; 
