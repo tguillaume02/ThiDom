@@ -5,3 +5,5 @@ host = "localhost"
 usr = "wdtest"
 pwd = ""
 db =  "test"
+
+idnotify=""

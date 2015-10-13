@@ -41,8 +41,8 @@ try:
 
 
 except db.Error, e:
-
-	urllib.urlopen("http://notify8702.freeheberg.org/?id=thibault&notif=Erreur connection bdd Scenario&id_notif:-8")
+	if msql.idnotify!="":
+		urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd Scenario&id_notif:-8")
 
 	print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error Scenario %d: %s" % (e.args[0],e.args[1])
 
@@ -326,14 +326,15 @@ while True:
 									cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (ID, now, val, "Scenario: "+ScenarioName+" " +str(CarteID) +" " +str(DeviceID) +" " +str(Actions_Device)))
 
 									try:
-										url = "http://notify8702.freeheberg.org/"
-										data = {}
-										data['id'] = 'thibault'
-										data['notif'] = "Scenario : "+ScenarioName
-										data['id_notif'] = XmlID
-										url_values = urllib.urlencode(data)
-										full_url = url + '?' + url_values
-										urllib2.urlopen(full_url)
+										if msql.idnotify!="":
+											url = "http://notify8702.freeheberg.org/"
+											data = {}
+											data['id'] = msql.idnotify
+											data['notif'] = "Scenario : "+ScenarioName
+											data['id_notif'] = XmlID
+											url_values = urllib.urlencode(data)
+											full_url = url + '?' + url_values
+											urllib2.urlopen(full_url)
 									except IOError,e:
 										pass
 

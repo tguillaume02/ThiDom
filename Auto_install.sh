@@ -21,7 +21,8 @@ msg_setup_apache="*         Paramétrage de la configuration apache       *"
 msg_optimize_webserver_cache_opcache="* installation de l'optimisation de cache Zend OpCache *"
 msg_install_complete="*                Installation terminée                 *"
 msg_login_info1="Vous pouvez vous connecter sur Thidom en allant sur :"
-msg_install_sql="*				  Installation de la base de données    *"
+msg_install_sql="*                Installation de la base de données    *"
+msg_id_notify="*    Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)    *"
 reboot="Votre Raspberry va maintenant redémarrer"
 }
 
@@ -168,14 +169,14 @@ echo "********************************************************"
 
 mkdir /home/pi/
 
-cp -f /tmp/ThiDom/www/* "${webserver_home}"
+cp -fr /tmp/ThiDom/www/* "${webserver_home}"
 
 mkdir /home/pi/Script\ crontab/
-cp /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
+cp -fr /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
 sudo chmod +x /home/pi/Script\ crontab/*
 
 mkdir /home/pi/Script_domotique/
-cp /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
+cp -fr /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
 
 
 
@@ -203,9 +204,12 @@ echo "DROP DATABASE IF EXISTS thidom;" | mysql -uroot -p"${MySQL_root}"
 echo "CREATE DATABASE thidom;" | mysql -uroot -p"${MySQL_root}"
 echo "GRANT ALL PRIVILEGES ON thidom.* TO 'thidom'@'localhost';" | mysql -uroot -p"${MySQL_root}"
 
+
 echo "********************************************************"
 echo "${msg_install_thidom}"
 echo "********************************************************"
+
+
 
 sed -i 's!^\t\t$password =.*!\t\t$password = "'${bdd_password}'";!' connect.php 
 sed -i 's!^\t\t$username =.*!\t\t$username = "thidom";!' connect.php 
@@ -217,6 +221,13 @@ sed -i 's!^$pwd =.*!$pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql
 sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^$db =.*!$db = "thidom";!' /home/pi/Script_domotique/msql.py
 
+
+echo "********************************************************"
+echo "${msg_id_notify}"
+echo "********************************************************"
+
+read idnotify < /dev/tty
+sed -i 's!^\t\t$idnotify =.*!\t\t$idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
 
 
 echo "********************************************************"

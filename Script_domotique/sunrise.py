@@ -23,7 +23,8 @@ try:
 	cursor = db.cursor()
 
 except db.Error, e:
-	urllib.urlopen("http://notify8702.freeheberg.org/?id=thibault&notif=Erreur connection bdd Sunrise&id_notif:-9")
+	if msql.idnotify!="":
+		urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd Sunrise&id_notif:-9")
 	print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error Scenario %d: %s" % (e.args[0],e.args[1])
 	sys.exit(1)
 

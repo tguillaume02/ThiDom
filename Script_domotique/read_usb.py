@@ -24,14 +24,15 @@ try:
 	cursor = db.cursor()
 
 	try:
-		url = "http://notify8702.freeheberg.org/"
-		data = {}
-		data['id'] = 'thibault'
-		data['notif'] = "Demarrage read usb"
-		data['id_notif'] = "-1"
-		url_values = urllib.urlencode(data)
-		full_url = url + '?' + url_values
-		urllib2.urlopen(full_url)
+		if msql.idnotify!="":
+			url = "http://notify8702.freeheberg.org/"
+			data = {}
+			data['id'] = msql.idnotify
+			data['notif'] = "Demarrage read usb"
+			data['id_notif'] = "-1"
+			url_values = urllib.urlencode(data)
+			full_url = url + '?' + url_values
+			urllib2.urlopen(full_url)
 	except IOError,e:
 		pass
 
@@ -185,28 +186,30 @@ def ReadArduino():
 							cursor.execute("INSERT INTO Log (DeviceId,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (idNotif,now, str_usb_read, nom + " " + lieux + " " + str(value) + " : " + status))
 
 							try:
-								url = "http://notify8702.freeheberg.org/"
-								data = {}
-								data['id'] = 'thibault'
-								#data['notif'] = type + " " + lieux + " " + value + " : " + status
-								data['notif'] = nom + " " + lieux + " " + value + " : " + status
-								data['id_notif'] = str(idNotif)
-								url_values = urllib.urlencode(data)
-								full_url = url + '?' + url_values
-								urllib2.urlopen(full_url)
+								if msql.idnotify!="":
+									url = "http://notify8702.freeheberg.org/"
+									data = {}
+									data['id'] = msql.idnotify
+									#data['notif'] = type + " " + lieux + " " + value + " : " + status
+									data['notif'] = nom + " " + lieux + " " + value + " : " + status
+									data['id_notif'] = str(idNotif)
+									url_values = urllib.urlencode(data)
+									full_url = url + '?' + url_values
+									urllib2.urlopen(full_url)
 							except IOError, e:
 								pass
 						except:
 							pass
 							try:
-								url = "http://notify8702.freeheberg.org/"
-								data = {}
-								data['id'] = 'thibault'
-								data['notif'] = "Erreur dans la requete read_usb"
-								data['id_notif'] = "-2"
-								url_values = urllib.urlencode(data)
-								full_url = url + '?' + url_values
-								urllib2.urlopen(full_url)
+								if msql.idnotify!="":
+									url = "http://notify8702.freeheberg.org/"
+									data = {}
+									data['id'] = msql.idnotify
+									data['notif'] = "Erreur dans la requete read_usb"
+									data['id_notif'] = "-2"
+									url_values = urllib.urlencode(data)
+									full_url = url + '?' + url_values
+									urllib2.urlopen(full_url)
 							except IOError, e:
 								pass
 		except KeyboardInterrupt:
@@ -283,16 +286,17 @@ def Temp(pinID,value):
 					#cursor.execute("UPDATE Etat_IO SET Alert_Time=%s where ID=%s", (date,Etat_IO_ID))
 					cursor.execute("UPDATE cmd_device SET Alert_Time=%s where ID=%s", (date,cmd_device_ID))
 					try:
-						url = "http://notify8702.freeheberg.org/"
-						data = {}
-						data['id'] = 'thibault'
-						data['notif'] = str_usb_read
-						now = datetime.datetime.now()
-						now = now.strftime("%Y%m%d%H%M%S")
-						data['id_notif'] = str(date)
-						url_values = urllib.urlencode(data)
-						full_url = url + '?' + url_values
-						urllib2.urlopen(full_url)
+						if msql.idnotify!="":
+							url = "http://notify8702.freeheberg.org/"
+							data = {}
+							data['id'] = msql.idnotify
+							data['notif'] = str_usb_read
+							now = datetime.datetime.now()
+							now = now.strftime("%Y%m%d%H%M%S")
+							data['id_notif'] = str(date)
+							url_values = urllib.urlencode(data)
+							full_url = url + '?' + url_values
+							urllib2.urlopen(full_url)
 
 					except IOError,e:
 						pass
@@ -319,16 +323,17 @@ def Alert(str_usb_read):
 		now = now.strftime('%Y-%m-%d %H:%M:%S')
 		cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", ("",now,"","Alert : " + str_usb_read))
 		try:
-			url = "http://notify8702.freeheberg.org/"
-			data = {}
-			data['id'] = 'thibault'
-			data['notif'] = value
-			now = datetime.datetime.now()
-			now = now.strftime("%Y%m%d%H%M%S")
-			data['id_notif'] = str(now)
-			url_values = urllib.urlencode(data)
-			full_url = url + '?' + url_values
-			urllib2.urlopen(full_url)
+			if msql.idnotify!="":
+				url = "http://notify8702.freeheberg.org/"
+				data = {}
+				data['id'] = msql.idnotify
+				data['notif'] = value
+				now = datetime.datetime.now()
+				now = now.strftime("%Y%m%d%H%M%S")
+				data['id_notif'] = str(now)
+				url_values = urllib.urlencode(data)
+				full_url = url + '?' + url_values
+				urllib2.urlopen(full_url)
 		except IOError,e:
 			pass
 	except IOError, e:

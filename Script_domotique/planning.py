@@ -31,7 +31,8 @@ while True:
 			time.sleep(0.2)
 			cursor = db.cursor()
 		except db.Error, e:
-			urllib.urlopen("http://notify8702.freeheberg.org/?id=thibault&notif=Erreur connection bdd planning&id_notif:-3")
+			if msql.idnotify!="":
+				urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd planning&id_notif:-3")
 			print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error planning %d: %s" % (e.args[0],e.args[1])
 			sys.exit(1)
 
