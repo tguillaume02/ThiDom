@@ -33,7 +33,7 @@ install_dependance() {
 	sudo aptitude install apache2 -y
 	sudo aptitude install php5 -y
 	sudo aptitude install php5-curl -y	
-	sudo aptitude install mysql-server5.5 -y
+	sudo aptitude install mysql-server-5.5 -y
 	sudo aptitude install php5-mysql -y
 	sudo aptitude install python-mysqldb -Y	
     sudo aptitude install python-serial -y
