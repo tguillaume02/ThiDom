@@ -250,7 +250,7 @@ echo "********************************************************"
 echo "${msg_install_sql}"
 echo "********************************************************"
 
- mysql -uroot -p"${MySQL_root}" < "${webserver_home}"/tmp/ThiDom/thidom.sql
+ mysql -uroot -p"${MySQL_root}" < /tmp/ThiDom/thidom.sql
 
 
 echo "********************************************************"
