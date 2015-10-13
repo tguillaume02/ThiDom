@@ -35,22 +35,22 @@ install_dependance() {
 	sudo aptitude install php5-curl -y	
 	sudo aptitude install mysql-server-5.5 -y
 	sudo aptitude install php5-mysql -y
-	sudo aptitude install python-mysqldb -Y	
+	sudo aptitude install python-mysqldb -y
     sudo aptitude install python-serial -y
 	sudo pip install -U pip
 	sudo pip install tweepy
 	
 	sudo aptitude install ca-certificates -y
 	
-	pecl install oauth
-	if [ $? -eq 0 ] ; then
-		for i in fpm cli ; do
-			PHP_OAUTH="`cat /etc/php5/${i}/php.ini | grep -e 'oauth.so'`"
-			if [ -z "${PHP_OAUTH}" ] ; then
-				echo "extension=oauth.so" >> /etc/php5/${i}/php.ini
-			fi
-		done
-    fi
+	#pecl install oauth
+	#if [ $? -eq 0 ] ; then
+		#for i in fpm cli ; do
+			#PHP_OAUTH="`cat /etc/php5/${i}/php.ini | grep -e 'oauth.so'`"
+			#if [ -z "${PHP_OAUTH}" ] ; then
+				#echo "extension=oauth.so" >> /etc/php5/${i}/php.ini
+			#fi
+		#done
+    #fi
 	
 	sudo aptitude autoremove -y 
 	sudo aptitude update -y 
