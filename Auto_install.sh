@@ -77,7 +77,7 @@ ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
 
 echo "${msg_question_install_thidom}"
 echo "${msg_warning_install_thidom}"
-webserver_home = "/var/www"
+webserver_home="/var/www"
 [ -d "${webserver_home}/Thidom/" ]  && echo "${msg_warning_overwrite_rhidom}"
 while true ; do
     echo -n "${msg_yesno}"
