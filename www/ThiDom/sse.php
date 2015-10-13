@@ -21,8 +21,8 @@ while(1)
 
 	$req = execute_sql(" SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat
 					FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
-					LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'test' AND etat_update_time.TABLE_NAME = 'cmd_device'
-					WHERE  (temp_update_time.TABLE_SCHEMA = 'test') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')"
+					LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
+					WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')"
 
 				   ) ;
 

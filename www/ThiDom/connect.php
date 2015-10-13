@@ -10,7 +10,7 @@
 		$password = "sqltest";
 		$dbname = "test";
 
-		$mysqli = new mysqli($servername,$username,$password,"test");
+		$mysqli = new mysqli($servername,$username,$password,$dbname);
 		if ($mysqli->connect_error) {
 		    die("Erreur Connexion  : " . $mysqli->connect_error ."  !<br>'");
 		} 
