@@ -52,10 +52,11 @@ install_dependance() {
 		#done
     #fi
 	
-	sudo aptitude autoremove -y 
+	sudo apt-get autoremove -y 
+	sudo aptitude autoclean -y 
 	sudo aptitude update -y 
 	sudo aptitude upgrade -y
-	sudo rpi-update -y
+	sudo rpi-update
 }
 
 init_msg
@@ -163,14 +164,14 @@ echo "********************************************************"
 #fi
 
 #unzip master.zip -d ThiDom
-#cd /tmp/ThiDom/ThiDom-master 
+#cd /tmp/ThiDom
 
 mkdir /home/pi/
 
-mv /tmp/ThiDom/ThiDom-master/www/ "${webserver_home}"
+mv /tmp/ThiDom/www/ "${webserver_home}"
 
-mv /tmp/ThiDom/ThiDom-master/Script\ crontab /home/pi/
-mv /tmp/ThiDom/ThiDom-master/Script_domotique /home/pi/
+mv /tmp/ThiDom/Script\ crontab /home/pi/
+mv /tmp/ThiDom/Script_domotique /home/pi/
 
 
 #if [ -d "thidom" ] ; then
