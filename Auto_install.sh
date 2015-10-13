@@ -1,3 +1,5 @@
+# EXPAND FILESYSTEM BEFORE
+
 init_msg()
 {
 msg_yesno="oui / non : "
@@ -30,6 +32,7 @@ install_dependance() {
 	sudo aptitude dist-upgrade -y
 	sudo aptitude update -y
 	sudo aptitude upgrade -y
+	sudo aptitude install resolvconf -y
 	sudo aptitude install curl -y
 	sudo aptitude install apache2 -y
 	sudo aptitude install php5 -y
@@ -253,10 +256,6 @@ cp /tmp/ThiDom/etc/rc.local /etc/
 cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 
 
-
-
-rm -rf /tmp/ThiDom
-
 echo "********************************************************"
 echo "${msg_optimize_webserver_cache_opcache}"
 echo "********************************************************"
@@ -282,13 +281,15 @@ echo "********************************************************"
 mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 
 
+rm -rf /tmp/ThiDom
 echo "********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************"
 
 IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
-if $IP == "":
+if $IP == ""; then
 	IP=$(ifconfig wlan0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+fi
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
 echo "\n\t\thttp://$IP/thidom ${msg_or} http://$HOST/thidom\n"
