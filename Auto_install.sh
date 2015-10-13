@@ -79,7 +79,7 @@ ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
 echo "${msg_question_install_thidom}"
 echo "${msg_warning_install_thidom}"
 webserver_home="/var/www"
-[ -d "${webserver_home}/Thidom/" ]  && echo "${msg_warning_overwrite_rhidom}"
+[ -d "${webserver_home}/ThiDom/" ]  && echo "${msg_warning_overwrite_rhidom}"
 while true ; do
     echo -n "${msg_yesno}"
     read ANSWER < /dev/tty
@@ -168,16 +168,18 @@ echo "********************************************************"
 
 mkdir /home/pi/
 
-mv /tmp/ThiDom/www/* "${webserver_home}"
+cp -f /tmp/ThiDom/www/* "${webserver_home}"
 
-mv /tmp/ThiDom/Script\ crontab /home/pi/
+mkdir /home/pi/Script\ crontab/
+cp /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
 sudo chmod +x /home/pi/Script\ crontab/*
 
-mv /tmp/ThiDom/Script_domotique /home/pi/
+mkdir /home/pi/Script_domotique/
+cp /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
 
 
 
-cd "${webserver_home}"
+cd "${webserver_home}/ThiDom"
 
 if [ -d "Thidom" ] ; then
     rm -rf Thidom
@@ -205,13 +207,13 @@ echo "********************************************************"
 echo "${msg_install_thidom}"
 echo "********************************************************"
 
-sed -i 's!^\t\t$password =.*!\t\t$password = "${bdd_password}";!' connect.php 
+sed -i 's!^\t\t$password =.*!\t\t$password = "'${bdd_password}'";!' connect.php 
 sed -i 's!^\t\t$username =.*!\t\t$username = "thidom";!' connect.php 
 sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php 
 
 chown www-data:www-data connect.php 
 
-sed -i 's!^$pwd =.*!$pwd = "${bdd_password}";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^$pwd =.*!$pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^$db =.*!$db = "thidom";!' /home/pi/Script_domotique/msql.py
 
