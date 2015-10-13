@@ -53,7 +53,7 @@ def ReadArduino():
 			x = ser.readline() # read one byte
 			str_usb_read = x
 			date = time.strftime('%y-%m-%d %H:%M:%S',time.localtime())
-			mon_fichier = open("/var/www/nodejs/public_html/toto.txt","a")
+			mon_fichier = open("/home/pi/Script\ crontab/debug/toto.txt","a")
 			mon_fichier.write(date+" : ")
 			mon_fichier.write(x)
 			mon_fichier.write("\r\n")
@@ -312,7 +312,7 @@ def Temp(pinID,value):
 	cursor.execute("UPDATE cmd_device SET Value=%s, Date=%s where ID=%s", (value,date,cmd_device_ID))
 	if cmd_device_ID != -1:
 		cursor.execute("INSERT INTO Temperature_Temp VALUES (%s, %s, %s, %s)", (date,value,lieux, cmd_device_ID))
-	mon_fichier = open("/var/www/nodejs/public_html/temperature.json","a")
+	mon_fichier = open("/home/pi/Script\ crontab/debug/temperature.json","a")
 	mon_fichier.write(lieux + " :" + value + " , " + "date " + date)
 	mon_fichier.write("\r\n")
 	mon_fichier.close() 

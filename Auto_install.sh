@@ -38,6 +38,7 @@ install_dependance() {
 	sudo aptitude install php5-mysql -y
 	sudo aptitude install python-mysqldb -y
     sudo aptitude install python-serial -y
+	sudo aptitude install htop -y
 	sudo pip install -U pip
 	sudo pip install tweepy
 	
@@ -285,7 +286,9 @@ echo "********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************"
 
-IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}')
+IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+if $IP == "":
+	IP=$(ifconfig wlan0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
 echo "\n\t\thttp://$IP/thidom ${msg_or} http://$HOST/thidom\n"

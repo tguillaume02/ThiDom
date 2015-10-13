@@ -8,8 +8,8 @@ if [ $IP == ' ' ];
 	else
 	if [ $(cat /sys/class/net/wlan0/carrier) == 0 ] || [ $IP != $IP_fixe ];
 		then 	
-			 sudo /etc/init.d/networking restart &&  touch /var/www/nodejs/public_html/cronNode.txt &&
+			 sudo /etc/init.d/networking restart &&  touch /home/pi/Script\ crontab/debug/cronNode.txt &&
 			 strDate=$(date) && strAct=" Relance wlan0" &&
-			 echo $strDate $strAct $IP  " //  "  $IP_fixe >> /var/www/nodejs/public_html/cronNode.txt ;
+			 echo $strDate $strAct $IP  " //  "  $IP_fixe >> /home/pi/Script\ crontab/debug/cronNode.txt ;
 		 fi;
 	fi;
