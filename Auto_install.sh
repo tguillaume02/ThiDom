@@ -255,7 +255,7 @@ sudo service apache2 reload
 mkdir /etc/fw
 cp /tmp/ThiDom/etc/fw/* /etc/fw/
 cp /tmp/ThiDom/etc/rc.local /etc/
-cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
+#cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 cp /tmp/ThiDom/crontab.txt /var/spool/cron/crontabs/pi
 
 
