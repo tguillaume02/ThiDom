@@ -22,7 +22,7 @@ msg_optimize_webserver_cache_opcache="* installation de l'optimisation de cache 
 msg_install_complete="*                Installation terminée                 *"
 msg_login_info1="Vous pouvez vous connecter sur Thidom en allant sur :"
 msg_install_sql="*                Installation de la base de données    *"
-msg_id_notify="*    Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)    *"
+msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
 reboot="Votre Raspberry va maintenant redémarrer"
 }
 
@@ -190,7 +190,7 @@ fi
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
 chown -R www-data:www-data "${webserver_home}"
-cd "${webserver_home}"
+
 
 
 echo "********************************************************"
@@ -222,10 +222,7 @@ sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^$db =.*!$db = "thidom";!' /home/pi/Script_domotique/msql.py
 
 
-echo "********************************************************"
 echo "${msg_id_notify}"
-echo "********************************************************"
-
 read idnotify < /dev/tty
 sed -i 's!^\t\t$idnotify =.*!\t\t$idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
 
@@ -234,8 +231,9 @@ echo "********************************************************"
 echo "${msg_setup_apache}"
 echo "********************************************************"
 
-cp install/000-default.conf /etc/apache2/sites-available/000-default.conf
-cp install/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
+cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
+cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
+cp /tmp/ThiDom/etc/apache2/ports.conf  /etc/apache2/ports.conf
 sudo mkdir /etc/apache2/ssl
 sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
 #sudo openssl req  -new -key client.key -out client.req && sudo openssl x509 -req -in client.req -CA ca.cer -CAkey ca.key -set_serial 101  -extensions client -days 3650 -outform PEM -out client.cer && sudo openssl pkcs12 -export -inkey client.key -in client.cer -out client.p12 
@@ -244,6 +242,13 @@ sudo a2enmod ssl
 sudo a2ensite default-ssl
 sudo a2enmod rewrite
 sudo service apache2 reload
+
+mkdir /etc/fw
+cp /tmp/ThiDom/etc/fw/* /etc/fw/
+cp /tmp/ThiDom/etc/rc.local /etc/
+cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
+
+
 
 
 rm -rf /tmp/ThiDom
