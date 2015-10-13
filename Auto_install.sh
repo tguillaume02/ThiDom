@@ -211,6 +211,7 @@ echo "********************************************************"
 echo "${msg_install_thidom}"
 echo "********************************************************"
 
+cd "${webserver_home}/ThiDom"
 
 
 sed -i 's!^\t\t$password =.*!\t\t$password = "'${bdd_password}'";!' connect.php 
