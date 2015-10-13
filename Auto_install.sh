@@ -217,9 +217,9 @@ sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php
 
 chown www-data:www-data connect.php 
 
-sed -i 's!^$pwd =.*!$pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^$db =.*!$db = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^usr =.*!usr = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^db =.*!db = "thidom";!' /home/pi/Script_domotique/msql.py
 
 
 echo "${msg_id_notify}"
