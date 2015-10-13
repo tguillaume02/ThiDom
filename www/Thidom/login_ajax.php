@@ -19,7 +19,7 @@ else
 	if($row['USERNAME'] != '' and $row['USERNAME'] == $user)
 	{
 		setcookie("WAY", "Agent",time()+3600*24*31);
-		echo 'domo4.php';
+		echo 'index.php';
 	}
 	else 
 	{

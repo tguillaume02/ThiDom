@@ -141,8 +141,8 @@ echo "********************************************************"
 
 mkdir -p "${webserver_home}"
 cd "${webserver_home}"
-chown www-data:www-data -R "${webserver_home}"
-usermod -a -G dialout www-data
+sudo chown www-data:www-data -R "${webserver_home}"
+sudo usermod -a -G dialout www-data
 
 
 
@@ -168,9 +168,11 @@ echo "********************************************************"
 
 mkdir /home/pi/
 
-mv /tmp/ThiDom/www/ "${webserver_home}"
+mv /tmp/ThiDom/www/* "${webserver_home}"
 
 mv /tmp/ThiDom/Script\ crontab /home/pi/
+sudo chmod +x /home/pi/Script\ crontab/*
+
 mv /tmp/ThiDom/Script_domotique /home/pi/
 
 
@@ -183,7 +185,6 @@ cd "${webserver_home}"
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
 chown -R www-data:www-data "${webserver_home}"
-rm -rf /tmp/ThiDom
 cd "${webserver_home}"
 
 
@@ -202,15 +203,15 @@ echo "********************************************************"
 echo "${msg_install_thidom}"
 echo "********************************************************"
 
-sed -i 's!^\t$password =.*!\t$password = "${bdd_password}";!' connect.php 
-sed -i 's!^\t$username =.*!\t$username = "thidom";!' connect.php 
-sed -i 's!^\t$dbname =.*!\t$dbname = "thidom";!' connect.php 
+sed -i 's!^\t\t$password =.*!\t\t$password = "${bdd_password}";!' connect.php 
+sed -i 's!^\t\t$username =.*!\t\t$username = "thidom";!' connect.php 
+sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php 
 
 chown www-data:www-data  connect.php 
 
-sed -i 's!^\t$pwd =.*!\t$pwd = "${bdd_password}";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^\t$usr =.*!\t$usr = "thidom";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^\t$db =.*!\t$db = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^$pwd =.*!$pwd = "${bdd_password}";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^$db =.*!$db = "thidom";!' /home/pi/Script_domotique/msql.py
 
 
 
@@ -220,13 +221,17 @@ echo "********************************************************"
 
 cp install/000-default.conf /etc/apache2/sites-available/000-default.conf
 cp install/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
-
+sudo mkdir /etc/apache2/ssl
 sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
-sudo openssl req  -new -key client.key -out client.req && sudo openssl x509 -req -in client.req -CA ca.cer -CAkey ca.key -set_serial 101  -extensions client -days 3650 -outform PEM -out client.cer && sudo openssl pkcs12 -export -inkey client.key -in client.cer -out client.p12 
+#sudo openssl req  -new -key client.key -out client.req && sudo openssl x509 -req -in client.req -CA ca.cer -CAkey ca.key -set_serial 101  -extensions client -days 3650 -outform PEM -out client.cer && sudo openssl pkcs12 -export -inkey client.key -in client.cer -out client.p12 
 
 sudo a2enmod ssl
 sudo a2ensite default-ssl
 sudo a2enmod rewrite
+sudo service apache2 reload
+
+
+rm -rf /tmp/ThiDom
 
 echo "********************************************************"
 echo "${msg_optimize_webserver_cache_opcache}"
@@ -250,7 +255,7 @@ echo "********************************************************"
 echo "${msg_install_sql}"
 echo "********************************************************"
 
- mysql -uroot -p"${MySQL_root}" < /tmp/ThiDom/thidom.sql
+mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 
 
 echo "********************************************************"
