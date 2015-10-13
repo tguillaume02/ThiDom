@@ -176,11 +176,13 @@ sudo chmod +x /home/pi/Script\ crontab/*
 mv /tmp/ThiDom/Script_domotique /home/pi/
 
 
-#if [ -d "thidom" ] ; then
-#    rm -rf thidom
-#fi
 
 cd "${webserver_home}"
+
+if [ -d "Thidom" ] ; then
+    rm -rf Thidom
+fi
+
 
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
@@ -207,7 +209,7 @@ sed -i 's!^\t\t$password =.*!\t\t$password = "${bdd_password}";!' connect.php
 sed -i 's!^\t\t$username =.*!\t\t$username = "thidom";!' connect.php 
 sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php 
 
-chown www-data:www-data  connect.php 
+chown www-data:www-data connect.php 
 
 sed -i 's!^$pwd =.*!$pwd = "${bdd_password}";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^$usr =.*!$usr = "thidom";!' /home/pi/Script_domotique/msql.py
