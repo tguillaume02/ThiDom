@@ -203,7 +203,15 @@ echo "${msg_install_thidom}"
 echo "********************************************************"
 
 sed -i 's!^\t$password =.*!\t$password = "${bdd_password}";!' connect.php 
+sed -i 's!^\t$username =.*!\t$username = "thidom";!' connect.php 
+sed -i 's!^\t$dbname =.*!\t$dbname = "thidom";!' connect.php 
+
 chown www-data:www-data  connect.php 
+
+sed -i 's!^\t$pwd =.*!\t$pwd = "${bdd_password}";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^\t$usr =.*!\t$usr = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^\t$db =.*!\t$db = "thidom";!' /home/pi/Script_domotique/msql.py
+
 
 
 echo "********************************************************"
