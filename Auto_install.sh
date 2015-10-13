@@ -149,24 +149,23 @@ echo "********************************************************"
 echo "${msg_copy_thidom_files}"
 echo "********************************************************"
 
-mkdir /tmp/ThiDom
-cd /tmp/ThiDom
+#mkdir /tmp/ThiDom
+#cd /tmp/ThiDom
 
-wget --no-check-certificate https://github.com/tguillaume02/ThiDom/archive/master.zip
+#wget --no-check-certificate https://github.com/tguillaume02/ThiDom/archive/master.zip
 
-if [  $? -ne 0 ] ; then    
-	wget --no-check-certificate https://github.com/tguillaume02/ThiDom/archive/master.zip
-    if [  $? -ne 0 ] ; then
-        echo "${msg_unable_to_download_file}"
-        exit 0
-    fi
-fi
+#if [  $? -ne 0 ] ; then    
+	#wget --no-check-certificate https://github.com/tguillaume02/ThiDom/archive/master.zip
+    #if [  $? -ne 0 ] ; then
+        #echo "${msg_unable_to_download_file}"
+        #exit 0
+    #fi
+#fi
 
-unzip master.zip -d ThiDom
-cd /tmp/ThiDom/ThiDom-master 
+#unzip master.zip -d ThiDom
+#cd /tmp/ThiDom/ThiDom-master 
 
 mkdir /home/pi/
-cd /home/pi/
 
 mv /tmp/ThiDom/ThiDom-master/www/ "${webserver_home}"
 
@@ -250,7 +249,7 @@ echo "********************************************************"
 echo "${msg_install_sql}"
 echo "********************************************************"
 
- mysql -uroot -p"${MySQL_root}" < "${webserver_home}"/thidom/tmp/thidom.sql
+ mysql -uroot -p"${MySQL_root}" < "${webserver_home}"/tmp/ThiDom/thidom.sql
 
 
 echo "********************************************************"
