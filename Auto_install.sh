@@ -107,6 +107,8 @@ echo "********************************************************"
 
 install_dependance
 
+
+echo  "**********************************************************************"
 echo "${msg_passwd_mysql}"
 while true ; do
     read MySQL_root < /dev/tty
@@ -286,9 +288,9 @@ echo "********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************"
 
-IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
-if $IP == ""; then
-	IP=$(ifconfig wlan0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}')
+if  [ -n $IP ]; then
+	IP=$(ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}')
 fi
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
