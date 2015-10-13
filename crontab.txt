@@ -1,0 +1,50 @@
+
+# Edit this file to introduce tasks to be run by cron.
+#
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+#
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').#
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+#
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+#
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+#
+# For more information see the manual pages of crontab(5) and cron(8)
+#
+# m h  dom mon dow   command
+
+# Lance au demarrage
+###@reboot /home/pi/Script\ crontab/run_nodejs.sh
+#@reboot /home/pi/Script\ crontab/run_read.sh
+#@reboot /home/pi/Script\ crontab/planning.sh
+#@reboot /home/pi/Script\ crontab/thermostat.sh
+#@reboot /home/pi/Script\ crontab/run_monitor.sh
+
+
+# Teste toutes les 10 minutes et ssi le fichier JSON n.a pas ete mis a jour depuis plus de 20 minutes, alors relance Node.js
+#*/10 * * * * /home/pi/Script\ crontab/check_nodejs.sh
+*/10 * * * *  /home/pi/Script\ crontab/check_read.sh
+*/5 * * * *  /home/pi/Script\ crontab/Check_wifi.sh
+0,15,30,45 * * * * /home/pi/Script\ crontab/moyennes_temp.sh
+0 * * * * /home/pi/Script\ crontab/update_sunrise.sh
+0 0,12 * * * /home/pi/Script\ crontab/backup_bdd.sh
+
+
+#*/13 * * * * root [ `ping -c3 -q  192.168.1.1 > /dev/null 2>&1` ] && touch /var/www/nodejs/public_html/cronNode.txt && strDate=$(date) && strAct=" Perte conne$
+
+
+
+
+
+
+
+
