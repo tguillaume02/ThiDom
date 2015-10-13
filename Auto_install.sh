@@ -167,24 +167,26 @@ echo "********************************************************"
 #unzip master.zip -d ThiDom
 #cd /tmp/ThiDom
 
+#cd "${webserver_home}/ThiDom"
+
+#if [ -d "Thidom" ] ; then
+    #rm -rf Thidom
+#fi
+
 mkdir /home/pi/
 
-cp -fr /tmp/ThiDom/www/* "${webserver_home}"
+cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 
 mkdir /home/pi/Script\ crontab/
-cp -fr /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
+cp -Rf /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
 sudo chmod +x /home/pi/Script\ crontab/*
 
 mkdir /home/pi/Script_domotique/
-cp -fr /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
+cp -Rf /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
 
 
 
-cd "${webserver_home}/ThiDom"
 
-if [ -d "Thidom" ] ; then
-    rm -rf Thidom
-fi
 
 
 #mkdir "${webserver_home}"/thidom/tmp
@@ -221,7 +223,7 @@ sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql.p
 sed -i 's!^usr =.*!usr = "thidom";!' /home/pi/Script_domotique/msql.py
 sed -i 's!^db =.*!db = "thidom";!' /home/pi/Script_domotique/msql.py
 
-
+echo ""
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 sed -i 's!^\t\t$idnotify =.*!\t\t$idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
