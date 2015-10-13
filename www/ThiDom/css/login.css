@@ -53,6 +53,7 @@ div#numpad_result {
 {
 	color:white !important;
 	background: url("../pic/icone-login.png") 0 no-repeat !important;
+	background-color : rgba(93, 96, 99, 0.51) !important;
 	padding-left:30px;
 }
 
@@ -60,6 +61,7 @@ div#numpad_result {
 {
 	color:white !important;
 	background: url("../pic/icone-cadena.png") 0 no-repeat !important;
+	background-color : rgba(93, 96, 99, 0.51) !important;
 	padding-left:30px;
 }
 
