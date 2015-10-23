@@ -1,5 +1,4 @@
 <?php
-
 include_once('Security.php'); 
 
 header('Content-Type: text/event-stream');

@@ -497,21 +497,21 @@ strong {
 .btnsmall {
     /*background: url("../pic/img03b.jpg") repeat scroll right center transparent;*/
     font-weight: 0 !important;
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#61a7f2),to(rgb(57, 107, 158)));
-    border-radius: 14px 14px 14px 14px;
-    color: #FFFFFF;
-    cursor: pointer;
-    display: inline-block;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#61a7f2),to(rgb(57, 107, 158)))!important;
+    border-radius: 14px 14px 14px 14px !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    display: inline-block !important;
     /*font-size: 90%;*/
     font-size: 13pt !important;
-    height: 2em;
-    line-height: 2em;
-    outline: medium none;
-    padding: 0.1em 1.6em;
-    text-decoration: none;
-    text-transform: none;
-    margin-bottom: 3px;
-    margin-left: 5px;
+    height: 2em !important;
+    line-height: 2em !important;
+    outline: medium none !important;
+    padding: 0.1em 1.6em !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    margin-bottom: 3px !important;
+    margin-left: 5px !important;
 }
 
 .btnsmall-sel {

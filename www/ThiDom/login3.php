@@ -1,9 +1,3 @@
-<?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 'On');
-?>
-
-
 <html> 
 	<head>
 		<meta  charset="utf-8" HTTP-EQUIV="Pragma" name="viewport" content="width=device-width, initial-scale=1,no-cache">
@@ -19,7 +13,7 @@
 			<img src="pic/neon-home.png" alt="logo" style="text-align:center" ><!--Domo'Box-->
 		</div>
 		<div id="login">
-			<form id="login_form" name="login_form"  action="#">
+			<!--<form id="login_form" name="login_form"  action="login_ajax.php"  method="post">-->
 				<table style="text-align:center;margin-right:auto;margin-left:auto;min-width: 21%;">
 					<tr>
 						<td>
@@ -42,11 +36,12 @@
 					</tr>
 					<tr>
 						<td>
+							<!--<input type="submit" class="btnsmall" id="btn_login" data-i18n="Edit" data-theme="a" style="width: 80%;margin-top:10px;font-size:15pt;text-align:center" value="Connexion"> -->
 							<div class="btnsmall" id="btn_login" href="javascript:;" data-i18n="Edit" data-theme="a" style="width: 80%;margin-top:10px;font-size:15pt">Connexion </div>
 						</td>
 					</tr>
 				</table>
-			</form>
+			<!--</form>-->
 		</div>
 	</body>
 </html>

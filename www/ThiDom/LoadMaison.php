@@ -1,5 +1,4 @@
 <?php
-
 	include_once('Security.php');
 
 	$delais = 60 * 60 * 24 * 7;   // Une semaine

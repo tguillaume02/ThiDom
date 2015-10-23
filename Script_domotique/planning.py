@@ -1,10 +1,10 @@
 #o!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import serial
 import MySQLdb
 import time
 import datetime
+import urllib2
 import urllib
 import sys
 import os
@@ -30,7 +30,7 @@ while True:
 			db = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
 			time.sleep(0.2)
 			cursor = db.cursor()
-		except db.Error, e:
+		except  MySQLdb.Error, e:
 			if msql.idnotify!="":
 				urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd planning&id_notif:-3")
 			print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error planning %d: %s" % (e.args[0],e.args[1])

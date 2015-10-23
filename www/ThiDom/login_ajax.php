@@ -1,4 +1,6 @@
 <?php
+$_SESSION['ConnectThiDom']=0;
+$_SESSION['user']="";
 /*
 if ($_POST['log'] == "842*7")
 {
@@ -18,8 +20,10 @@ else
 	$row = $res->fetch_array(MYSQLI_ASSOC);
 	if($row['USERNAME'] != '' and $row['USERNAME'] == $user)
 	{
+		$_SESSION['ConnectThiDom']=1;
+		$_SESSION['user']=$user;
 		setcookie("WAY", "Agent",time()+3600*24*31);
-		echo 'index.php';
+		echo 'index.php';	
 	}
 	else 
 	{

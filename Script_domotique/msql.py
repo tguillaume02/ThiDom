@@ -6,4 +6,4 @@ usr = "wdtest"
 pwd = ""
 db =  "test"
 
-idnotify=""
+idnotify = ""

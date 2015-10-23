@@ -441,7 +441,7 @@ if ($mode == "valide")
 	{		
 		if ($user_pass == $user_pass2)
 		{
-			$pass = md5($user_pass);
+			$pass = hash('sha256', $user_pass);
 			$req_pass = execute_sql("SELECT USERPASS FROM User WHERE ID = '$id'") ;			
 			while ($donnees = $req_pass->fetch_array())
 			{

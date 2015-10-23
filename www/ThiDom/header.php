@@ -1,4 +1,4 @@
-<div data-role="header" id="header" data-id="header_gen" class="ui-fixed-hidden" data-position="fixed" data-theme="b">
+<header data-role="header" id="header" data-id="header_gen" class="ui-fixed-hidden" data-position="fixed" data-theme="b">
 	<!-- En tete-->
 	<!--<div>
 		<table id="table_header" style="width:100%">
@@ -20,7 +20,7 @@
 		</table>
 	</div>-->
 	<!-- NavBar-->
-	<div data-role="navbar" class="nav-glyphish-example ui-bar-b" id="navbar" data-grid="b">
+	<nav data-role="navbar" class="nav-glyphish-example ui-bar-b" id="navbar" data-grid="b">
 		<ul>
 			<!--<li><a href="#">Batiments</a></li> 
 			// <li><a href="#" id="serrer">Serre</a></li>-->
@@ -28,6 +28,6 @@
 			<li><a href="#div_graph" id="Graphique" data-icon="custom" onclick="$(window).resize();">Graphique</a></li>
 			<li><a href="#div_admin" id="Parametre"  onclick="init_admin()" data-icon="custom" >Administration</a></li>
 		</ul>
-	</div><!-- /navbar --> 
-</div>
+	</nav><!-- /navbar --> 
+</header>
 <!--<br>-->

@@ -1,20 +1,9 @@
 <?php
-
-include_once('Security.php'); 
 /* if ($_POST["act"] == "l")
 {
 	*/
 	
-	$nom_value = "Agent";
-	$bonbon = trim($_COOKIE['WAY']);
-
-	if ($bonbon == $nom_value)
-	{
-	}
-	else
-	{
-		exit();
-	}
+	include_once('Security.php'); 
 	
 	$val_info = "";
 	$device = $_POST["device"];

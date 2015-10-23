@@ -189,9 +189,11 @@ sudo chmod +x /home/pi/Script\ crontab/*
 
 mkdir /home/pi/Script_domotique/
 cp -Rf /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
+sudo chmod +x home/pi/Script_domotique/*
 
 
-
+sudo chown  pi:pi -R /home/pi/Script_domotique/
+sudo chown  pi:pi -R /home/pi/Script\ crontab/
 
 
 
@@ -233,7 +235,8 @@ sed -i 's!^db =.*!db = "thidom";!' /home/pi/Script_domotique/msql.py
 echo ""
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
-sed -i 's!^\t\t$idnotify =.*!\t\t$idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
+
+sed -i 's!^idnotify =.*!idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
 
 
 echo "********************************************************"
@@ -256,7 +259,8 @@ mkdir /etc/fw
 cp /tmp/ThiDom/etc/fw/* /etc/fw/
 cp /tmp/ThiDom/etc/rc.local /etc/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
-cp /tmp/ThiDom/crontab.txt /var/spool/cron/crontabs/pi
+sudo crontab -u pi /tmp/ThiDom/crontab.txt
+
 
 
 echo "********************************************************"
@@ -283,6 +287,7 @@ echo "********************************************************"
 
 mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 
+sudo cp /etc/resolvconf/resolv.conf.d/original /etc/resolvconf/resolv.conf.d/base
 
 rm -rf /tmp/ThiDom
 echo "********************************************************"
@@ -301,7 +306,8 @@ echo "${msg_login_info2} admin/admin"
 echo "${reboot}"
 
 
-
+###### mysql#######
+# mettre en commentaire dans /etc/mysqm/my.cnf la ligne bind-address		= 127.0.0.1
 
 # Modifier le fichier /etc/apache2/ports.conf
                     #/etc/apache2/sites-available

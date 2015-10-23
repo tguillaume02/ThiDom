@@ -17,16 +17,16 @@
 	  #printf "My IP address is %s\n" "$_IP"
 	  #echo "My IP address is %s\n" "$_IP" >> /home/pi/mon_ip.txt
 	#fi
-	
+echo "########### $(date +"%d-%B-%Y %H:%M") ##############" >> console.log	
 /home/pi/Script\ crontab/run_read.sh
 /home/pi/Script\ crontab/planning.sh
 /home/pi/Script\ crontab/thermostat.sh
 /home/pi/Script\ crontab/Scenario.sh
 /home/pi/Script\ crontab/run_monitor.sh
 /home/pi/Script\ crontab/read_tweet.sh
-/home/pi/Script\ crontab/noip.sh
-sudo /etc/fw/Firewall.fw
-#sudo /etc/fw/Firewall_with_127.fw
-sudo -u pi /home/pi/Script\ crontab/run_pyload.sh
+#/home/pi/Script\ crontab/noip.sh
+#sudo /etc/fw/Firewall.fw
+##sudo /etc/fw/Firewall_with_127.fw
+#sudo -u pi /home/pi/Script\ crontab/run_pyload.sh
 
 exit 0
