@@ -15,7 +15,7 @@ else
 */
 	include_once('connect.php');	
 	$user = $_POST['user'];
-	$pass = md5($_POST['pass_user']);
+	$pass = hash('sha256',$_POST['pass_user']);
 	$res = execute_sql("SELECT USERNAME FROM User WHERE USERNAME ='$user' and USERPASS ='$pass'"); 
 	$row = $res->fetch_array(MYSQLI_ASSOC);
 	if($row['USERNAME'] != '' and $row['USERNAME'] == $user)
