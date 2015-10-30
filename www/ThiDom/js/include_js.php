@@ -238,7 +238,6 @@
 							Nom = $event.Nom;
 							RAZ = $event.RAZ;
 							Visible = $event.Visible;
-
 							if (Type == "Plugins")
 							{
 								event_delete = "delete_plugins_app";
@@ -1489,6 +1488,7 @@
 			function valid(event,cmd_device_id, num_row,Device_id)
 			{
 				id = "";
+				cmd_device_id = "";
 				piece_id="";
 				piece_name = "";
 				app_name = "";
@@ -1539,8 +1539,8 @@
 				{		
 					id = $("#ID_Piece").val();
 					piece_name = $("#add_piece_name_piece").val();
-					cmd_device_ID = '';
 					piece_visible = $('#Visible_piece').is(':checked');
+					cmd_device_ID = '';
 				}
 				
 				if (event == "delete_piece")
