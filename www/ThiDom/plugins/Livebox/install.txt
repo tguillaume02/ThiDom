@@ -1,0 +1,3 @@
+Up,{"url": "plugins/Livebox/Livebox.php","data":"act=loadData"}
+Down,{"url": "plugins/Livebox/Livebox_ajax.php","data":"act=loadData"}
+Reboot Livebox,{"url": "plugins/Livebox/Livebox_ajax.php","data": "act=loadData" }

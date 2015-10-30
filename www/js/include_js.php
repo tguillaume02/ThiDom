@@ -238,15 +238,17 @@
 							Nom = $event.Nom;
 							RAZ = $event.RAZ;
 							Visible = $event.Visible;
-							event_delete = "delete_app";
 							if (Type == "Plugins")
 							{
-								$("#TrAdminPlugins").append("<td><table class='Equipement_Plugins'><tr><td><img src=plugins/"+Nom+"/pic/"+Nom+".png></td></tr><tr><td style='text-align:center;color:white'>"+Nom+"</td></tr></table></td>");
+								event_delete = "delete_plugins_app";
+//								$("#TrAdminPlugins").append("<td><table class='Equipement_Plugins'><tr><td><img src=plugins/"+Nom+"/pic/"+Nom+".png></td></tr><tr><td style='text-align:center;color:white'>"+Nom+"</td></tr></table></td>");
+								$("#TrAdminPlugins").append("<td><table class='Equipement_Plugins'><tr><td style='text-align: right'><img src='pic/delete.png' ald='delete' onclick=\"delete_confirm('"+event_delete+"',"+cmd_device_ID+","+ID+")\"  style='cursor:pointer;margin-top: -23%;margin-right: -10%;'></td></tr><tr><td><img src=plugins/"+Nom+"/pic/"+Nom+".png></td></tr><tr><td style='text-align:center;color:white'>"+Nom+"</td></tr></table></td>");
 							}
 							else
 							{
+								event_delete = "delete_app";
 								w+=1;
-								$("#tbody_AdminEquipement").append("<tr><td style='text-align:center;'>"+ID+"</td><td style='text-align:center;'>"+cmd_device_ID+"</td><td style='text-align:center;'>"+DeviceID+"</td><td style='text-align:center;'>"+Carte_ID+"</td><td style='text-align:center;'>"+TypeID+"</td><td style='text-align:center;'>"+LieuxID+"</td><td style='text-align:center;'>"+RAZ+"</td><td style='text-align:center;'>"+Visible+"</td><td style='text-align:center;'>"+Piece+"</td><td style='text-align:center;'>"+Nom+"</td><td style='text-align:center;'>"+Type+"</td><td style='text-align:center;' id='edit_"+w+"' ><img src='pic/pencil.png' alt='pencil' id='pencil_"+w+"' onclick='EditEquipement("+ID+","+cmd_device_ID+","+w+")'></td><td><img src='pic/delete.png' ald='pencil'  onclick='delete_confirm(event_delete,"+cmd_device_ID+","+w+")'></td></tr>");
+								$("#tbody_AdminEquipement").append("<tr><td style='text-align:center;'>"+ID+"</td><td style='text-align:center;'>"+cmd_device_ID+"</td><td style='text-align:center;'>"+DeviceID+"</td><td style='text-align:center;'>"+Carte_ID+"</td><td style='text-align:center;'>"+TypeID+"</td><td style='text-align:center;'>"+LieuxID+"</td><td style='text-align:center;'>"+RAZ+"</td><td style='text-align:center;'>"+Visible+"</td><td style='text-align:center;'>"+Piece+"</td><td style='text-align:center;'>"+Nom+"</td><td style='text-align:center;'>"+Type+"</td><td style='text-align:center;' id='edit_"+w+"' ><img src='pic/pencil.png' alt='pencil' id='pencil_"+w+"' onclick='EditEquipement("+ID+","+cmd_device_ID+","+w+")'></td><td><img src='pic/delete.png' ald='pencil'  onclick=\"delete_confirm('"+event_delete+"',"+cmd_device_ID+","+w+")\"></td></tr>");
 								//$("#tbody_AdminEquipement").append("<tr><td style='text-align:center;'>"+ID+"</td><td style='text-align:center;'>"+Piece+"</td><td style='text-align:center;'>"+Nom+"</td><td style='text-align:center;'>"+Type+"</td><td style='text-align:center;' id='edit_"+i+"' ><img src='pic/pencil.png' alt='pencil' id='pencil_"+i+"' onclick='EditEquipement("+ID+","+i+")'>&nbsp;&nbsp;<img src='pic/delete.png' ald='pencil'></td></tr>");
 							}
 						}			
@@ -303,7 +305,7 @@
 
 	}
 
-	function delete_confirm(event,cmd_device_id,num_row)
+	function delete_confirm(event,cmd_device_id,num_row,id)
 	{
 		if (event ==  "delete_piece")
 		{
@@ -315,7 +317,7 @@
 		}
 		var r = confirm(question);
 		if (r == true) {
-			valid(event,cmd_device_id,num_row);
+			valid(event,cmd_device_id,num_row,id);
 		}
 	}
 
@@ -463,7 +465,7 @@
 						for(var i=0;i<data.length;i++) {					
 							$event = data[i];								
 							event_delete = "delete_piece";						
-							$("#tbody_AdminPiece").append("<tr><td style='text-align:center;'>"+$event.ID+"</td><td style='text-align:center;'>"+$event.Nom+"</td><td style='text-align:center;'><img src='pic/pencil.png' ald='pencil' onclick='EditPiece("+$event.ID+","+i+","+$event.Visible+")'></td><td style='text-align:center;'><img src='pic/delete.png' ald='pencil' onclick='delete_confirm(event_delete,"+i+")'></td></tr>");
+							$("#tbody_AdminPiece").append("<tr><td style='text-align:center;'>"+$event.ID+"</td><td style='text-align:center;'>"+$event.Nom+"</td><td style='text-align:center;'><img src='pic/pencil.png' ald='pencil' onclick='EditPiece("+$event.ID+","+i+","+$event.Visible+")'></td><td style='text-align:center;'><img src='pic/delete.png' ald='pencil' onclick=\"delete_confirm('"+event_delete+"',"+i+")\"></td></tr>");
 						}				
 						oTable = $("#AdminPiece").DataTable({
 							"bJQueryUI": true,
@@ -1483,7 +1485,7 @@
 				Load_Type_App();
 			};
 			
-			function valid(event,cmd_device_id, num_row)
+			function valid(event,cmd_device_id, num_row,id)
 			{
 				id = "";
 				cmd_device_id = "";
@@ -1563,6 +1565,12 @@
 					Request = $("#Liste_plugins option:selected").val();
 					cmd_device_ID = '';
 
+				}
+
+				if(event == "delete_plugins_app")
+				{			
+					id = id;
+					cmd_device_ID = cmd_device_id;
 				}
 				var request = $.ajax({
 					dataType: "json",

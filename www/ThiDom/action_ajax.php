@@ -373,6 +373,20 @@ if ($mode == "valide")
 			echo json_encode($value);
 		}		
 	}
+	elseif ($property == "delete_plugins_app")
+	{
+		/*$req = execute_sql("DELETE FROM Etat_IO where ID ='$id'");	*/
+		$req = execute_sql("DELETE FROM cmd_device where Device_ID ='$id'");
+		$req1 = execute_sql("DELETE FROM Device where ID ='$id'");
+
+		if($req == TRUE and $req1 == TRUE)
+		{	
+			$value = array();
+			$msg = $app_name." a bien été supprimé de ".$piece_name;
+			$value[] =  Array( "msg"=>$msg,"clear"=>"on");
+			echo json_encode($value);
+		}		
+	}
 	elseif ($property == "add_piece")
 	{
 		if ($id != "")
@@ -469,10 +483,15 @@ if ($mode == "valide")
 	{
 		if ($app_name != "" && $piece_name != "" && $Request !="")
 		{
-			$req = execute_sql("INSERT INTO Device (Nom,Type_ID,Lieux_ID,Visible)  SELECT '$app_name', ID, '$LieuxId', 1 from Type_Device where Type = 'Plugins';");
+			$req = execute_sql("INSERT INTO Device (Nom,Type_ID,Lieux_ID,Visible)  SELECT '$app_name', ID, '$piece_id', 1 from Type_Device where Type = 'Plugins';");
 
-			$req1 = execute_sql("INSERT INTO cmd_device (Nom,Device_ID,Request,Value,Etat,Visible) select '$app_name', MAX(ID) ,'$Request',0,0,'$visible_app' from Device");
-
+			$lines = file('./plugins/'.$app_name.'/install.txt');
+			/*On parcourt le tableau $lines et on affiche le contenu de chaque ligne précédée de son numéro*/
+			foreach ($lines as $lineNumber => $lineContent)
+			{
+				$InstallArray = explode(",", $lineContent);
+				$req1 = execute_sql("INSERT INTO cmd_device (Nom,Device_ID,Request,Value,Etat,Visible) select '$InstallArray[0]', MAX(ID) ,'$InstallArray[1]',0,0,'$visible_app' from Device");
+			}
 
 			if($req == TRUE and $req1 == TRUE)
 			{	

@@ -2337,6 +2337,7 @@ table.dataTable tr.odd.row_selected td {
 
 .Equipement_Plugins
 {
+    background: rgba(0, 0, 0, 0.25);
     border: 2px solid rgb(57, 107, 158); height: auto;
     min-width : 95px;
     min-height : 95px;

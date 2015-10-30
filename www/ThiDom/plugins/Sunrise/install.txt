@@ -1,0 +1,5 @@
+Conditions,{"url": "plugins/Sunrise/Sunrise.php?value=Conditions"}
+
+Sunset,{"url": "plugins/Sunrise/Sunrise.php?value=Sunset"}
+
+Sunrise,{"url": "plugins/Sunrise/Sunrise.php?value=Sunrise"}
