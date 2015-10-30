@@ -29,7 +29,9 @@
 	//$act = $nom."#".$val;
 	// $req = $mysqli->query("select Temperature_Temp.temp as temp,Etat_IO.lieux from Temperature_Temp inner join Etat_IO on Etat_IO.lieux = Temperature_Temp.lieux where Etat_IO.deviceID=".$pinID." order by Temperature_Temp.date desc LIMIT 1") or die('Erreur SQL !<br>');
 		
-		$req = execute_sql("select value from Etat_IO where ID=(select sensor_attachID from Etat_IO where DeviceID=".$pinID." and Carte_ID=".$carte_id.")");
+//		$req = execute_sql("select value from Etat_IO where ID=(select sensor_attachID from Etat_IO where DeviceID=".$pinID." and Carte_ID=".$carte_id.")");
+		$req = execute_sql("select value from cmd_device  where ID=(select sensor_attachID from cmd_device inner join Device on Device.ID = cmd_device.Device_ID  where DeviceID=".$pinID." and CarteID=".$carte_id.")");
+
 		
 		While ($donnees = $req->fetch_array())
 		{

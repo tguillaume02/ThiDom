@@ -13,7 +13,7 @@
 			<img src="pic/neon-home.png" alt="logo" style="text-align:center" ><!--Domo'Box-->
 		</div>
 		<div id="login">
-			<!--<form id="login_form" name="login_form"  action="login_ajax.php"  method="post">-->
+<!--			<form id="login_form" name="login_form"  action="login_ajax.php"  method="post">-->
 				<table style="text-align:center;margin-right:auto;margin-left:auto;min-width: 21%;">
 					<tr>
 						<td>
@@ -41,7 +41,7 @@
 						</td>
 					</tr>
 				</table>
-			<!--</form>-->
+		<!--	</form>-->
 		</div>
 	</body>
 </html>
@@ -58,22 +58,23 @@
 		});
 	})
 	
-		function checkpwd()
-		{			
-			 var request = $.ajax({
-                type: "POST",
-                url: "login_ajax.php",
-				data: {
-					user : $("#user").val(),
-					pass_user : $("#pass_user").val()
-				},
-                cache: false,
-                async: true
-            });
+	function checkpwd()
+	{			
+		var request = $.ajax({
+                	type: "POST",
+	                url: "login_ajax.php",
+			data: {
+				user : $("#user").val(),
+				pass_user : $("#pass_user").val()
+			},
+        	        cache: false,
+                	async: true
+	            });
 
-            request.done(function (data) {
-                    var redir = new String(data);
-					window.location.href =redir;
-            });
+        	    request.done(function (data) {
+            	    	var redir = new String(data);
+			window.location.href =redir;
+           	     });
 		};
 	</script>
+

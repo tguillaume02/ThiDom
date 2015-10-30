@@ -489,8 +489,8 @@ if ($mode == "valide")
 			/*On parcourt le tableau $lines et on affiche le contenu de chaque ligne précédée de son numéro*/
 			foreach ($lines as $lineNumber => $lineContent)
 			{
-				$InstallArray = explode(",", $lineContent);
-				$req1 = execute_sql("INSERT INTO cmd_device (Nom,Device_ID,Request,Value,Etat,Visible) select '$InstallArray[0]', MAX(ID) ,'$InstallArray[1]',0,0,'$visible_app' from Device");
+				$InstallArray = explode("#", $lineContent);
+				$req1 = execute_sql("INSERT INTO cmd_device (Nom,Device_ID,Request,Value,Etat,RAZ,Visible) select '$InstallArray[0]', MAX(ID) ,'$InstallArray[1]','$InstallArray[2]',0,0,'$visible_app' from Device");
 			}
 
 			if($req == TRUE and $req1 == TRUE)

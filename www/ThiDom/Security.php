@@ -9,7 +9,7 @@
 	{
 		$nom_value = "Agent";
 		$bonbon = trim($_COOKIE['WAY']);
-		if ( ($bonbon == $nom_value and  $_SESSION['user']  != "" and $_SESSION['ConnectThiDom']==1) and ! isset($mysqli))
+		if ( ($bonbon == $nom_value /*and  $_SESSION['user']  != "" and $_SESSION['ConnectThiDom']==1*/) and ! isset($mysqli))
 		{
 			include_once('connect.php');	
 			include_once('functions.php');	
