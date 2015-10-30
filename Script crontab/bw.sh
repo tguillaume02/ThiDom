@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-# Indique la bande passante au moment de l'ÃƒÂ©xÃƒÂ©cution pour une interface donnÃƒÂ©e en paramÃƒÂ¨tre.
+# Indique la bande passante au moment de l'execution pour une interface donnée en paramètre.
 # Utilisation : ./bw.sh eth0
 # Sortie      : <BP IN>:<BP OUT> 
 

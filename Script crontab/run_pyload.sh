@@ -1,3 +1,4 @@
 #!/bin/bash
 
-service pyload start
+#service pyload start
+pyLoadCore --daemon
