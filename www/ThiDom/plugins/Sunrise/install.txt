@@ -1,5 +1,3 @@
-Conditions,{"url": "plugins/Sunrise/Sunrise.php?value=Conditions"}
-
-Sunset,{"url": "plugins/Sunrise/Sunrise.php?value=Sunset"}
-
-Sunrise,{"url": "plugins/Sunrise/Sunrise.php?value=Sunrise"}
+Conditions#{"url": "plugins/Sunrise/Sunrise.php","url_ajax": "plugins/Sunrise/Sunrise_ajax.php","data"="act=Conditions"}#60
+Sunset#{"url": "plugins/Sunrise/Sunrise.php","url_ajax": "plugins/Sunrise/Sunrise_ajax.php",,"act=Sunset"}#60
+Sunrise#{"url": "plugins/Sunrise/Sunrise.php","url_ajax": "plugins/Sunrise/Sunrise_ajax.php","act=Sunrise"}#60

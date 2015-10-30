@@ -81,6 +81,6 @@
 
 	loadData();
 
-	var auto_refresh = setInterval(function () {loadData()},3600000);
+//	var auto_refresh = setInterval(function () {loadData()},3600000);
 
 </script>

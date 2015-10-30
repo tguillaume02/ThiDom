@@ -85,7 +85,7 @@ header('Content-Type: application/json');
       $j = date("j", strtotime('now -'.$LastChange.' Seconds')); 
       $m = date("n", strtotime('now -'.$LastChange.' Seconds')); 
       $Y = date("Y", strtotime('now -'.$LastChange.' Seconds')); 
-      $LastChange = $jour[$w]." ".$j." ".$mois[$m]." ".$Y." - ".date("H:i", strtotime('now -'.$LastChange.' Seconds')); 
+      $LastChange = $jour[$w]." ".$j." ".$mois[$m]." ".$Y."-".date("H:i", strtotime('now -'.$LastChange.' Seconds')); 
 
 
 
