@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 host = "localhost"
-usr = "wdtest"
-pwd = ""
-db =  "test"
+usr = "wdtest";
+pwd = "";
+db = "test";
 
-idnotify = ""
+idnotify = "";
