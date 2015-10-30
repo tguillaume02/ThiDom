@@ -1,14 +1,17 @@
 #o!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import serial
 import MySQLdb
 import time
 import datetime
-import urllib2
 import urllib
+import urllib2
 import sys
 import os
 import msql
+import json
+import ssl
 
 processus = 'mysqld'
 s = os.popen('ps ax').read()
@@ -27,21 +30,35 @@ while True:
 		# REMISE A ZERO DES ALERTES ACTIFS DEPUIS PLUS DE DEUX MINUTES
 		#if time.time() > timeout or time.strftime('%S',time.localtime()) == '00':
 		try:
-			db = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
+			DbConnect = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
 			time.sleep(0.2)
-			cursor = db.cursor()
-		except  MySQLdb.Error, e:
+			cursor = DbConnect.cursor()
+		except MySQLdb.Error, e:
 			if msql.idnotify!="":
 				urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd planning&id_notif:-3")
 			print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error planning %d: %s" % (e.args[0],e.args[1])
 			sys.exit(1)
 
 		#sql_alert = " select ID from Etat_IO where type = 'Alerte' and date < Date_SUB(now(), INTERVAL 2 MINUTE) and Etat = 1"			
-		sql_alert = " select ID from ( select ID,Etat,Date,Date_SUB(now(), INTERVAL RAZ MINUTE) as raz  from cmd_device  ) as t where t.Date< t.raz and t.Etat = 1 "		
+		sql_alert = " select ID,Type_ID,Request from ( select cmd_device.ID,Etat,Device.Type_ID,Request,Date,Date_SUB(now(), INTERVAL RAZ MINUTE) as raz  from cmd_device inner join Device on Device.ID = cmd_device.Device_ID ) as t where t.Date< t.raz and (t.Etat = 1 or t.Type_ID = 8) "	
+   
+    
 		cursor.execute(sql_alert)
 		for row in cursor.fetchall():
 			DeviceID = row[0]
-			cursor.execute(" update cmd_device set cmd_device.Etat ='0' where ID ="+str(DeviceID))				
+			Type_ID = row[1]
+			Request = row[2]
+			if Type_ID != 8:
+				cursor.execute(" update cmd_device set cmd_device.Etat ='0', cmd_device.Value ='0' where ID ="+str(DeviceID))
+			elif Type_ID == 8:
+				context = ssl._create_unverified_context()
+				Request = json.loads(Request)
+				url = "https://localhost/ThiDom/"+Request["url_ajax"]
+				data = Request["data"]
+				#url_values = urllib.urlencode(data)
+				url_values = data
+				full_url = urllib2.Request(url, url_values)
+				exec_cmd = urllib2.urlopen(full_url,context=context)
 		
 		#sql = "SELECT STATUS, Etat_IO.DeviceID, Etat_IO.Carte_ID,  Etat_IO.Nom, Etat_IO.Type, Etat_IO.Lieux, thermo.DeviceID,Etat_IO.ID FROM planning inner join Etat_IO on Etat_IO.ID = ETAT_IO_ID AND planning.STATUS != Etat_IO.Value left join Etat_IO as thermo on thermo.ID = Etat_IO.sensor_attachID WHERE DAYS like '%"+str(time.localtime().tm_wday)+"%' and HOURS ='"+time.strftime('%H:%M',time.localtime())+":00' and ACTIVATE = 1"
 
@@ -76,7 +93,7 @@ while True:
 			now = datetime.datetime.now()
 			now = now.strftime('%Y-%m-%d %H:%M:%S')
 			cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s,%s,%s, %s)", (ID,now,val, "Planning: "+Type+" "+Lieux+" "+Nom+" " +str(CarteID) +" " +str(DeviceID) +" " +str(New_Status)))
-		db.close()
+		DbConnect.close()
 		time.sleep(1)
 		# db.autocommit(True)
 	except KeyboardInterrupt:

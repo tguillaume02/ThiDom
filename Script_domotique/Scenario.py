@@ -13,7 +13,7 @@ import sys
 import os
 import msql
 import json
-
+import ssl
 
 
 processus = 'mysqld'
@@ -32,15 +32,15 @@ while processus not in s:
 
 try:
 
-	db = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
+	DbConnect = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
 
 	time.sleep(0.2)
 
-	cursor = db.cursor()
+	cursor = DbConnect.cursor()
 
 
 
-except db.Error, e:
+except MySQLdb.Error, e:
 	if msql.idnotify!="":
 		urllib.urlopen("http://notify8702.freeheberg.org/?id="+msql.idnotify+"&notif=Erreur connection bdd Scenario&id_notif:-8")
 
@@ -49,7 +49,7 @@ except db.Error, e:
 	sys.exit(1)
 
 
-
+context = ssl._create_unverified_context()
 
 
 ser = serial.Serial( port = '/dev/ttyACM0', baudrate =9600 )
@@ -62,9 +62,15 @@ while True:
 
 		time.sleep(0.2)
 
+		val = ""
+		CarteID = ""
+		DeviceID = ""
+		Actions_Device = ""		
+		BLog = True
+
 		#sql_Liste_Scenario = "SELECT XmlID,count(*) as NbScenario from Scenario Group by XmlID"
 
-		sql_Liste_Scenario = "SELECT XmlID,Conditions,Actions, SequenceNo,Scenario_Xml.Name, Scenario_Xml.status FROM Scenario  inner join Scenario_Xml on Scenario_Xml.ID = Scenario.XmlID where status = 1 ORDER BY XmlID, SequenceNo"
+		sql_Liste_Scenario = "SELECT XmlID,Conditions,Actions, SequenceNo,Scenario_Xml.Name, Scenario_Xml.status,Scenario.NextTimeEvents,Scenario.NextActionEvents FROM Scenario  inner join Scenario_Xml on Scenario_Xml.ID = Scenario.XmlID where status = 1  and (NextActionEvents is NULL or NextActionEvents >= Now()) ORDER BY XmlID, SequenceNo"
 
 		#print (sql_Liste_Scenario)
 
@@ -87,6 +93,10 @@ while True:
 			ScenarioName = row[4]		
 
 			Status = row[5]
+
+			NextTimeEvents = row[6]
+
+			NextActionEvents = row[7]
 
 			#print row
 
@@ -118,7 +128,7 @@ while True:
 						row_id = str(row_Len_And)
 						max_row_id = int(row_id)
 						Conditions_SQL += "inner join cmd_device as e"+row_id+" on "
-						Conditions_SQL += Conditions_And[row_Len_And].replace("timeofday  ==","(HOUR(now())*60+MINUTE(now())) =").replace("timeofday ","(HOUR(now())*60+MINUTE(now())) ").replace("timeofsun  ==","(select DATE_FORMAT(now(), '%H:%i')) = ").replace("weekday  ==","WEEKDAY(now()) =").replace("==","and e"+row_id+".Etat=",).replace("device[","e"+row_id+".id=").replace("]","").replace("On",'1').replace("Off",'0').replace("@Sunrise","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunrise')").replace("@Sunset","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunset')")
+						Conditions_SQL += Conditions_And[row_Len_And].replace("timeofday  ==","(HOUR(now())*60+MINUTE(now())) =").replace("timeofday ","(HOUR(now())*60+MINUTE(now())) ").replace("timeofsun  ==","(select DATE_FORMAT(now(), '%H:%i')) = ").replace("weekday  ==","WEEKDAY(now()) =").replace("==","and e"+row_id+".Etat=",).replace("temperaturedevice[","e"+row_id+".id=").replace("device[","e"+row_id+".id=").replace("]","").replace("On",'1').replace("Off",'0').replace("@Sunrise","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunrise')").replace("@Sunset","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunset')")
 
 					#Conditions_SQL = "where "
 					#Conditions_SQL += Conditions.replace("timeofday  ==","(HOUR(now())*60+MINUTE(now())) =").replace("timeofday ","(HOUR(now())*60+MINUTE(now())) ").replace("timeofsun  ==","(select DATE_FORMAT(now(), '%H:%i')) = ").replace("weekday  ==","WEEKDAY(now()) =").replace("==","and Etat_IO.Etat=",).replace("device[","Etat_IO.id=").replace("]","").replace("On",'1').replace("Off",'0').replace("@Sunrise","(select DATE_FORMAT(sunrise, '%H:%i') from Sunrise_set)").replace("@Sunset","(select DATE_FORMAT(sunset, '%H:%i') from Sunrise_set)")
@@ -139,7 +149,7 @@ while True:
 
 						Conditions_SQL += "left join cmd_device as e"+row_id+" on "
 
-						Conditions_SQL += Conditions_OR[row_Len_OR].replace("timeofday  ==","(HOUR(now())*60+MINUTE(now())) =").replace("timeofday ","(HOUR(now())*60+MINUTE(now()))").replace("timeofsun  ==","(select DATE_FORMAT(now(), '%H:%i')) = ").replace("weekday  ==","WEEKDAY(now()) =").replace("==","and e"+row_id+".Etat=",).replace(">=","and Etat >=",).replace("<=","and Etat <=",).replace(">","and Etat >",).replace("<","and Etat <",).replace("device[","e"+row_id+".id=").replace("]","").replace("On",'1').replace("Off",'0').replace("@Sunrise","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunrise')").replace("@Sunset","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunset')")
+						Conditions_SQL += Conditions_OR[row_Len_OR].replace("timeofday  ==","(HOUR(now())*60+MINUTE(now())) =").replace("timeofday ","(HOUR(now())*60+MINUTE(now()))").replace("timeofsun  ==","(select DATE_FORMAT(now(), '%H:%i')) = ").replace("weekday  ==","WEEKDAY(now()) =").replace("==","and e"+row_id+".Etat=",).replace(">=","and Etat >=",).replace("<=","and Etat <=",).replace(">","and Etat >",).replace("<","and Etat <",).replace("temperaturedevice[","e"+row_id+".id=").replace("device[","e"+row_id+".id=").replace("]","").replace("On",'1').replace("Off",'0').replace("@Sunrise","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunrise')").replace("@Sunset","( select DATE_FORMAT(str_to_date(Value, '%H:%i'),'%H:%i') from cmd_device where cmd_device.Nom = 'Sunset')")
 
 						if conditions_Where !="":
 
@@ -218,112 +228,132 @@ while True:
 
 									bTimer = True;
 
+								if ID =='"SendNotification"':
+									BLog = False
+									if msql.idnotify!="":
+										url = "http://notify8702.freeheberg.org/"
+										data = {}
+										data['id'] = msql.idnotify
+										data['notif'] = Actions_Device.replace('$','')
+										data['id_notif'] = XmlID
+										url_values = urllib.urlencode(data)
+										full_url = url + '?' + url_values
+										urllib2.urlopen(full_url)				
+										BChange_Status = True					
+								else:
+									sql_Type_device = "SELECT Type_Device.Type, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value,Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request FROM cmd_device INNER JOIN Device on Device.ID = cmd_device.Device_ID INNER JOIN Type_Device ON Device.Type_ID  = Type_Device.ID INNER JOIN cmd_device as Sensor_attached on Sensor_attached.ID = cmd_device.sensor_attachID WHERE cmd_device.ID ="+str(ID)+";"
 
+									cursor.execute(sql_Type_device)
 
-								sql_Type_device = "SELECT Type_Device.Type, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value,Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request FROM cmd_device INNER JOIN Device on Device.ID = cmd_device.Device_ID INNER JOIN Type_Device ON Device.Type_ID  = Type_Device.ID INNER JOIN cmd_device as Sensor_attached on Sensor_attached.ID = cmd_device.sensor_attachID WHERE cmd_device.ID ="+str(ID)+";"
+									result_sql_Type_device = cursor.fetchone()
 
-								cursor.execute(sql_Type_device)
+									Type_Device = result_sql_Type_device[0]
+									CarteID = result_sql_Type_device[1]
+									DeviceID = result_sql_Type_device[2]
+									Etat_Actuel = result_sql_Type_device[3]
+									Etat_Value = result_sql_Type_device[4]
+									value_sensor_attached = result_sql_Type_device[5]
+									Last_Action_Date = result_sql_Type_device[6]
+									ID = result_sql_Type_device[7]
+									Request = result_sql_Type_device[8]
+									if Type_Device == "Plugins":
+										ConditionsId =  Conditions.replace("device[","").replace("]","").split("==")[0]
+										sql_Date_Conditions = "Select Date from cmd_device where ID = "+ConditionsId
+										cursor.execute(sql_Date_Conditions)
+										result_sql_Date_Conditions = cursor.fetchone()
+										Last_Date_Execute_Conditions = result_sql_Date_Conditions[0]
+										if Last_Date_Execute_Conditions > Last_Action_Date :
+											Request = json.loads(Request)
+											RequestUrl =""
+											RequestData=""
+											val = ""
+											try:
+												RequestUrl = Request["url_ajax"]
+											except:
+												pass
+											try:
+												RequestData = Request["data"]
+											except: 
+												pass
+											if RequestUrl != "":
+												url = "https://localhost/ThiDom/"+RequestUrl
+												#url_values = urllib.urlencode(RequestData)
+												url_values = RequestData
+												full_url = urllib2.Request(url, url_values)
+												exec_cmd = urllib2.urlopen(full_url,context=context)
+												BChange_Status = True
+									elif Etat_Value != Actions_Device :
 
-								result_sql_Type_device = cursor.fetchone()
+										if Type_Device == "Chauffage":
 
-								Type_Device = result_sql_Type_device[0]
-								CarteID = result_sql_Type_device[1]
-								DeviceID = result_sql_Type_device[2]
-								Etat_Actuel = result_sql_Type_device[3]
-								Etat_Value = result_sql_Type_device[4]
-								value_sensor_attached = result_sql_Type_device[5]
-								Last_Action_Date = result_sql_Type_device[6]
-								ID = result_sql_Type_device[7]
-								Request = result_sql_Type_device[8]
-								if Type_Device == "Plugins":
-									ConditionsId =  Conditions.replace("device[","").replace("]","").split("==")[0]
-									sql_Date_Conditions = "Select Date from cmd_device where ID = "+ConditionsId
-									cursor.execute(sql_Date_Conditions)
-									result_sql_Date_Conditions = cursor.fetchone()
-									Last_Date_Execute_Conditions = result_sql_Date_Conditions[0]
-									if Last_Date_Execute_Conditions > Last_Action_Date :
-										Request = json.loads(Request)
-										RequestUrl =""
-										RequestData=""
-										val = ""
-										try:
-											RequestUrl = Request["url"]
-										except:
-											pass
-										try:
-											RequestData = Request["data"]
-										except: 
-											pass
-										if RequestUrl != "":
-											exec_cmd = urllib2.urlopen("https://localhost/new/"+RequestUrl, RequestData)
-											BChange_Status = True
-								elif Etat_Value != Actions_Device :
+											if float(value_sensor_attached) < float(Actions_Device):
 
-									if Type_Device == "Chauffage":
-
-										if float(value_sensor_attached) < float(Actions_Device):
-
-											act_chauff = 1
-
-										else:
-
-											act_chauff =0
-										if (float(Etat_Actuel) != float(act_chauff) or float(Etat_Value) != float(Actions_Device)):
-
-											BChange_Status = True
-
-											val = str(CarteID)+"/"+str(DeviceID)+"@"+str(Actions_Device)+":"+str(act_chauff)+"\n"
-
-											#print val
-
-											written = ser.write(val.replace(' ',''))
-
-									else:
-										if (float(Etat_Actuel) != float(Actions_Device) or float(Etat_Value) != float(Actions_Device)):
-
-											BChange_Status = True
-
-											val = str(CarteID)+"/"+str(DeviceID)+"@"+str(Actions_Device)+":"+str(Actions_Device)+"\n"
-
-											#print val
-
-											written = ser.write(val.replace(' ',''))
-
-								elif Etat_Value == Actions_Device:
-
-									#print Etat_Value +"//" +Actions_Device
-
-									#print "bTimer = " + str(bTimer)
-
-									if bTimer == True:
-
-										Last_Action_Date = datetime.datetime.strptime(Last_Action_Date,"%Y-%m-%d %H:%M:%S")
-
-										Next_Action_Date = Last_Action_Date  + datetime.timedelta(minutes = tbtimer[1])
-
-										if datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"%Y-%m-%d %H:%M:%S") >= Next_Action_Date:
-
-											if Type_Device == "Chauffage":
-
-												c = str(int(not Etat_Value))
+												act_chauff = 1
 
 											else:
 
+												act_chauff =0
+											if (float(Etat_Actuel) != float(act_chauff) or float(Etat_Value) != float(Actions_Device)):
+
 												BChange_Status = True
 
-												val = str(CarteID)+"/"+str(DeviceID)+"@"+str(int(not Etat_Value))+":"+str(int(not Etat_Value))+"\n"
+												val = str(CarteID)+"/"+str(DeviceID)+"@"+str(Actions_Device)+":"+str(act_chauff)+"\n"
+
+												#print val
 
 												written = ser.write(val.replace(' ',''))
+
+										else:
+											if (float(Etat_Actuel) != float(Actions_Device) or float(Etat_Value) != float(Actions_Device)):
+
+												BChange_Status = True
+
+												val = str(CarteID)+"/"+str(DeviceID)+"@"+str(Actions_Device)+":"+str(Actions_Device)+"\n"
+
+												#print val
+
+												written = ser.write(val.replace(' ',''))
+
+									elif Etat_Value == Actions_Device:
+
+										#print Etat_Value +"//" +Actions_Device
+
+										#print "bTimer = " + str(bTimer)
+
+										if bTimer == True:
+
+											Last_Action_Date = datetime.datetime.strptime(Last_Action_Date,"%Y-%m-%d %H:%M:%S")
+
+											Next_Action_Date = Last_Action_Date  + datetime.timedelta(minutes = tbtimer[1])
+
+											if datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"%Y-%m-%d %H:%M:%S") >= Next_Action_Date:
+
+												if Type_Device == "Chauffage":
+
+													c = str(int(not Etat_Value))
+
+												else:
+
+													BChange_Status = True
+
+													val = str(CarteID)+"/"+str(DeviceID)+"@"+str(int(not Etat_Value))+":"+str(int(not Etat_Value))+"\n"
+
+													written = ser.write(val.replace(' ',''))
 
 
 
 								if BChange_Status == True:
 
 									now = datetime.datetime.now()
+									sNow = now.strftime('%Y-%m-%d %H:%M:%S')
+									if NextActionEvents!=None:
+										NextEvent = now + datetime.timedelta(minutes = NextActionEvents)
+										NextEvent= NextEvent.strftime('%Y-%m-%d %H:%M:%S')
+										cursor.execute("UPDATE Scenario set LastTimeEvents=%s,NextTimeEvents=%s where XmlID=%s", (sNow,NextEvent,XmlID))
 
-									now = now.strftime('%Y-%m-%d %H:%M:%S')
-
-									cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (ID, now, val, "Scenario: "+ScenarioName+" " +str(CarteID) +" " +str(DeviceID) +" " +str(Actions_Device)))
+									cursor.execute("UPDATE Scenario set LastTimeEvents=%s where XmlID=%s",(sNow,XmlID))
+									if BLog == True:
+										cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (ID, sNow, val, "Scenario: "+ScenarioName+" " +str(CarteID) +" " +str(DeviceID) +" " +str(Actions_Device)))
 
 									try:
 										if msql.idnotify!="":

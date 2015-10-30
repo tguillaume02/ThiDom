@@ -20,8 +20,8 @@ while processus not in s:
 	s = os.popen('ps ax').read()
 
 try:
-	db =MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
-	cursor = db.cursor()
+	DbConnect =MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
+	cursor = DbConnect.cursor()
 
 	try:
 		if msql.idnotify!="":
@@ -36,7 +36,7 @@ try:
 	except IOError,e:
 		pass
 
-except db.Error, e:  
+except MySQLdb.Error, e:  
 	print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error %d: %s" % (e.args[0],e.args[1])
 	sys.exit(1)
 
@@ -312,10 +312,10 @@ def Temp(pinID,value):
 	cursor.execute("UPDATE cmd_device SET Value=%s, Date=%s where ID=%s", (value,date,cmd_device_ID))
 	if cmd_device_ID != -1:
 		cursor.execute("INSERT INTO Temperature_Temp VALUES (%s, %s, %s, %s)", (date,value,lieux, cmd_device_ID))
-	#mon_fichier = open("/home/pi/Script crontab/debug/temperature.json","a")
-	#mon_fichier.write(lieux + " :" + value + " , " + "date " + date)
-	#mon_fichier.write("\r\n")
-	#mon_fichier.close() 
+#	mon_fichier = open("/home/pi/Script crontab/debug/temperature.json","a")
+#	mon_fichier.write(lieux + " :" + value + " , " + "date " + date)
+#	mon_fichier.write("\r\n")
+#	mon_fichier.close() 
 
 def Alert(str_usb_read):
 	try:
