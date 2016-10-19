@@ -40,7 +40,7 @@ while True:
 			sys.exit(1)
 
 		#sql_alert = " select ID from Etat_IO where type = 'Alerte' and date < Date_SUB(now(), INTERVAL 2 MINUTE) and Etat = 1"			
-		sql_alert = " select ID,Type_ID,Request from ( select cmd_device.ID,Etat,Device.Type_ID,Request,Date,Date_SUB(now(), INTERVAL RAZ MINUTE) as raz  from cmd_device inner join Device on Device.ID = cmd_device.Device_ID ) as t where t.Date< t.raz and (t.Etat = 1 or t.Type_ID = 8) "	
+		sql_alert = " select ID,Type_ID,Request,RAZ from ( select cmd_device.ID,Etat,Device.Type_ID,Request,Date,Date_SUB(now(), INTERVAL RAZ MINUTE) as DateRaz, RAZ  from cmd_device inner join Device on Device.ID = cmd_device.Device_ID ) as t where t.Date< t.DateRaz and (t.Etat = 1 or t.Type_ID = 8) "	
    
     
 		cursor.execute(sql_alert)
@@ -48,6 +48,7 @@ while True:
 			DeviceID = row[0]
 			Type_ID = row[1]
 			Request = row[2]
+			RAZ = row[3]
 			if Type_ID != 8:
 				cursor.execute(" update cmd_device set cmd_device.Etat ='0', cmd_device.Value ='0' where ID ="+str(DeviceID))
 			elif Type_ID == 8:
@@ -59,6 +60,10 @@ while True:
 				url_values = data
 				full_url = urllib2.Request(url, url_values)
 				exec_cmd = urllib2.urlopen(full_url,context=context)
+				#Minute = date('i');
+				Minute = datetime.datetime.now().minute
+				if (Minute % RAZ) != 0:
+					cursor.execute("update cmd_device set date =(select DATE_FORMAT(now(), '%Y-%m-%d %H:00:00') - INTERVAL "+str(Minute%RAZ)+" MINUTE)  where ID ="+str(DeviceID))
 		
 		#sql = "SELECT STATUS, Etat_IO.DeviceID, Etat_IO.Carte_ID,  Etat_IO.Nom, Etat_IO.Type, Etat_IO.Lieux, thermo.DeviceID,Etat_IO.ID FROM planning inner join Etat_IO on Etat_IO.ID = ETAT_IO_ID AND planning.STATUS != Etat_IO.Value left join Etat_IO as thermo on thermo.ID = Etat_IO.sensor_attachID WHERE DAYS like '%"+str(time.localtime().tm_wday)+"%' and HOURS ='"+time.strftime('%H:%M',time.localtime())+":00' and ACTIVATE = 1"
 
@@ -82,11 +87,11 @@ while True:
 #				print Lieux
 			if Type == "Chauffage":
 				#val = "Chauffage_"+str(DeviceID)+"#"+str(New_Status)+"\n"
-				val = str(DeviceID)+"@"+str(New_Status)+":0/"+str(CarteID)+"\n"
+				val = str(CarteID)+"/"+str(DeviceID)+"@"+str(New_Status)+":0\n"
 				# print val
 				written = ser.write(val)
 			else:
-				val = str(DeviceID)+":"+str(New_Status)+"/"+str(CarteID)+"\n"
+				val = str(CarteID)+"/"+str(DeviceID)+":"+str(New_Status)+"\n"
 				# print val
 				writen = ser.write(val)
 										

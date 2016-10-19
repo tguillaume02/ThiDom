@@ -41,7 +41,9 @@ install_dependance() {
 	sudo aptitude install php5-mysql -y
 	sudo aptitude install python-mysqldb -y
     sudo aptitude install python-serial -y
+	sudo aptitude install fail2ban -y
 	sudo aptitude install htop -y
+    sudo aptitude install  python-jinja2 -y
 	sudo pip install -U pip
 	sudo pip install tweepy
 	
@@ -305,6 +307,18 @@ echo "${msg_login_info2} admin/admin"
 
 echo "${reboot}"
 
+
+############# DEFINE STATIC ID TO USB  ##############
+# sudo udevadm info --query=all --name=ttyUSB0
+# sudo lsusb -v | more
+# Notez ou copiez les lignes, (avancez par appui sur la touche espace) et trouvez
+#  - idVendor
+#  - idProduct
+#  - iSerial (éventuellement)
+# On configure  donc  le fichier /etc/udev/rules.d/99-usb-serial.rules - See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
+#  SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB11"
+
+- See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
 
 ###### mysql#######
 # mettre en commentaire dans /etc/mysqm/my.cnf la ligne bind-address		= 127.0.0.1

@@ -795,7 +795,7 @@ if ($mode == "Create_Scenario")
 			    {
 			    	//echo"insert into Scenario (XmlID, Conditions, Actions,SequenceNo ) values((select MAX(ID) from Scenario_Xml), '$conditions', '$actions','$SequenceNo')";
 			    	if ($UpdateScenario == "false")
-			    	{ echo "INSERT INTO Scenario_Xml(ID,Name,XML,Status) values($Scenario_id, '$Scenario_Name', '$Xml_Scenario', $Xml_Status )";
+			    	{ 
 			    		$req = execute_sql("INSERT INTO Scenario (XmlID, Conditions, Actions,SequenceNo ) values($Scenario_id, '$conditions', '$actions','$SequenceNo')") ;
 			    		//echo "INSERT INTO Scenario_Xml(ID,Name,XML,Status) values('$Scenario_id', '$Scenario_Name', '$Xml_Scenario', $Xml_Status )";
 						$req = execute_sql("INSERT INTO Scenario_Xml(ID,Name,XML,Status) values($Scenario_id, '$Scenario_Name', '$Xml_Scenario', $Xml_Status )") ;
