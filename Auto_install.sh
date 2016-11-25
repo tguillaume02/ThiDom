@@ -91,10 +91,10 @@ while true ; do
     echo -n "${msg_yesno}"
     read ANSWER < /dev/tty
     case $ANSWER in
-        ${msg_yes})
+        ${msg_yes}
             break
         ;;
-        ${msg_no})
+        ${msg_no}
             echo "${msg_cancel_install}"
             exit 1
         ;;
@@ -119,10 +119,10 @@ while true ; do
         echo -n "${msg_yesno}"
         read ANSWER < /dev/tty
         case $ANSWER in
-            ${msg_yes})
+            ${msg_yes}
                 break
             ;;
-            ${msg_no})
+            ${msg_no}
 			echo "${msg_passwd_mysql}"
                 break
             ;;
