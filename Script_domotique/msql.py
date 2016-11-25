@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 host = "localhost"
-usr = "wdtest";
-pwd = "";
-db = "test";
+usr = "thidom"
+pwd = "b431e02e0be6eca"
+db = "thidom"
 
-idnotify = "";

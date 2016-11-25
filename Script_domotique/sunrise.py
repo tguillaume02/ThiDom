@@ -29,7 +29,7 @@ except db.Error, e:
 	sys.exit(1)
 
 
-ser = serial.Serial( port = '/dev/ttyACM0', baudrate =9600 )
+ser = serial.Serial( port = '/dev/ttyusb1', baudrate =9600 )
 sunrise = sys.argv[1]
 sunset = sys.argv[2]
 conditions = sys.argv[3]

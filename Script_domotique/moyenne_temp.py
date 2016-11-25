@@ -23,7 +23,7 @@ except db.Error, e:
 #while True:
 try:
 	time.sleep(0.2)
-	cursor.execute("INSERT INTO Temperature (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') as date , ROUND(AVG(temp),2) as avg, lieux, Etat_IO_ID from Temperature_Temp where date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) group by lieux)")			
+	cursor.execute("INSERT INTO Temperature (date,temp,lieux,Lieux_ID,cmd_device_ID) select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') as date , ROUND(AVG(temp),1) as avg, lieux, Lieux_ID, cmd_device_ID from Temperature_Temp where date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) group by lieux")			
 	cursor.execute("DELETE FROM Temperature_Temp WHERE date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL  20 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00'))")
 	mon_fichier = open("/home/pi/text.txt","w")
 	mon_fichier.write ("test")

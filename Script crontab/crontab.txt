@@ -33,7 +33,7 @@
 */10 * * * *  /home/pi/Script\ crontab/check_read.sh
 */5 * * * *  /home/pi/Script\ crontab/Check_wifi.sh
 0,15,30,45 * * * * /home/pi/Script\ crontab/moyennes_temp.sh
-#0 * * * * /home/pi/Script\ crontab/update_sunrise.sh
+0 * * * * /home/pi/Script\ crontab/update_sunrise.sh
 0 0,12 * * * /home/pi/Script\ crontab/backup_bdd.sh
 #
 #

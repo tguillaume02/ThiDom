@@ -2,356 +2,221 @@
 
 import thread
 import serial
-import MySQLdb 
-import sys 
+import MySQLdb
+import sys
 import datetime
 import time
 import urllib2
 import urllib
 import os
 import msql
+from SendNotification import SendNotification
+#import ptvsd
+
+#ptvsd.enable_attach(secret="my_secret")
 
 processus = 'mysqld'
 s = os.popen('ps ax').read()
 
 while processus not in s:
-	n = 1
-	time.sleep(0.2)
-	s = os.popen('ps ax').read()
+    n = 1
+    time.sleep(0.2)
+    s = os.popen('ps ax').read()
 
 try:
-	DbConnect =MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
-	cursor = DbConnect.cursor()
+    DbConnect = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
+    cursor = DbConnect.cursor()
 
-	try:
-		if msql.idnotify!="":
-			url = "http://notify8702.freeheberg.org/"
-			data = {}
-			data['id'] = msql.idnotify
-			data['notif'] = "Demarrage read usb"
-			data['id_notif'] = "-1"
-			url_values = urllib.urlencode(data)
-			full_url = url + '?' + url_values
-			urllib2.urlopen(full_url)
-	except IOError,e:
-		pass
+    try:
+        SendNotification("Demarrage read usb", "-1")
+    except:
+        print "####### READ USB - Send Notification Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0])
+        pass
 
-except MySQLdb.Error, e:  
-	print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + " Error %d: %s" % (e.args[0],e.args[1])
-	sys.exit(1)
+except MySQLdb.Error, e:
+    print "####### READ USB - Error Connection BDD #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error %d: %s" % (e.args[0], e.args[1])
+    sys.exit(1)
 
-ser = serial.Serial(port = '/dev/ttyACM0', baudrate = 9600)
-
-#print ser
+ser = serial.Serial(port='/dev/ttyUSB1', baudrate=9600)
 
 def ReadArduino():
-	global Alert_LastTime
-	Alert_LastTime ='1900-01-01 00:00:00'
-	while True: 
-		try:
-			x = ""
-			x = ser.readline() # read one byte
-			str_usb_read = x
-			date = time.strftime('%y-%m-%d %H:%M:%S',time.localtime())
-			mon_fichier = open("/home/pi/Script crontab/debug/toto.txt","a")
-			mon_fichier.write(date+" : ")
-			mon_fichier.write(x)
-			mon_fichier.write("\r\n")
-			mon_fichier.close()
-			x = x.replace("\r\n", "")
+    global Alert_LastTime
+    Alert_LastTime = '1900-01-01 00:00:00'
+    while True:
+        try:
+            x = ""
+            x = ser.readline()  # read one byte
+            str_usb_read = x
+            date = time.strftime('%y-%m-%d %H:%M:%S', time.localtime())
+            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
+            mon_fichier.write(date+" : ")
+            mon_fichier.write(x)
+            mon_fichier.write("\r\n")
+            mon_fichier.close()
+            x = x.replace("\r\n", "")
 
+            if ":" in x:
+                type = ""
+                pinID = ""
+                value = ""
+                status = ""
+                SlaveCarteId = ""
+                idNotif = ""
 
-			# planning()
-			# send or receive by arduino device_lieux:act
-			#x ="Chauffage_Salon:Chauffage salon_17"
-			#x ="Temperature_Exterieur:11"
-			#print x
+                if "/" in x:
+                    try:
+                        x, SlaveCarteId = x.split("/")
+                    except:
+                        print "####### READ USB - Split / #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + "value: " + x
+                try:
+                    pinID, value = x.split(":")
+                except:
+                    print "####### READ USB - Split : #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + "value: " + x
 
-			if ":" in x:
-				#mon_fichier = open("/var/www/nodejs/public_html/toto.txt","a")
-				#mon_fichier.write(x)
-				#mon_fichier.write("\r\n")
-				type = "" 
-				pinID = ""
-				value = ""
-				status = ""
-				SlaveCarteId = ""
+                status = value
 
-				if "/" in x:
-					#SlaveCarteId,x = x.split("/")
-					try:
-						x,SlaveCarteId = x.split("/")
-					except:
-						print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + "value: " + x
+                if "_" in pinID:
+                    try:
+                        type, pinID = pinID.split("_")
+                    except:
+                        print "####### READ USB - Split _ #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + "value: " + pinID
 
-				try:
-					pinID, value = x.split(":")
-				except:
-					 print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + "value: " + x
+                if "@" in pinID:
+                    status = value
+                    try:
+                        pinID, value = pinID.split("@")
+                    except:
+                        print "####### READ USB - Split @ #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + "value: " + x
+                else:
+                    status = value
 
-				status = value
-				#type_lieux, value = x.split(":")
-				if "_" in pinID:
-					try:
-						type,pinID = pinID.split("_")
-					except:
-						print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + "value: " + pinID
+                ############ TEMPORAIRE A RETIRER QUAND CORRECTIF FAIT SUR ARDUINO
 
-				#type,lieux = type_lieux.split("_")
-				# if "@" in status:
-					# value,status = status.split("@")
+                if status == "":
+                    status = value
 
-				if "@" in pinID:
-					status = value
-					try:
-						pinID,value = pinID.split("@")
-					except:
-						print time.strftime('%A %d. %B %Y  %H:%M',time.localtime()) + "value: " + x
-				else:
-					status = value
+                pinID = pinID.strip()
+                type = type.strip()
+                status = status.strip()
+                value = value.strip()
+                x = ""
 
-				############ TEMPORAIRE A RETIRER QUAND CORRECTIF FAIT SUR ARDUINO
+                if type == "Temp":
+                    Temp(SlaveCarteId, pinID, value)
+                elif type == "Alert":
+                    Alert(str_usb_read)
+                else:
+                    date = time.strftime('%y-%m-%d %H:%M:%S', time.localtime())
+                    if SlaveCarteId != "" and pinID != "":
+                        cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteID=%s and cmd_device.Device_ID = Device.ID", (value, status, date, pinID, int(SlaveCarteId)))
+                        now = datetime.datetime.now()
+                        now = now.strftime('%Y-%m-%d %H:%M:%S')
+                    elif pinID != "":
+                        SlaveCarteId = "0"
+                        #cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
+                        cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteID=0 and cmd_device.Device_ID = Device.ID", (value, status, date, pinID))
+                        now = datetime.datetime.now()
+                        now = now.strftime('%Y-%m-%d %H:%M:%S')
 
-				if status == "":
-					status = value
+                    if status == 0 or status == "0":
+                        status = "off"
+                    elif status == 1 or status == "1":
+                        status = "on"
+                    else:
+                        status = status
 
-				pinID = pinID.strip()
-				type = type.strip()
-				status = status.strip()
-				value = value.strip()
-				x = ""
+                    try:
+                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom, Type_Device.widget FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN Type_Device on Device.Type_ID = Type_Device.ID LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
+                        for row in cursor.fetchall():
+                            idNotif = row[0]
+                            nom = row[1]
+                            lieux = row[2]
+                            widget = row[3]
 
-				if type == "Temp":
-					Temp(pinID,value)
-				elif type == "Alert":
-					Alert(str_usb_read)
-				else:
-					#Action(value,status,pinID,SlaveCarteId,str_usb_read)
-						date = time.strftime('%y-%m-%d %H:%M:%S',time.localtime())
-						#cursor.execute("UPDATE Etat_IO SET ETAT=%s, Date=%s where
-						#Type=%s and Lieux=%s and Nom=%s ",
-						#(value,date,type,lieux,device))
-						#cursor.execute("UPDATE Etat_IO SET Value=%s, ETAT=%s, Date=%s where
-						#Type=%s and Lieux=%s ", (value,status,date,type,lieux))
-						#print (SlaveCarteId)
-						if SlaveCarteId != "":
-							#print ("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_ID=%s", (value,status,date,pinID,int(SlaveCarteId)))
-							#cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_ID=%s", (value,status,date,pinID,int(SlaveCarteId)))
-							cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteID=%s and cmd_device.Device_ID = Device.ID", (value,status,date,pinID,int(SlaveCarteId)))
-							now = datetime.datetime.now()
-							now = now.strftime('%Y-%m-%d %H:%M:%S')
-							#cursor.execute("INSERT INTO Log (DATE,ACTION) VALUES (%s, %s)",
-							#(now,"UPDATE" + str_usb_read))
-						else:
-							SlaveCarteId = "0"
-							#cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
-							cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteID=0 and cmd_device.Device_ID = Device.ID", (value,status,date,pinID))
-							now = datetime.datetime.now()
-							now = now.strftime('%Y-%m-%d %H:%M:%S')
-							#cursor.execute("INSERT INTO Log (DATE,ACTION) VALUES (%s, %s)",
-							#(now,"UPDATE" + str_usb_read))
+                        if idNotif != "":
+                            if widget == "slider":
+                                value = ""
 
-						#value = value.strip()
-						#if value == 0 or value == "0":
-						#	value="off"
-						#elif value == 1 or value == "1":
-						#	value="on"
-						#else:
-						#	value = value
+                            now = datetime.datetime.now()
+                            now = now.strftime('%Y-%m-%d %H:%M:%S')
+                            cursor.execute("INSERT INTO Log (DeviceId, DATE, ACTION, Message) VALUES (%s, %s, %s, %s)", (idNotif, now, str_usb_read, nom + " " + lieux + " " + str(value) + " : " + status))
 
-						if status == 0 or status == "0":
-							status = "off"
-						elif status == 1 or status == "1":
-							status = "on"
-						else: 
-							status = status
+                            try:
+                                SendNotification(nom + " " + lieux + " " + str(value) + " : " + status, str(idNotif))
+                            except:
+                                print "####### READ USB - Send Notification New Status #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0])
+                                pass
+                        else:
+                            NewDevice(SlaveCarteId, pinID, value)
+                    except:
+                        print "####### READ USB  New Status #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0])
+                        pass
+                        try:
+                            SendNotification("Erreur dans la requete read_usb", "-2")
+                        except:
+                            print "####### READ USB - Erreur dans la requete read_usb #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0])
+                            pass
+        except KeyboardInterrupt:
+            print "Bye"
+            sys.exit()
 
-						try:
-							#cursor.execute("SELECT ID FROM Etat_IO WHERE
-							#concat(Nom,'_',Lieux)=%s",(type_lieux))
-							#cursor.execute("SELECT ID,Nom,Lieux,widget FROM Etat_IO where DeviceID=%s and Carte_ID=%s",(int(pinID),int(SlaveCarteId)))
-							cursor.execute("SELECT cmd_device.ID,cmd_device.Nom,Lieux.Nom,Type_Device.widget FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN Type_Device on Device.Type_ID = Type_Device.ID LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s",(int(pinID),int(SlaveCarteId)))
-							for row in cursor.fetchall():
-								idNotif = row[0]
-								nom = row[1]
-								lieux = row[2]
-								widget = row[3]
-								
-							if widget == "slider":
-								value = ""
+def Temp(SlaveCarteId, pinID, value):
+    global Alert_LastTime
+    cmd_device_ID = -1
+    lieux = ''
+    cursor.execute(" SELECT Lieux.Nom,Lieux.ID as Lieux_id,cmd_device.ID, COALESCE(Alert_Time,'0000-00-00 00:00:00') as Alert_Time  from cmd_device INNER JOIN Device on cmd_device.Device_ID = Device.ID INNER JOIN Lieux on Lieux.Id = Device.Lieux_ID where cmd_device.DeviceId = %s", (pinID))
+    if cursor.rowcount > 0:
+        bNotInBdd = False
+        for row in cursor.fetchall():
+            lieux = row[0]
+            Lieux_ID = row[1]
+            cmd_device_ID = row[2]
+            Alert_Time = row[3]
+    else:
+        bNotInBdd = True
+        lieux = pinID
 
-							now = datetime.datetime.now()
-							now = now.strftime('%Y-%m-%d %H:%M:%S')
-							#cursor.execute("INSERT INTO Log (DATE,ACTION) VALUES (%s, %s)", (now, str_usb_read + "    " + type + " " + lieux + " " + str(value) + " : " + status))
-							cursor.execute("INSERT INTO Log (DeviceId,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (idNotif,now, str_usb_read, nom + " " + lieux + " " + str(value) + " : " + status))
+    date = time.strftime('%y-%m-%d %H:%M:%S', time.localtime())
 
-							try:
-								if msql.idnotify!="":
-									url = "http://notify8702.freeheberg.org/"
-									data = {}
-									data['id'] = msql.idnotify
-									#data['notif'] = type + " " + lieux + " " + value + " : " + status
-									data['notif'] = nom + " " + lieux + " " + value + " : " + status
-									data['id_notif'] = str(idNotif)
-									url_values = urllib.urlencode(data)
-									full_url = url + '?' + url_values
-									urllib2.urlopen(full_url)
-							except IOError, e:
-								pass
-						except:
-							pass
-							try:
-								if msql.idnotify!="":
-									url = "http://notify8702.freeheberg.org/"
-									data = {}
-									data['id'] = msql.idnotify
-									data['notif'] = "Erreur dans la requete read_usb"
-									data['id_notif'] = "-2"
-									url_values = urllib.urlencode(data)
-									full_url = url + '?' + url_values
-									urllib2.urlopen(full_url)
-							except IOError, e:
-								pass
-		except KeyboardInterrupt:
-			print "Bye"
-			sys.exit()
-				
-def planning():
-	#try:
-		 # while True:
-			# ser.flush()
-			cursor.execute("SELECT STATUS, Etat_IO.DeviceID, Etat_IO.Nom, Etat_IO.Type, Etat_IO.Lieux FROM planning inner join Etat_IO on Etat_IO.ID = ETAT_IO_ID WHERE DAYS like '%" + str(time.localtime().tm_wday) + "%' and HOURS ='" + time.strftime('%H:%M',time.localtime()) + ":00'")
-			print("SELECT STATUS, Etat_IO.DeviceID, Etat_IO.Nom, Etat_IO.Type, Etat_IO.Lieux FROM planning inner join Etat_IO on Etat_IO.ID = ETAT_IO_ID WHERE DAYS like '%" + str(time.localtime().tm_wday) + "%' and HOURS ='" + time.strftime('%H:%M',time.localtime()) + ":00'")
-			for row in cursor.fetchall():
-				New_Status = row[0]
-				DeviceID = row[1]
-				Nom = row[2]
-				Type = row[3]
-				Lieux = row[4]
-				if Type == "Chauffage":
-					val = str(DeviceID) + "#" + str(New_Status) + "/n"
-					written = ser.write(val)
-					time.sleep(30)
-				else:
-					val = str(DeviceID) + ":" + str(New_Status) + "/n"
-					writen = ser.write(val)	
-					time.sleep(30)
-					# print val
-					# print Nom
-
-	 # data = "Etat_IO"
-	 # query = "Select * from %s" % (data)
-	 # cursor.execute(query)
-
-def Temp(pinID,value):
-	global Alert_LastTime
-	cmd_device_ID = -1
-	lieux=''
-	#cursor.execute("SELECT Lieux,ID,COALESCE(Alert_Time,'0000-00-00 00:00:00') as Alert_Time from Etat_IO where DeviceId = %s",(pinID))
-	cursor.execute(" SELECT Lieux.Nom,cmd_device.ID,COALESCE(Alert_Time,'0000-00-00 00:00:00') as Alert_Time  from cmd_device INNER JOIN Device on cmd_device.Device_ID = Device.ID INNER JOIN Lieux on Lieux.Id = Device.Lieux_ID where cmd_device.DeviceId = %s",(pinID))
-	if cursor.rowcount > 0:
-		for row in cursor.fetchall():
-			lieux = row[0]
-			cmd_device_ID = row[1]
-			Alert_Time = row[2]
-			#lieux = cursor.fetchone()[0]
-			#cmd_device_ID = cursor.fetchone()[1]
-	else:
-		#lieux = lieux
-		#lieux = "Exterieur"
-		lieux = pinID
-
-	#if float(value) > 0 and pinID == 'Exterieur':
-	#	value = float(value) * float(-1)
-	#	value = str(value)
-		
-	if pinID == 'Exterieur':
-		cmd_device_ID = 0
-		Alert_Time_Diff=datetime.datetime.now() - datetime.datetime.strptime(Alert_LastTime ,"%Y-%m-%d %H:%M:%S")
-		min_diff = divmod(Alert_Time_Diff.days * 86400 + Alert_Time_Diff.seconds, 60)[0]
-		if min_diff >=30:
-			Bnotif = False
-			Alert_LastTime = datetime. datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-			if float(value) >= 0 and float(value) < 3:
-				str_usb_read = "Alert : risque de gelée "+ value
-				Bnotif = True
-			elif float(value) < 0:
-				str_usb_read = "Alert : gelée "+ value
-				Bnotif = True
-
-			if Bnotif == True:
-				try:
-					date = time.strftime('%y-%m-%d %H:%M:%S',time.localtime())
-					cursor.execute("INSERT INTO Log (DeviceID, DATE,ACTION, Message) VALUES (%s, %s, %s, %s)", (cmd_device_ID, date,'', str_usb_read))
-					#cursor.execute("UPDATE Etat_IO SET Alert_Time=%s where ID=%s", (date,Etat_IO_ID))
-					cursor.execute("UPDATE cmd_device SET Alert_Time=%s where ID=%s", (date,cmd_device_ID))
-					try:
-						if msql.idnotify!="":
-							url = "http://notify8702.freeheberg.org/"
-							data = {}
-							data['id'] = msql.idnotify
-							data['notif'] = str_usb_read
-							now = datetime.datetime.now()
-							now = now.strftime("%Y%m%d%H%M%S")
-							data['id_notif'] = str(date)
-							url_values = urllib.urlencode(data)
-							full_url = url + '?' + url_values
-							urllib2.urlopen(full_url)
-
-					except IOError,e:
-						pass
-				except IOError, e:
-					pass
-
-		if float(value) < 0:
-			value = float(value) * -1
-			value = str(value)
-			
-	date = time.strftime('%y-%m-%d %H:%M:%S',time.localtime())
-	#cursor.execute("UPDATE Etat_IO SET Value=%s, Date=%s where ID=%s", (value,date,Etat_IO_ID))
-	cursor.execute("UPDATE cmd_device SET Value=%s, Date=%s where ID=%s", (value,date,cmd_device_ID))
-	if cmd_device_ID != -1:
-		cursor.execute("INSERT INTO Temperature_Temp VALUES (%s, %s, %s, %s)", (date,value,lieux, cmd_device_ID))
-#	mon_fichier = open("/home/pi/Script crontab/debug/temperature.json","a")
-#	mon_fichier.write(lieux + " :" + value + " , " + "date " + date)
-#	mon_fichier.write("\r\n")
-#	mon_fichier.close() 
+    if pinID == 'Exterieur':
+        cmd_device_ID = 0
+        Lieux_ID = 5
+        if float(value) < 0:
+            value = float(value) * -1
+            value = str(value)
+    elif bNotInBdd is True:
+        NewDevice(SlaveCarteId, pinID, value)
+    cursor.execute("UPDATE cmd_device SET Value=%s, Etat=%s, Date=%s where ID=%s", (value, value, date, cmd_device_ID))
+    if cmd_device_ID != -1:
+        cursor.execute("INSERT INTO Temperature_Temp VALUES (%s, %s, %s, %s, %s)", (date, value, lieux, Lieux_ID, cmd_device_ID))
+    cursor.execute("delete from Log where Log.date < SUBDATE(CURRENT_DATE, INTERVAL 15 DAY)")
 
 def Alert(str_usb_read):
-	try:
-		now = datetime.datetime.now()
-		now = now.strftime('%Y-%m-%d %H:%M:%S')
-		cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", ("",now,"","Alert : " + str_usb_read))
-		try:
-			if msql.idnotify!="":
-				url = "http://notify8702.freeheberg.org/"
-				data = {}
-				data['id'] = msql.idnotify
-				data['notif'] = value
-				now = datetime.datetime.now()
-				now = now.strftime("%Y%m%d%H%M%S")
-				data['id_notif'] = str(now)
-				url_values = urllib.urlencode(data)
-				full_url = url + '?' + url_values
-				urllib2.urlopen(full_url)
-		except IOError,e:
-			pass
-	except IOError, e:
-		pass
+    try:
+        now = datetime.datetime.now()
+        now = now.strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", ("", now, "", "Alert : " + str_usb_read))
+        try:
+            SendNotification(value)
+        except IOError, e:
+            print "####### READ USB - Send Notification Alert #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error %d: %s" % (e.args[0], e.args[1])
+            pass
+    except IOError, e:
+        print "####### READ USB - Save Notification Alert #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error %d: %s" % (e.args[0], e.args[1])
+        pass
 
-#def Action(value,status,pinID,SlaveCarteId,str_usb_read):
-
-# try:
-   # thread.start_new_thread( ReadArduino,() )
-   # thread.start_new_thread( planning,() )
-# except:
-   # print "Error: unable to start thread"
-
-# while 1:
-	# pass
-	
-try: 
-	ReadArduino()
+def NewDevice(SlaveCarteId, pinID, value):
+    try:
+        date = time.strftime('%y-%m-%d %H:%M:%S', time.localtime())
+        cursor.execute("SELECT MAX(id)+1 as maxid from Device ")
+        maxId = cursor.fetchone()[0]
+        cursor.execute("INSERT INTO Device (ID, Nom, CarteID, Type_ID) VALUES (%s, %s, %s, %s) ", (maxId, "New Device", SlaveCarteId, "-99"))
+        cursor.execute("INSERT INTO cmd_device (Nom, Device_ID, DeviceId, Value, Date, Visible) VALUES (%s, %s, %s, %s, %s, %s) ", ("", maxId, pinID, value, date, "-99"))
+    except:
+        print "####### READ USB - New Device #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0])
+        pass
+try:
+    ReadArduino()
 except KeyboardInterrupt:
-	print "Bye"
-	sys.exit()
+    print "Bye"
+    sys.exit()
