@@ -23,6 +23,8 @@ msg_setup_apache="*         Paramétrage de la configuration apache       *"
 msg_optimize_webserver_cache_opcache="* installation de l'optimisation de cache Zend OpCache *"
 msg_install_complete="*                Installation terminée                 *"
 msg_login_info1="Vous pouvez vous connecter sur Thidom en allant sur :"
+msg_login_info2="Votre utilisateur par défault est: "
+msg_login_info3="Votre mot de passe par défault est: "
 msg_install_sql="*                Installation de la base de données    *"
 msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
 reboot="Votre Raspberry va maintenant redémarrer"
@@ -64,6 +66,8 @@ install_dependance() {
 	sudo aptitude update -y 
 	sudo aptitude upgrade -y
 	sudo rpi-update
+
+    sudo service mysql start
 }
 
 init_msg
@@ -296,17 +300,23 @@ echo "********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************"
 
-IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}')
-if  [ -n $IP ]; then
-	IP=$(ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}')
+IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+if  [ -z $IP ]; then
+	IP=$(ifconfig wlan0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+fi
+
+if  [ -z $IP ]; then
+    IP = "localhost"
 fi
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
-echo "\n\t\thttp://$IP/thidom ${msg_or} http://$HOST/thidom\n"
-echo "${msg_login_info2} admin/admin"
+echo "\n\t\thttp://$IP/ThiDom ${msg_or} http://$HOST/ThiDom\n"
+echo "${msg_login_info2} admin\n"
+echo "${msg_login_info3} admin\n"
 
 echo "${reboot}"
 
+sudo reboot
 
 ############# DEFINE STATIC ID TO USB  ##############
 # sudo udevadm info --query=all --name=ttyUSB0
@@ -318,7 +328,7 @@ echo "${reboot}"
 # On configure  donc  le fichier /etc/udev/rules.d/99-usb-serial.rules - See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
 #  SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB11"
 
-- See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
+#- See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
 
 ###### mysql#######
 # mettre en commentaire dans /etc/mysqm/my.cnf la ligne bind-address		= 127.0.0.1
@@ -406,15 +416,15 @@ echo "${reboot}"
 #allow-hotplug wlan0
 #auto wlan0
 ##iface wlan0 inet dhcp
- ##       wpa-ssid "Livebox-4FD3"
-  ##      wpa-psk ca2e790a89cad16659643729c3cb8a7ef0babfba1426abb22d3e9c7a965826c4
+ ##       wpa-ssid "NOM DE LA BOX"
+  ##      wpa-psk CLE DE LA BOX
 
 #iface wlan0 inet static
         #address 192.168.1.25
         #netmask 255.255.255.0
         #gateway 192.168.1.1
-        #wpa-ssid "Livebox-4FD3_EXT"
-        #wpa-psk ae027e82797e6b0497d78b43a420b0f2e69b8e327ae20022862d9fafa452b1f0
+        #wpa-ssid "NOM DE LA BOW "
+        #wpa-psk CLE DE LA BOX
 
 #iface default inet dhcp
 
