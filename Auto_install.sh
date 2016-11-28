@@ -12,7 +12,7 @@ msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
 msg_warning_install_thidom="Attention : ceci écrasera la configuration par défaut de ${ws_upname} si elle existe !"
 msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
 msg_install_deps="*             Installation des dépendances             *"
-msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de la MySql) ?"
+msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de MySql) ?"
 msg_confirm_passwd_mysql="Confirmez vous que le mot de passe est :"
 msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
 msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
@@ -181,21 +181,21 @@ echo "********************************************************"
     #rm -rf Thidom
 #fi
 
-mkdir /home/pi/
+#mkdir /home/pi/
 
 cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 
-mkdir /home/pi/Script\ crontab/
-cp -Rf /tmp/ThiDom/Script\ crontab/* /home/pi/Script\ crontab/
-sudo chmod +x /home/pi/Script\ crontab/*
+mkdir $HOME/Script\ crontab/
+cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
+sudo chmod +x $HOME/Script\ crontab/*
 
-mkdir /home/pi/Script_domotique/
-cp -Rf /tmp/ThiDom/Script_domotique/* /home/pi/Script_domotique/
-sudo chmod +x home/pi/Script_domotique/*
+mkdir $HOME/Script_domotique/
+cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
+sudo chmod +x $HOME/Script_domotique/*
 
 
-sudo chown  pi:pi -R /home/pi/Script_domotique/
-sudo chown  pi:pi -R /home/pi/Script\ crontab/
+sudo chown  $USER:$USER -R $HOME/Script_domotique/
+sudo chown  $USER:$USER -R $HOME/Script\ crontab/
 
 
 
@@ -230,15 +230,15 @@ sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php
 
 chown www-data:www-data connect.php 
 
-sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^usr =.*!usr = "thidom";!' /home/pi/Script_domotique/msql.py
-sed -i 's!^db =.*!db = "thidom";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' $HOME/Script_domotique/msql.py
+sed -i 's!^usr =.*!usr = "thidom";!' $HOME/Script_domotique/msql.py
+sed -i 's!^db =.*!db = "thidom";!' $HOME/Script_domotique/msql.py
 
 echo ""
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 
-sed -i 's!^idnotify =.*!idnotify = "'${idnotify}'";!' /home/pi/Script_domotique/msql.py
+sed -i 's!^idnotify =.*!idnotify = "'${idnotify}'";!' $HOME/Script_domotique/msql.py
 
 
 echo "********************************************************"
@@ -261,7 +261,7 @@ mkdir /etc/fw
 cp /tmp/ThiDom/etc/fw/* /etc/fw/
 cp /tmp/ThiDom/etc/rc.local /etc/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
-sudo crontab -u pi /tmp/ThiDom/crontab.txt
+sudo crontab -u $USER /tmp/ThiDom/crontab.txt
 
 
 
