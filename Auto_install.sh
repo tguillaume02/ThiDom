@@ -1,33 +1,34 @@
+#!/bin/bash
 # EXPAND FILESYSTEM BEFORE
 
 init_msg()
 {
-msg_yesno="oui / non : "
-msg_yes="oui"
-msg_no="non"
-msg_cancel_install="Annulation de l'installation"
-msg_answer_yesno="Répondez oui ou non"
-msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
-msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
-msg_warning_install_thidom="Attention : ceci écrasera la configuration par défaut de ${ws_upname} si elle existe !"
-msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
-msg_install_deps="*             Installation des dépendances             *"
-msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de MySql) ?"
-msg_confirm_passwd_mysql="Confirmez vous que le mot de passe est :"
-msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
-msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
-msg_copy_thidom_files="*             Copie des fichiers de Thidom             *"
-msg_unable_to_download_file="Impossible de télécharger le fichier"
-msg_install_thidom="*                Installation de Thidom                *"
-msg_setup_apache="*         Paramétrage de la configuration apache       *"
-msg_optimize_webserver_cache_opcache="* installation de l'optimisation de cache Zend OpCache *"
-msg_install_complete="*                Installation terminée                 *"
-msg_login_info1="Vous pouvez vous connecter sur Thidom en allant sur :"
-msg_login_info2="Votre utilisateur par défault est: "
-msg_login_info3="Votre mot de passe par défault est: "
-msg_install_sql="*                Installation de la base de données    *"
-msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
-reboot="Votre Raspberry va maintenant redémarrer"
+	msg_yesno="oui / non : "
+	msg_yes="oui"
+	msg_no="non"
+	msg_cancel_install="Annulation de l'installation"
+	msg_answer_yesno="Répondez oui ou non"
+	msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
+	msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
+	msg_warning_install_thidom="Attention : ceci écrasera la configuration par défaut de ${ws_upname} si elle existe !"
+	msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
+	msg_install_deps="*             Installation des dépendances             *"
+	msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de MySql) ?"
+	msg_confirm_passwd_mysql="Confirmez vous que le mot de passe est :"
+	msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
+	msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
+	msg_copy_thidom_files="*             Copie des fichiers de Thidom             *"
+	msg_unable_to_download_file="Impossible de télécharger le fichier"
+	msg_install_thidom="*                Installation de Thidom                *"
+	msg_setup_apache="*         Paramétrage de la configuration apache       *"
+	msg_optimize_webserver_cache_opcache="* installation de l'optimisation de cache Zend OpCache *"
+	msg_install_complete="*                Installation terminée                 *"
+	msg_login_info1="Vous pouvez vous connecter sur Thidom en allant sur :"
+	msg_login_info2="Votre utilisateur par défault est: "
+	msg_login_info3="Votre mot de passe par défault est: "
+	msg_install_sql="*                Installation de la base de données    *"
+	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
+	reboot="Votre Raspberry va maintenant redémarrer"
 }
 
 install_dependance() {
@@ -42,15 +43,15 @@ install_dependance() {
 	sudo aptitude install mysql-server-5.5 -y
 	sudo aptitude install php5-mysql -y
 	sudo aptitude install python-mysqldb -y
-    sudo aptitude install python-serial -y
+	sudo aptitude install python-serial -y
 	sudo aptitude install fail2ban -y
 	sudo aptitude install htop -y
-    sudo aptitude install  python-jinja2 -y
-	sudo pip install -U pip
-	sudo pip install tweepy
-	
+	sudo aptitude install  python-jinja2 -y
+	sudo pip install -U pip -y
+	sudo pip install tweepy -y
+
 	sudo aptitude install ca-certificates -y
-	
+
 	#pecl install oauth
 	#if [ $? -eq 0 ] ; then
 		#for i in fpm cli ; do
@@ -59,7 +60,7 @@ install_dependance() {
 				#echo "extension=oauth.so" >> /etc/php5/${i}/php.ini
 			#fi
 		#done
-    #fi
+	#fi
 	
 	sudo apt-get autoremove -y 
 	sudo aptitude autoclean -y 
@@ -67,7 +68,7 @@ install_dependance() {
 	sudo aptitude upgrade -y
 	sudo rpi-update
 
-    sudo service mysql start
+	sudo service mysql start
 }
 
 init_msg
@@ -79,9 +80,9 @@ echo "****************************************************************"
 # Check for root priviledges
 
 if [ $(id -u) != 0 ] ; then
-    echo "Super-user (root) privileges are required to install Thidom"
-    echo "Please run 'sudo $0' or log in as root, and rerun $0"
-    exit 1
+	echo "Super-user (root) privileges are required to install Thidom"
+	echo "Please run 'sudo $0' or log in as root, and rerun $0"
+	exit 1
 fi
 
 webserver=${1-apache}
@@ -92,18 +93,18 @@ echo "${msg_warning_install_thidom}"
 webserver_home="/var/www"
 [ -d "${webserver_home}/ThiDom/" ]  && echo "${msg_warning_overwrite_rhidom}"
 while true ; do
-    echo -n "${msg_yesno}"
-    read ANSWER < /dev/tty
-    case $ANSWER in
-        ${msg_yes})
-            break
-        ;;
-        ${msg_no})
-            echo "${msg_cancel_install}"
-            exit 1
-        ;;
-    esac
-    echo "${msg_answer_yesno}"
+	echo -n "${msg_yesno}"
+	read ANSWER < /dev/tty
+	case $ANSWER in
+		${msg_yes})
+break
+;;
+${msg_no})
+echo "${msg_cancel_install}"
+exit 1
+;;
+esac
+echo "${msg_answer_yesno}"
 done
 
 
@@ -117,23 +118,23 @@ install_dependance
 echo  "**********************************************************************"
 echo "${msg_passwd_mysql}"
 while true ; do
-    read MySQL_root < /dev/tty
-    echo "${msg_confirm_passwd_mysql} ${MySQL_root} ( ${msg_yesno} )"
-    while true ; do
-        echo -n "${msg_yesno}"
-        read ANSWER < /dev/tty
-        case $ANSWER in
-            ${msg_yes})
-                break
-            ;;
-            ${msg_no})
-			echo "${msg_passwd_mysql}"
-                break
-            ;;
-        esac
-        echo "${msg_answer_yesno}"
-    done    
-    if [ "${ANSWER}" = "${msg_yes}" ] ; then
+	read MySQL_root < /dev/tty
+	echo "${msg_confirm_passwd_mysql} ${MySQL_root} ( ${msg_yesno} )"
+	while true ; do
+		echo -n "${msg_yesno}"
+		read ANSWER < /dev/tty
+		case $ANSWER in
+			${msg_yes})
+break
+;;
+${msg_no})
+echo "${msg_passwd_mysql}"
+break
+;;
+esac
+echo "${msg_answer_yesno}"
+done    
+if [ "${ANSWER}" = "${msg_yes}" ] ; then
         # Test access immediately
         # to ensure that the provided password is valid
         echo "show databases;" | mysql -uroot -p"${MySQL_root}"
@@ -141,9 +142,9 @@ while true ; do
             # good password
             break
         else
-            echo "${msg_bad_passwd_mysql}"
-            echo "${msg_passwd_mysql}"
-            continue
+        	echo "${msg_bad_passwd_mysql}"
+        	echo "${msg_passwd_mysql}"
+        	continue
         fi
     fi
 done
@@ -276,14 +277,14 @@ echo "********************************************************"
 sudo aptitude install php-pear php5-dev build-essential -y
 yes '' | pecl install -fs zendopcache-7.0.3
 for i in fpm cli ; do
-        echo "zend_extension=opcache.so" >> /etc/php5/${i}/php.ini
-        echo "opcache.memory_consumption=256"  >> /etc/php5/${i}/php.ini
-        echo "opcache.interned_strings_buffer=8"  >> /etc/php5/${i}/php.ini
-        echo "opcache.max_accelerated_files=4000"  >> /etc/php5/${i}/php.ini
-        echo "opcache.revalidate_freq=1"  >> /etc/php5/${i}/php.ini
-        echo "opcache.fast_shutdown=1"  >> /etc/php5/${i}/php.ini
-        echo "opcache.enable_cli=1"  >> /etc/php5/${i}/php.ini
-        echo "opcache.enable=1"  >> /etc/php5/${i}/php.ini
+	echo "zend_extension=opcache.so" >> /etc/php5/${i}/php.ini
+	echo "opcache.memory_consumption=256"  >> /etc/php5/${i}/php.ini
+	echo "opcache.interned_strings_buffer=8"  >> /etc/php5/${i}/php.ini
+	echo "opcache.max_accelerated_files=4000"  >> /etc/php5/${i}/php.ini
+	echo "opcache.revalidate_freq=1"  >> /etc/php5/${i}/php.ini
+	echo "opcache.fast_shutdown=1"  >> /etc/php5/${i}/php.ini
+	echo "opcache.enable_cli=1"  >> /etc/php5/${i}/php.ini
+	echo "opcache.enable=1"  >> /etc/php5/${i}/php.ini
 done
 
 
@@ -306,7 +307,7 @@ if  [ -z $IP ]; then
 fi
 
 if  [ -z $IP ]; then
-    IP = "localhost"
+	IP = "localhost"
 fi
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
@@ -369,7 +370,7 @@ sudo reboot
 		#/etc/mysql/my.cnf
 	### A REMPLACER #####
 		#/var/lib/mysql/
-	
+
 	#sudo chown -R mysql:mysql /var/lib/mysql
 	#sudo chmod 755 /var/lib/mysql
 	#sudo chmod 755 /var/lib/mysql/mysql
