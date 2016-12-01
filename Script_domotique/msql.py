@@ -3,6 +3,6 @@
 
 host = "localhost"
 usr = "thidom"
-pwd = "b431e02e0be6eca"
+pwd = ""
 db = "thidom"
 

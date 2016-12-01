@@ -181,9 +181,9 @@ def Temp(SlaveCarteId, pinID, value):
     if pinID == 'Exterieur':
         cmd_device_ID = 0
         Lieux_ID = 5
-        if float(value) < 0:
-            value = float(value) * -1
-            value = str(value)
+        #if float(value) < 0:
+            #value = float(value) * -1
+            #value = str(value)
     elif bNotInBdd is True:
         NewDevice(SlaveCarteId, pinID, value)
     cursor.execute("UPDATE cmd_device SET Value=%s, Etat=%s, Date=%s where ID=%s", (value, value, date, cmd_device_ID))

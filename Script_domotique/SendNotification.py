@@ -5,7 +5,7 @@ import datetime
 import urllib2
 import urllib
 
-idnotify = ""
+idnotify = "thibault"
 
 def SendNotification(value, id_notif="now"):
     if idnotify != "":
@@ -20,4 +20,7 @@ def SendNotification(value, id_notif="now"):
         data['id_notif'] = id_notif
         url_values = urllib.urlencode(data)
         full_url = url + '?' + url_values
-        urllib2.urlopen(full_url)
+        try:
+            urllib2.urlopen(full_url)
+        except:
+            print "######  SendNotification Error value:"+value

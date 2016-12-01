@@ -38,16 +38,17 @@ install_dependance() {
 	sudo aptitude install resolvconf -y
 	sudo aptitude install curl -y
 	sudo aptitude install apache2 -y
-	sudo aptitude install php5 -y
-	sudo aptitude install php5-curl -y	
+	sudo aptitude install apache2-utils -y
+	sudo aptitude install libexpat1 -y
+	sudo aptitude install ssl-cert -y
+	install_php
 	sudo aptitude install mysql-server-5.5 -y
-	sudo aptitude install php5-mysql -y
 	sudo aptitude install python-mysqldb -y
 	sudo aptitude install python-serial -y
 	sudo aptitude install fail2ban -y
 	sudo aptitude install htop -y
 	sudo aptitude install  python-jinja2 -y
-	sudo pip install -U pip -y
+	sudo pip install -U pip 
 	sudo pip install tweepy -y
 
 	sudo aptitude install ca-certificates -y
@@ -70,6 +71,41 @@ install_dependance() {
 
 	sudo service mysql start
 }
+
+install_php() {
+	sudo aptitude install php7.0 -y 
+	sudo aptitude install php7.0-curl -y 
+	sudo aptitude install php7.0-gd -y
+	sudo aptitude install php7.0-imap -y
+	sudo aptitude install php7.0-json -y
+	sudo aptitude install php7.0-mcrypt -y
+	sudo aptitude install php7.0-mysql -y
+	sudo aptitude install php7.0-xml -y
+	sudo aptitude install php7.0-opcache -y
+	sudo aptitude install php7.0-soap -y
+	sudo aptitude install php7.0-xmlrpc -y
+	sudo aptitude install libapache2-mod-php7.0 -y
+	sudo aptitude install php7.0-common -y
+	sudo aptitude install php7.0-dev -y
+	sudo aptitude install php7.0-zip -y
+	sudo aptitude install php7.0-ssh2 -y
+	sudo aptitude install php7.0-calendar -y
+	if [ $? -ne 0 ]; then
+		sudo aptitude install libapache2-mod-php5 -y
+		sudo aptitude install php5 -y
+		sudo aptitude install php5-common -y
+		sudo aptitude install php5-curl -y
+		sudo aptitude install php5-dev -y
+		sudo aptitude install php5-gd -y
+		sudo aptitude install php5-json -y
+		sudo aptitude install php5-memcached -y
+		sudo aptitude install php5-mysql -y
+		sudo aptitude install php5-cli -y
+		sudo aptitude install php5-ssh2 -y
+	fi
+	echo "${VERT}step_5_php success${NORMAL}"
+}
+
 
 init_msg
 

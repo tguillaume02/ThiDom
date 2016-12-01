@@ -284,8 +284,8 @@ while True:
                                         cursor.execute("UPDATE Scenario set LastTimeEvents=%s,NextTimeEvents=%s where XmlID=%s", (sNow, NextEvent, XmlID))
                                     else:
                                         cursor.execute("UPDATE Scenario set LastTimeEvents=%s where XmlID=%s", (sNow, XmlID))
-                                    if BLog == True:
-                                        cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", (ID, sNow, val, "Scenario: " + ScenarioName + " " + str(CarteID) + " " + str(DeviceID) + " " + str(Actions_Device)))
+                                    if BLog is True:
+                                        cursor.execute("INSERT INTO Log (DeviceID, DATE, ACTION, Message) VALUES (%s, %s, %s, %s)", (ID, sNow, val, "Scenario: " + ScenarioName + " " + str(CarteID) + " " + str(DeviceID) + " " + str(Actions_Device)))
                                     if ID != 'SendNotification':
                                         try:
                                             SendNotification("Scenario : " + ScenarioName, XmlID*9087)
