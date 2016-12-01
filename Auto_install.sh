@@ -32,6 +32,7 @@ init_msg()
 }
 
 install_dependance() {
+	sudo apt-get install aptitude -y
 	sudo aptitude dist-upgrade -y
 	sudo aptitude update -y
 	sudo aptitude upgrade -y
