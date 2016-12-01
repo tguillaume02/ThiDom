@@ -102,8 +102,8 @@ install_php() {
 		sudo aptitude install php5-mysql -y
 		sudo aptitude install php5-cli -y
 		sudo aptitude install php5-ssh2 -y
-	fi
-	echo "${VERT}step_5_php success${NORMAL}"
+	fi	
+	sudo aptitude install php-pear build-essential -y
 }
 
 
@@ -310,18 +310,19 @@ echo "********************************************************"
 echo "${msg_optimize_webserver_cache_opcache}"
 echo "********************************************************"
 
-sudo aptitude install php-pear php5-dev build-essential -y
 yes '' | pecl install -fs zendopcache-7.0.3
-for i in fpm cli ; do
-	echo "zend_extension=opcache.so" >> /etc/php5/${i}/php.ini
-	echo "opcache.memory_consumption=256"  >> /etc/php5/${i}/php.ini
-	echo "opcache.interned_strings_buffer=8"  >> /etc/php5/${i}/php.ini
-	echo "opcache.max_accelerated_files=4000"  >> /etc/php5/${i}/php.ini
-	echo "opcache.revalidate_freq=1"  >> /etc/php5/${i}/php.ini
-	echo "opcache.fast_shutdown=1"  >> /etc/php5/${i}/php.ini
-	echo "opcache.enable_cli=1"  >> /etc/php5/${i}/php.ini
-	echo "opcache.enable=1"  >> /etc/php5/${i}/php.ini
+#for i in fpm cli ; do
+for file in $(find /etc/ -iname php.ini -type f); do
+	echo "zend_extension=opcache.so" >> ${file}
+	echo "opcache.memory_consumption=256"  >> ${file}
+	echo "opcache.interned_strings_buffer=8"  >> ${file}
+	echo "opcache.max_accelerated_files=4000"  >> ${file}
+	echo "opcache.revalidate_freq=1"  >> ${file}
+	echo "opcache.fast_shutdown=1"  >> ${file}
+	echo "opcache.enable_cli=1"  >> ${file}
+	echo "opcache.enable=1"  >> ${file}
 done
+#done
 
 
 echo "********************************************************"
