@@ -202,6 +202,20 @@ CREATE TABLE `Type_Device` (
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+INSERT INTO Type_Device values ("1","Lampe","Light","Action");
+INSERT INTO Type_Device values ("2","Chauffage_old","plus_moins","Slider");
+INSERT INTO Type_Device values ("0","Temperaturepiece","Temperature","Temperature");
+INSERT INTO Type_Device values ("4","Temperatureobjet","Temperature_objet","Temperature");
+INSERT INTO Type_Device values ("5","Alerte","Alerte","Alerte");
+INSERT INTO Type_Device values ("6","LampeRGB","RGB","Action");
+INSERT INTO Type_Device values ("8","Plugins","Plugins","Plugins");
+INSERT INTO Type_Device values ("9","Lampe2","Light","Action");
+INSERT INTO Type_Device values ("10","Chauffage","Chauffage","Slider");
+INSERT INTO Type_Device values ("11","Switch","Switch","Action");
+INSERT INTO Type_Device values ("12","OpeningDetector","OpeningDetector","Info");
+INSERT INTO Type_Device values ("13","BackgroundColor","BackgroundColor","Info");
+INSERT INTO Type_Device values ("14","Presence","Presence","Info");
+
 --
 -- Table structure for table `User`
 --
@@ -298,5 +312,17 @@ CREATE TABLE `widget` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+
+INSERT INTO widget values ("Lampe","on_off");
+INSERT INTO widget values ("button","button");
+INSERT INTO widget values ("plus_moins","button");
+INSERT INTO widget values ("Alerte","Alerte");
+INSERT INTO widget values ("RGB","on_off");
+INSERT INTO widget values ("Light","Light");
+INSERT INTO widget values ("Window","Window");
+INSERT INTO widget values ("Temperature","Temperature");
+INSERT INTO widget values ("Thermostat","Slider");
 
 -- Dump completed on 2016-11-25 12:04:57
