@@ -201,7 +201,44 @@
 			function LoadEquipement()
 			{				
 				$("#tbody_AdminEquipement").html("");
-				$("#AdminPlugins tbody").html("");
+				$("#AdminPlugins tbody").html("");		
+				var oTable = $("#AdminEquipement").DataTable();
+				oTable.destroy();	
+				$("#tbody_AdminEquipement").empty()
+				$("#AdminPlugins").append("<tr id='TrAdminPlugins'></tr>")
+				oTable = $("#AdminEquipement").DataTable({
+					"bJQueryUI": true,
+					"bLengthChange": false,
+					"bFilter": true,
+					"bInfo": false,
+					"bSort": false,
+					"sPaginationType": "full_numbers",
+					"columnDefs": [
+					{ "visible": false, "targets": [0,1,2,3,4,5,6,7] }
+					],
+					"oLanguage": {
+						"SProcessing" :     "Traitement en cours ..." ,
+						"Ssearch" :         "Rechercher:" ,
+						"sLengthMenu" :     "éléments Display _MENU_" ,
+						"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
+						"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
+						"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
+						"SInfoPostFix" :    "" ,
+						"sLoadingRecords" : "Chargement en cours ..." ,
+						"sZeroRecords" :    "Aucun élément à afficher" ,
+						"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
+						"OPaginate" : {
+							"SFirst" :      "Premier" ,
+							"SPrevious" :   "Précédent" ,
+							"SNext" :       "Suivant" ,
+							"Slast" :       "Dernier"
+						},
+						"OAria" : {
+							"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
+							"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
+						},
+					}
+				});
 				var request = $.ajax({
 					dataType: "json",
 					type: "POST",
@@ -217,11 +254,7 @@
 					async: true
 				});
 				
-				request.done(function (data) {			
-						var oTable = $("#AdminEquipement").DataTable();
-						oTable.destroy();	
-						$("#tbody_AdminEquipement").empty()
-						$("#AdminPlugins").append("<tr id='TrAdminPlugins'></tr>")
+				request.done(function (data) {	
 					if (data.length > 0)
 					{				
 						w = -1;
@@ -259,49 +292,15 @@
 							oTable.fnSetColumnVis( 3, false);
 							oTable.fnSetColumnVis( 4, false);
 						};*/
-					}
-					oTable = $("#AdminEquipement").DataTable({
-						"bJQueryUI": true,
-						"bLengthChange": false,
-						"bFilter": true,
-						"bInfo": false,
-						"bSort": false,
-						"sPaginationType": "full_numbers",
-
-						"columnDefs": [
-						{ "visible": false, "targets": [0,1,2,3,4,5,6,7] }
-						],
-						"oLanguage": {
-							"SProcessing" :     "Traitement en cours ..." ,
-							"Ssearch" :         "Rechercher:" ,
-							"sLengthMenu" :     "éléments Display _MENU_" ,
-							"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
-							"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
-							"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
-							"SInfoPostFix" :    "" ,
-							"sLoadingRecords" : "Chargement en cours ..." ,
-							"sZeroRecords" :    "Aucun élément à afficher" ,
-							"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
-							"OPaginate" : {
-								"SFirst" :      "Premier" ,
-								"SPrevious" :   "Précédent" ,
-								"SNext" :       "Suivant" ,
-								"Slast" :       "Dernier"
-							},
-							"OAria" : {
-								"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
-								"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
-							},
-						}
-					});
-					$(".dataTable").width('100%');
-					
+					}					
 				});
 
 		request.fail(function (jqXHR, textStatus, errorThrown) 
 		{
 			ErrorLoading();
 		});
+		
+		$(".dataTable").width('100%');
 
 	}
 
@@ -427,6 +426,43 @@
 
 			function Load_Lieux()
 			{				
+
+				var oTable = $("#AdminPiece").DataTable();
+				oTable.destroy();				
+				oTable = $("#AdminPiece").DataTable({
+						"bJQueryUI": true,
+						"bLengthChange": false,
+						"bFilter": true,
+						"bInfo": false,
+						"bSort": false,
+						"sPaginationType": "full_numbers",
+
+						"columnDefs": [
+						{ "visible": false, "targets": [0] }
+						],
+						"oLanguage": {
+							"SProcessing" :     "Traitement en cours ..." ,
+							"Ssearch" :         "Rechercher:" ,
+							"sLengthMenu" :     "éléments Display _MENU_" ,
+							"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
+							"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
+							"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
+							"SInfoPostFix" :    "" ,
+							"sLoadingRecords" : "Chargement en cours ..." ,
+							"sZeroRecords" :    "Aucun élément à afficher" ,
+							"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
+							"OPaginate" : {
+								"SFirst" :      "Premier" ,
+								"SPrevious" :   "Précédent" ,
+								"SNext" :       "Suivant" ,
+								"Slast" :       "Dernier"
+							},
+							"OAria" : {
+								"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
+								"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
+							},
+						}
+					});
 				var request = $.ajax({
 					dataType: "json",
 					type: "POST",
@@ -456,42 +492,6 @@
 						LoadDevice($("#delete_app_name_piece").val());
 					});
 					
-					var oTable = $("#AdminPiece").DataTable();
-					oTable.destroy();				
-					oTable = $("#AdminPiece").DataTable({
-							"bJQueryUI": true,
-							"bLengthChange": false,
-							"bFilter": true,
-							"bInfo": false,
-							"bSort": false,
-							"sPaginationType": "full_numbers",
-
-							"columnDefs": [
-							{ "visible": false, "targets": [0] }
-							],
-							"oLanguage": {
-								"SProcessing" :     "Traitement en cours ..." ,
-								"Ssearch" :         "Rechercher:" ,
-								"sLengthMenu" :     "éléments Display _MENU_" ,
-								"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
-								"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
-								"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
-								"SInfoPostFix" :    "" ,
-								"sLoadingRecords" : "Chargement en cours ..." ,
-								"sZeroRecords" :    "Aucun élément à afficher" ,
-								"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
-								"OPaginate" : {
-									"SFirst" :      "Premier" ,
-									"SPrevious" :   "Précédent" ,
-									"SNext" :       "Suivant" ,
-									"Slast" :       "Dernier"
-								},
-								"OAria" : {
-									"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
-									"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
-								},
-							}
-						});
 					if (data.length > 0)
 					{
 						$("#planning_no_data").hide();	
