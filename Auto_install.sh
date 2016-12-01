@@ -354,9 +354,9 @@ echo "\n\t\thttp://$IP/ThiDom ${msg_or} http://$HOST/ThiDom\n"
 echo "${msg_login_info2} admin\n"
 echo "${msg_login_info3} admin\n"
 
-echo "${reboot}"
+#echo "${reboot}"
 
-sudo reboot
+#sudo reboot
 
 ############# DEFINE STATIC ID TO USB  ##############
 # sudo udevadm info --query=all --name=ttyUSB0
