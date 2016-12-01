@@ -217,13 +217,13 @@
 					async: true
 				});
 				
-				request.done(function (data) {		
-					if (data.length > 0)
-					{					
+				request.done(function (data) {			
 						var oTable = $("#AdminEquipement").DataTable();
 						oTable.destroy();	
 						$("#tbody_AdminEquipement").empty()
 						$("#AdminPlugins").append("<tr id='TrAdminPlugins'></tr>")
+					if (data.length > 0)
+					{				
 						w = -1;
 						for(var i=0;i<data.length;i++) {	
 							$event = data[i];	
@@ -252,40 +252,6 @@
 								//$("#tbody_AdminEquipement").append("<tr><td style='text-align:center;'>"+ID+"</td><td style='text-align:center;'>"+Piece+"</td><td style='text-align:center;'>"+Nom+"</td><td style='text-align:center;'>"+Type+"</td><td style='text-align:center;' id='edit_"+i+"' ><img src='pic/pencil.png' alt='pencil' id='pencil_"+i+"' onclick='EditEquipement("+ID+","+i+")'>&nbsp;&nbsp;<img src='pic/delete.png' ald='pencil'></td></tr>");
 							}
 						}			
-						oTable = $("#AdminEquipement").DataTable({
-							"bJQueryUI": true,
-							"bLengthChange": false,
-							"bFilter": true,
-							"bInfo": false,
-							"bSort": false,
-							"sPaginationType": "full_numbers",
-
-							"columnDefs": [
-							{ "visible": false, "targets": [0,1,2,3,4,5,6,7] }
-							],
-							"oLanguage": {
-								"SProcessing" :     "Traitement en cours ..." ,
-								"Ssearch" :         "Rechercher:" ,
-								"sLengthMenu" :     "éléments Display _MENU_" ,
-								"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
-								"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
-								"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
-								"SInfoPostFix" :    "" ,
-								"sLoadingRecords" : "Chargement en cours ..." ,
-								"sZeroRecords" :    "Aucun élément à afficher" ,
-								"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
-								"OPaginate" : {
-									"SFirst" :      "Premier" ,
-									"SPrevious" :   "Précédent" ,
-									"SNext" :       "Suivant" ,
-									"Slast" :       "Dernier"
-								},
-								"OAria" : {
-									"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
-									"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
-								},
-							}
-						});
 
 						/*if (window.innerWidth < 484)
 						{
@@ -293,8 +259,42 @@
 							oTable.fnSetColumnVis( 3, false);
 							oTable.fnSetColumnVis( 4, false);
 						};*/
-						$(".dataTable").width('100%');
 					}
+					oTable = $("#AdminEquipement").DataTable({
+						"bJQueryUI": true,
+						"bLengthChange": false,
+						"bFilter": true,
+						"bInfo": false,
+						"bSort": false,
+						"sPaginationType": "full_numbers",
+
+						"columnDefs": [
+						{ "visible": false, "targets": [0,1,2,3,4,5,6,7] }
+						],
+						"oLanguage": {
+							"SProcessing" :     "Traitement en cours ..." ,
+							"Ssearch" :         "Rechercher:" ,
+							"sLengthMenu" :     "éléments Display _MENU_" ,
+							"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
+							"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
+							"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
+							"SInfoPostFix" :    "" ,
+							"sLoadingRecords" : "Chargement en cours ..." ,
+							"sZeroRecords" :    "Aucun élément à afficher" ,
+							"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
+							"OPaginate" : {
+								"SFirst" :      "Premier" ,
+								"SPrevious" :   "Précédent" ,
+								"SNext" :       "Suivant" ,
+								"Slast" :       "Dernier"
+							},
+							"OAria" : {
+								"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
+								"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
+							},
+						}
+					});
+					$(".dataTable").width('100%');
 					
 				});
 
@@ -456,18 +456,9 @@
 						LoadDevice($("#delete_app_name_piece").val());
 					});
 					
-					if (data.length > 0)
-					{
-						$("#planning_no_data").hide();	
-						var oTable = $("#AdminPiece").DataTable();
-						oTable.destroy();				
-						$("#tbody_AdminPiece").empty();
-						for(var i=0;i<data.length;i++) {					
-							$event = data[i];								
-							event_delete = "delete_piece";						
-							$("#tbody_AdminPiece").append("<tr><td style='text-align:center;'>"+$event.ID+"</td><td style='text-align:center;'>"+$event.Nom+"</td><td style='text-align:center;'><img src='pic/pencil.png' ald='pencil' onclick='EditPiece("+$event.ID+","+i+","+$event.Visible+")'></td><td style='text-align:center;'><img src='pic/delete.png' ald='pencil' onclick=\"delete_confirm('"+event_delete+"',"+i+")\"></td></tr>");
-						}				
-						oTable = $("#AdminPiece").DataTable({
+					var oTable = $("#AdminPiece").DataTable();
+					oTable.destroy();				
+					oTable = $("#AdminPiece").DataTable({
 							"bJQueryUI": true,
 							"bLengthChange": false,
 							"bFilter": true,
@@ -501,6 +492,16 @@
 								},
 							}
 						});
+					if (data.length > 0)
+					{
+						$("#planning_no_data").hide();	
+						$("#tbody_AdminPiece").empty();
+						for(var i=0;i<data.length;i++) {					
+							$event = data[i];								
+							event_delete = "delete_piece";						
+							$("#tbody_AdminPiece").append("<tr><td style='text-align:center;'>"+$event.ID+"</td><td style='text-align:center;'>"+$event.Nom+"</td><td style='text-align:center;'><img src='pic/pencil.png' ald='pencil' onclick='EditPiece("+$event.ID+","+i+","+$event.Visible+")'></td><td style='text-align:center;'><img src='pic/delete.png' ald='pencil' onclick=\"delete_confirm('"+event_delete+"',"+i+")\"></td></tr>");
+						}				
+						
 	};					
 });
 

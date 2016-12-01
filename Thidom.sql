@@ -232,7 +232,7 @@ CREATE TABLE `User` (
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO User (USERNAME,USERPASS) VALUES ("admin","08580930f08eaed520a06c6df166d0c556c1aecb35eab444535bb7de4fdef695");
+INSERT INTO User (USERNAME,USERPASS) VALUES ("admin","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
 
 --
 -- Table structure for table `cmd_device`
