@@ -42,14 +42,15 @@ install_dependance() {
 	sudo aptitude install libexpat1 -y
 	sudo aptitude install ssl-cert -y
 	install_php
-	sudo aptitude install mysql-server-5.5 -y
+	sudo aptitude install mysql-server -y
 	sudo aptitude install python-mysqldb -y
 	sudo aptitude install python-serial -y
 	sudo aptitude install fail2ban -y
 	sudo aptitude install htop -y
 	sudo aptitude install  python-jinja2 -y
+	sudo aptitude install python-pip -y
 	sudo pip install -U pip 
-	sudo pip install tweepy -y
+	sudo pip install tweepy
 
 	sudo aptitude install ca-certificates -y
 
