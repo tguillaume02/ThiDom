@@ -226,14 +226,14 @@ echo "********************************************************"
 
 #mkdir /home/pi/
 
-cp -Rf /tmp/ThiDom/www/TihDom/* "${webserver_home}/ThiDom/"
+sudo cp -Rf /tmp/ThiDom/www/TihDom/* "${webserver_home}/ThiDom/"
 
 mkdir $HOME/Script\ crontab/
-cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
+sudo cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
 sudo chmod +x $HOME/Script\ crontab/*
 
 mkdir $HOME/Script_domotique/
-cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
+sudo cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
 sudo chmod +x $HOME/Script_domotique/*
 
 

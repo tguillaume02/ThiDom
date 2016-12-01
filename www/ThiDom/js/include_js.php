@@ -594,48 +594,50 @@
 					$event = data[i];							
 					$("#tbody_AdminUser").append("<tr><td style='text-align:center;'>"+$event.ID+"</td><td style='text-align:center;'>"+$event.Pass+"</td><td style='text-align:center;'>"+$event.Nom+"</td><td style='text-align:center;'>"+$event.Background+"</td><td style='text-align:center;'><img src='pic/pencil.png' ald='pencil'  onclick='EditUser("+$event.ID+","+i+")'></td><td style='text-align:center;'><img src='pic/delete.png' ald='pencil'></td></tr>");
 				}
-				var oTable = $("#AdminUser").DataTable();
-				oTable.destroy();				
-				oTable = $("#AdminUser").DataTable({
-					"bJQueryUI": true,
-					"bLengthChange": false,
-					"bFilter": true,
-					"bInfo": false,
-					"bSort": false,
-					"sPaginationType": "full_numbers",
-
-					"columnDefs": [
-					{ "visible": false, "targets": [0,1] }
-					],
-					"oLanguage": {
-						"SProcessing" :     "Traitement en cours ..." ,
-						"Ssearch" :         "Rechercher:" ,
-						"sLengthMenu" :     "éléments Display _MENU_" ,
-						"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
-						"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
-						"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
-						"SInfoPostFix" :    "" ,
-						"sLoadingRecords" : "Chargement en cours ..." ,
-						"sZeroRecords" :    "Aucun élément à afficher" ,
-						"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
-						"OPaginate" : {
-							"SFirst" :      "Premier" ,
-							"SPrevious" :   "Précédent" ,
-							"SNext" :       "Suivant" ,
-							"Slast" :       "Dernier"
-						},
-						"OAria" : {
-							"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
-							"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
-						},
-					}
-				});
-	};					
-});
+			};					
+		});
 
 		request.fail(function (jqXHR, textStatus, errorThrown) 
 		{
 			ErrorLoading();
+		});
+
+		
+		var oTable = $("#AdminUser").DataTable();
+		oTable.destroy();				
+		oTable = $("#AdminUser").DataTable({
+			"bJQueryUI": true,
+			"bLengthChange": false,
+			"bFilter": true,
+			"bInfo": false,
+			"bSort": false,
+			"sPaginationType": "full_numbers",
+
+			"columnDefs": [
+			{ "visible": false, "targets": [0,1] }
+			],
+			"oLanguage": {
+				"SProcessing" :     "Traitement en cours ..." ,
+				"Ssearch" :         "Rechercher:" ,
+				"sLengthMenu" :     "éléments Display _MENU_" ,
+				"SInfo" :           "Affichage de l'élement _START_ à _END_ sur _TOTAL_ éléments" ,
+				"SInfoEmpty" :      "Affichage de l'élement 0 à 0 sur 0 éléments" ,
+				"SInfoFiltered" :   "(Filtre de _MAX_ 'éléments au total)" ,
+				"SInfoPostFix" :    "" ,
+				"sLoadingRecords" : "Chargement en cours ..." ,
+				"sZeroRecords" :    "Aucun élément à afficher" ,
+				"SEmptyTable" :     "Aucune Donnée Disponible Dans Le tableau" ,
+				"OPaginate" : {
+					"SFirst" :      "Premier" ,
+					"SPrevious" :   "Précédent" ,
+					"SNext" :       "Suivant" ,
+					"Slast" :       "Dernier"
+				},
+				"OAria" : {
+					"SSortAscending" :  ": activer verser juge la colonne par ordre croissant" ,
+					"SSortDescending" : ": activer verser juge la colonne par ordre decroissant"
+				},
+			}
 		});
 	}
 
