@@ -1,1 +1,1 @@
-sudo aptitude install git ; cd /tmp  ; git clone https://github.com/tguillaume02/ThiDom ; cd /tmp/Thidom && chmod +x Auto_install.sh ; sudo ./Auto_install.sh
+sudo apt-get install aptitude -y; sudo aptitude install git -y; cd /tmp  ; git clone https://github.com/tguillaume02/ThiDom ; cd /tmp/Thidom && chmod +x Auto_install.sh ; sudo ./Auto_install.sh
