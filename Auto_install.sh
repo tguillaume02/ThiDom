@@ -226,7 +226,7 @@ echo "********************************************************"
 
 #mkdir /home/pi/
 
-cp -Rf /tmp/ThiDom/www/TihDom* "${webserver_home}/ThiDom/"
+cp -Rf /tmp/ThiDom/www/TihDom/* "${webserver_home}/ThiDom/"
 
 mkdir $HOME/Script\ crontab/
 cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
@@ -346,13 +346,13 @@ if  [ -z $IP ]; then
 fi
 
 if  [ -z $IP ]; then
-	IP = "localhost"
+	IP="localhost"
 fi
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
 echo "\n\t\thttp://$IP/ThiDom ${msg_or} http://$HOST/ThiDom\n"
-echo "${msg_login_info2} admin\n"
-echo "${msg_login_info3} admin\n"
+echo "${msg_login_info2} admin"
+echo "${msg_login_info3} admin"
 
 #echo "${reboot}"
 
