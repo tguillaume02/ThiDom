@@ -191,7 +191,7 @@ echo "********************************************************"
 echo "${msg_setup_dirs_and_privs}"
 echo "********************************************************"
 
-mkdir -p "${webserver_home}"
+sudo mkdir -p "${webserver_home}"
 cd "${webserver_home}"
 sudo chown www-data:www-data -R "${webserver_home}"
 sudo usermod -a -G dialout www-data
@@ -226,15 +226,15 @@ echo "********************************************************"
 
 #mkdir /home/pi/
 
-mkdir ${webserver_home}/ThiDom
+sudo mkdir ${webserver_home}/ThiDom
 
 sudo cp -Rf /tmp/ThiDom/www/ThiDom/* "${webserver_home}/ThiDom/"
 
-mkdir $HOME/Script\ crontab/
+sudo mkdir $HOME/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
 sudo chmod +x $HOME/Script\ crontab/*
 
-mkdir $HOME/Script_domotique/
+sudo mkdir $HOME/Script_domotique/
 sudo cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
 sudo chmod +x $HOME/Script_domotique/*
 
@@ -290,9 +290,9 @@ echo "********************************************************"
 echo "${msg_setup_apache}"
 echo "********************************************************"
 
-cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
-cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
-cp /tmp/ThiDom/etc/apache2/ports.conf  /etc/apache2/ports.conf
+sudo cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
+sudo cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
+sudo cp /tmp/ThiDom/etc/apache2/ports.conf  /etc/apache2/ports.conf
 sudo mkdir /etc/apache2/ssl
 sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
 #sudo openssl req  -new -key client.key -out client.req && sudo openssl x509 -req -in client.req -CA ca.cer -CAkey ca.key -set_serial 101  -extensions client -days 3650 -outform PEM -out client.cer && sudo openssl pkcs12 -export -inkey client.key -in client.cer -out client.p12 
@@ -302,9 +302,9 @@ sudo a2ensite default-ssl
 sudo a2enmod rewrite
 sudo service apache2 reload
 
-mkdir /etc/fw
-cp /tmp/ThiDom/etc/fw/* /etc/fw/
-cp /tmp/ThiDom/etc/rc.local /etc/
+sudo mkdir /etc/fw
+sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/
+sudo cp /tmp/ThiDom/etc/rc.local /etc/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
 
