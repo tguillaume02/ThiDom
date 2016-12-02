@@ -402,7 +402,7 @@ if ($mode == "valide")
 		}
 		else
 		{
-			$req = execute_sql("select max(Position)+1 as max from Lieux");	
+			$req = execute_sql("select IFNULL(max(Position)+1,1) as max from Lieux");	
 			while ($donnees = $req->fetch_array())
 			{
 				$max_pos = $donnees['max'];
@@ -763,7 +763,7 @@ if ($mode == "Create_Scenario")
 
 	if ($Scenario_id-1 == -1)
 	{
-		$req = execute_sql("select max(ID)+1 as max from Scenario_Xml");
+		$req = execute_sql("select IFNULL(max(ID)+1,1) as max from Scenario_Xml");
 			while ($donnees = $req->fetch_array())
 			{
 				$Scenario_id = $donnees['max'];
