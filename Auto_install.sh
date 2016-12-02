@@ -226,7 +226,7 @@ echo "********************************************************"
 
 #mkdir /home/pi/
 
-sudo cp -Rf /tmp/ThiDom/www/TihDom/* "${webserver_home}/ThiDom/"
+sudo cp -Rf /tmp/ThiDom/www/ThiDom/* "${webserver_home}/ThiDom/"
 
 mkdir $HOME/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
