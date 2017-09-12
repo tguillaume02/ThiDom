@@ -1,0 +1,90 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          iptables configuration
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: iptables initscript
+# Description:       Custom iptables
+### END INIT INFO
+
+# Vider les tables actuelles
+iptables -t filter -F
+
+# Vider les règles personnelles
+iptables -t filter -X
+ 
+# Interdire toute connexion entrante et sortante
+iptables -t filter -P INPUT DROP
+iptables -t filter -P FORWARD DROP
+iptables -t filter -P OUTPUT DROP
+ 
+# Autorise les connexions déjà établies et localhost
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -t filter -A INPUT -i lo -j ACCEPT
+iptables -t filter -A OUTPUT -o lo -j ACCEPT
+
+# Ouvrir les ports utilisés
+
+# ICMP (Ping)
+iptables -t filter -A INPUT -p icmp -j ACCEPT 
+iptables -t filter -A OUTPUT -p icmp -j ACCEPT 
+ 
+# SSH
+iptables -t filter -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 22 -j ACCEPT
+ 
+# DNS
+iptables -t filter -A OUTPUT -p tcp --dport 53 -j ACCEPT 
+iptables -t filter -A OUTPUT -p udp --dport 53 -j ACCEPT 
+iptables -t filter -A INPUT -p tcp --dport 53 -j ACCEPT 
+iptables -t filter -A INPUT -p udp --dport 53 -j ACCEPT 
+ 
+# HTTP
+iptables -t filter -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 443 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 4443 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 4443 -j ACCEPT
+
+# Mysql : 3306
+iptables -t filter -A INPUT -p tcp --dport 3306 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 3306 -j ACCEPT
+
+# SAMBA
+iptables -t filter -A INPUT -p tcp --dport 137 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 138 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 139 -j ACCEPT
+iptables -t filter -A INPUT -p tcp --dport 445 -j ACCEPT
+
+# FTP 
+iptables -t filter -A OUTPUT -p tcp --dport 20:21 -j ACCEPT 
+iptables -t filter -A INPUT -p tcp --dport 20:21 -j ACCEPT 
+
+# Mail SMTP
+iptables -t filter -A INPUT -p tcp --dport 25 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 25 -j ACCEPT
+
+# SMTP GOOGLE
+iptables -t filter -A INPUT -p tcp --dport 587 -j ACCEPT
+iptables -t filter -A OUTPUT -p tcp --dport 587 -j ACCEPT
+
+
+# NTP (horloge du serveur) 
+sudo iptables -t filter -A OUTPUT -p udp --dport 123 -j ACCEPT
+
+#SCAN de ports
+sudo iptables -A FORWARD -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s -j ACCEPT
+
+
+#Pyload
+sudo iptables -t filter -A OUTPUT -p tcp --dport 9087 -j ACCEPT
+sudo iptables -t filter -A INPUT -p tcp --dport 9087 -j ACCEPT
+
+#Kodi
+sudo iptables -t filter -A INPUT -p tcp --dport 1234 -j ACCEPT
+

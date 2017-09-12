@@ -1,0 +1,15 @@
+{  
+  "short_name": "ThiDom",  
+  "name": "ThiDom",  
+  "start_url": "/ThiDom",  
+  "icons": [  
+    {  
+      "src": "/Core/pic/home192x192.png",  
+      "sizes": "192x192",  
+      "type": "image/png"  
+    }
+  ],  
+  "background_color": "#FFFFFF",
+  "theme_color": "#20B2AA", 
+  "display": "standalone"
+}

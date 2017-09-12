@@ -1,0 +1,39 @@
+
+<IfModule mod_headers.c>
+        <FilesMatch "\.(css|js|png|jpeg|jpg|gif|ttf|woff|icon|html)$">
+                Header set Cache-Control "max-age=2592000, public"
+        </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+        # Enable expirations
+                ExpiresActive On
+        # Images
+                ExpiresByType image/jpg "access 1 year"
+                ExpiresByType image/jpeg "access 1 year"
+                ExpiresByType image/gif "access 1 year"
+                ExpiresByType image/png "access 1 year"
+                ExpiresByType image/x-icon "access 1 year"
+                ExpiresByType image/ico "access 1 year"
+                ExpiresByType image/icon "access 1 year"
+        # CSS
+                ExpiresByType text/css "access 1 month"
+        # HTML
+                ExpiresByType text/html "access 1 month"
+        # PDF
+                ExpiresByType application/pdf "access 1 month"
+        # JavaScript
+                ExpiresByType text/x-javascript "access 1 month"
+                ExpiresByType text/javascript "access 1 month"
+        # FLASH
+                ExpiresByType application/x-shockwave-flash "access 1 month"        
+        # Default expirations
+                ExpiresDefault "access 1 month"
+</IfModule>
+
+
+<Files .htaccess>
+        Order Allow,Deny
+        Deny from all
+</Files>
+

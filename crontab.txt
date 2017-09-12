@@ -29,12 +29,9 @@
 #
 #
 # Teste toutes les 10 minutes et ssi le fichier JSON n.a pas ete mis a jour depuis plus de 20 minutes, alors relance Node.js
-#*/10 * * * * /home/pi/Script\ crontab/check_nodejs.sh
 */10 * * * *  /home/pi/Script\ crontab/check_read.sh
 */5 * * * *  /home/pi/Script\ crontab/Check_wifi.sh
 0,15,30,45 * * * * /home/pi/Script\ crontab/moyennes_temp.sh
-#0 * * * * /home/pi/Script\ crontab/update_sunrise.sh
 0 0,12 * * * /home/pi/Script\ crontab/backup_bdd.sh
-#
-#
-#*/13 * * * * root [ `ping -c3 -q  192.168.1.1 > /dev/null 2>&1` ] && touch /var/www/nodejs/public_html/cronNode.txt && strDate=$(date) && strAct=" Perte conne$
+
+0 */1 * * * sudo ntpdate pool.ntp.org

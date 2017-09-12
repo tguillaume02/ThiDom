@@ -28,32 +28,41 @@ init_msg()
 	msg_login_info3="Votre mot de passe par défault est: "
 	msg_install_sql="*                Installation de la base de données    *"
 	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
-	reboot="Votre Raspberry va maintenant redémarrer"
+	reboot="Votre machine va maintenant redémarrer"
+	reboot1 = "Votre machine va redémarrer dans 1 seconde ";
+	reboot2 = "Votre machine va redémarrer dans 2 secondes ";
+	reboot3 = "Votre machine va redémarrer dans 3 secondes ";
+	reboot4 = "Votre machine va redémarrer dans 4 secondes ";
+	reboot5 = "Votre machine va redémarrer dans 5 secondes ";
 }
 
 install_dependance() {
-	sudo apt-get install aptitude -y
-	sudo aptitude dist-upgrade -y
-	sudo aptitude update -y
-	sudo aptitude upgrade -y
-	sudo aptitude install resolvconf -y
-	sudo aptitude install curl -y
-	sudo aptitude install apache2 -y
-	sudo aptitude install apache2-utils -y
-	sudo aptitude install libexpat1 -y
-	sudo aptitude install ssl-cert -y
+	sudo apt-get dist-upgrade -y
+	sudo apt-get update -y
+	sudo apt-get upgrade -y
+	sudo apt-get install resolvconf -y
+	sudo apt-get install curl -y
 	install_php
-	sudo aptitude install mysql-server -y
-	sudo aptitude install python-mysqldb -y
-	sudo aptitude install python-serial -y
-	sudo aptitude install fail2ban -y
-	sudo aptitude install htop -y
-	sudo aptitude install  python-jinja2 -y
-	sudo aptitude install python-pip -y
+	sudo apt-get install apache2 -y
+	sudo apt-get install apache2-utils -y
+	sudo apt-get install libexpat1 -y
+	sudo apt-get install ssl-cert -y
+	sudo apt-get install mysql-server -y
+	sudo apt-get install python-mysqldb -y
+	sudo apt-get install python-serial -y
+	sudo apt-get install fail2ban -y
+	sudo apt-get install htop -y
+	sudo apt-get install python-jinja2 -y
+	sudo apt-get install python-pip -y
 	sudo pip install -U pip 
 	sudo pip install tweepy
-
-	sudo aptitude install ca-certificates -y
+	sudo pip install httplib2
+	sudo pip install --upgrade google-api-python-client
+	install_php
+	sudo apt-get install ca-certificates -y
+	sudo apt-get install ntpdate -y
+	sudo apt-get install mailutils mpack -y
+	sudo apt-get install ssmtp -y
 
 	#pecl install oauth
 	#if [ $? -eq 0 ] ; then
@@ -66,48 +75,48 @@ install_dependance() {
 	#fi
 	
 	sudo apt-get autoremove -y 
-	sudo aptitude autoclean -y 
-	sudo aptitude update -y 
-	sudo aptitude upgrade -y
+	sudo apt-get autoclean -y 
+	sudo apt-get update -y 
+	sudo apt-get upgrade -y
+	sudo apt-get dist-upgrade -y
 	sudo rpi-update
 
 	sudo service mysql start
 }
 
 install_php() {
-	sudo aptitude install php7.0 -y 
-	sudo aptitude install php7.0-curl -y 
-	sudo aptitude install php7.0-gd -y
-	sudo aptitude install php7.0-imap -y
-	sudo aptitude install php7.0-json -y
-	sudo aptitude install php7.0-mcrypt -y
-	sudo aptitude install php7.0-mysql -y
-	sudo aptitude install php7.0-xml -y
-	sudo aptitude install php7.0-opcache -y
-	sudo aptitude install php7.0-soap -y
-	sudo aptitude install php7.0-xmlrpc -y
-	sudo aptitude install libapache2-mod-php7.0 -y
-	sudo aptitude install php7.0-common -y
-	sudo aptitude install php7.0-dev -y
-	sudo aptitude install php7.0-zip -y
-	sudo aptitude install php7.0-ssh2 -y
-	sudo aptitude install php7.0-calendar -y
+	sudo apt-get install php7.0 -y 
+	sudo apt-get install php7.0-curl -y 
+	sudo apt-get install php7.0-gd -y
+	sudo apt-get install php7.0-imap -y
+	sudo apt-get install php7.0-json -y
+	sudo apt-get install php7.0-mcrypt -y
+	sudo apt-get install php7.0-mysql -y
+	sudo apt-get install php7.0-xml -y
+	sudo apt-get install php7.0-opcache -y
+	sudo apt-get install php7.0-soap -y
+	sudo apt-get install php7.0-xmlrpc -y
+	sudo apt-get install libapache2-mod-php7.0 -y
+	sudo apt-get install php7.0-common -y
+	sudo apt-get install php7.0-dev -y
+	sudo apt-get install php7.0-zip -y
+	sudo apt-get install php7.0-ssh2 -y
+	sudo apt-get install php7.0-calendar -y
 	if [ $? -ne 0 ]; then
-		sudo aptitude install libapache2-mod-php5 -y
-		sudo aptitude install php5 -y
-		sudo aptitude install php5-common -y
-		sudo aptitude install php5-curl -y
-		sudo aptitude install php5-dev -y
-		sudo aptitude install php5-gd -y
-		sudo aptitude install php5-json -y
-		sudo aptitude install php5-memcached -y
-		sudo aptitude install php5-mysql -y
-		sudo aptitude install php5-cli -y
-		sudo aptitude install php5-ssh2 -y
+		sudo apt-get install libapache2-mod-php5 -y
+		sudo apt-get install php5 -y
+		sudo apt-get install php5-common -y
+		sudo apt-get install php5-curl -y
+		sudo apt-get install php5-dev -y
+		sudo apt-get install php5-gd -y
+		sudo apt-get install php5-json -y
+		sudo apt-get install php5-memcached -y
+		sudo apt-get install php5-mysql -y
+		sudo apt-get install php5-cli -y
+		sudo apt-get install php5-ssh2 -y
 	fi	
-	sudo aptitude install php-pear build-essential -y
+	sudo apt-get install php-pear build-essential -y
 }
-
 
 init_msg
 
@@ -152,7 +161,6 @@ echo "********************************************************"
 
 install_dependance
 
-
 echo  "**********************************************************************"
 echo "${msg_passwd_mysql}"
 while true ; do
@@ -196,8 +204,6 @@ cd "${webserver_home}"
 sudo chown www-data:www-data -R "${webserver_home}"
 sudo usermod -a -G dialout www-data
 
-
-
 echo "********************************************************"
 echo "${msg_copy_thidom_files}"
 echo "********************************************************"
@@ -226,9 +232,9 @@ echo "********************************************************"
 
 #mkdir /home/pi/
 
-sudo mkdir ${webserver_home}/ThiDom
+#sudo mkdir ${webserver_home}/ThiDom
 
-sudo cp -Rf /tmp/ThiDom/www/ThiDom/* "${webserver_home}/ThiDom/"
+sudo cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 
 sudo mkdir $HOME/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
@@ -238,17 +244,12 @@ sudo mkdir $HOME/Script_domotique/
 sudo cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
 sudo chmod +x $HOME/Script_domotique/*
 
-
 sudo chown  $USER:$USER -R $HOME/Script_domotique/
 sudo chown  $USER:$USER -R $HOME/Script\ crontab/
-
-
 
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
 chown -R www-data:www-data "${webserver_home}"
-
-
 
 echo "********************************************************"
 echo "${msg_config_db}"
@@ -266,12 +267,11 @@ echo "********************************************************"
 echo "${msg_install_thidom}"
 echo "********************************************************"
 
-cd "${webserver_home}/ThiDom"
+cd "${webserver_home}/ThiDom/Core/class/"
 
-
-sed -i 's!^\t\t$password =.*!\t\t$password = "'${bdd_password}'";!' connect.php 
-sed -i 's!^\t\t$username =.*!\t\t$username = "thidom";!' connect.php 
-sed -i 's!^\t\t$dbname =.*!\t\t$dbname = "thidom";!' connect.php 
+sed -i 's!^\t\t$_user =.*!\t\t$_user = "thidom";!' db.class.php
+sed -i 's!^\t\t$_pwd =.*!\t\t$_pwd = "'${bdd_password}'";!' db.class.php 
+sed -i 's!^\t\t$_bdd =.*!\t\t$_bdd = "thidom";!' db.class.php
 
 chown www-data:www-data connect.php 
 
@@ -292,6 +292,7 @@ echo "********************************************************"
 
 sudo cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 sudo cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
+sudo sed -i '/<Directory \/var\/www\/>/a \\tOptions +MultiViews' /etc/apache2/apache2.conf
 sudo cp /tmp/ThiDom/etc/apache2/ports.conf  /etc/apache2/ports.conf
 sudo mkdir /etc/apache2/ssl
 sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
@@ -304,10 +305,10 @@ sudo service apache2 reload
 
 sudo mkdir /etc/fw
 sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/
+sudo cp /tmp/ThiDom/etc/init.d/* /etc/init.d/
 sudo cp /tmp/ThiDom/etc/rc.local /etc/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
-
 
 
 echo "********************************************************"
@@ -356,24 +357,48 @@ echo "\n\t\thttp://$IP/ThiDom ${msg_or} http://$HOST/ThiDom\n"
 echo "${msg_login_info2} admin"
 echo "${msg_login_info3} admin"
 
-#echo "${reboot}"
-
-#sudo reboot
 
 ############# DEFINE STATIC ID TO USB  ##############
-# sudo udevadm info --query=all --name=ttyUSB0
-# sudo lsusb -v | more
-# Notez ou copiez les lignes, (avancez par appui sur la touche espace) et trouvez
-#  - idVendor
-#  - idProduct
-#  - iSerial (éventuellement)
-# On configure  donc  le fichier /etc/udev/rules.d/99-usb-serial.rules - See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
-#  SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB11"
+	# sudo udevadm info --query=all --name=ttyUSB0
+	# sudo lsusb -v | more
+	# Notez ou copiez les lignes, (avancez par appui sur la touche espace) et trouvez
+	#  - idVendor
+	#  - idProduct
+	#  - iSerial (éventuellement)
+	# On configure  donc  le fichier /etc/udev/rules.d/99-usb-serial.rules -
+	sudo echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="ttyUSB1"' >>  /etc/udev/rules.d/99-usb-serial.rules
 
-#- See more at: http://easydomoticz.com/#sthash.nXvK3FIo.dpuf
+	sudo udevadm control --reload
 
-###### mysql#######
-# mettre en commentaire dans /etc/mysqm/my.cnf la ligne bind-address		= 127.0.0.1
+	sudo chmod 777 /dev/ttyUSB1
+
+
+###### MYSQL #######
+# mettre en commentaire dans /etc/mysql/my.cnf la ligne bind-address		= 127.0.0.1
+sudo sed -e '/bind-address/ s/^#*/#/' -i /etc/mysql/my.cnf
+
+
+##### ADD IPTABLES RULES ON START
+update-rc.d DefaultFirewall defaults
+
+echo "${reboot5}"
+sleep 1
+
+echo "${reboot4}"
+sleep 1
+
+echo "${reboot3}"
+sleep 1
+
+echo "${reboot2}"
+sleep 1
+
+echo "${reboot1}"
+sleep 1
+
+echo "${reboot}"
+
+sudo reboot
 
 # Modifier le fichier /etc/apache2/ports.conf
                     #/etc/apache2/sites-available
@@ -381,13 +406,13 @@ echo "${msg_login_info3} admin"
 	
 #sudo service apache2 force-reload
 #sudo /etc/init.d/apache2 reload
-#sudo aptitude install samba -y
+#sudo apt-get install samba -y
  # fichier /etc/samba/smb.conf à remplacer
  # creer utilisateur sudo smbpasswd -a pi
  
  
-# sudo aptitude install kodi -y
-# sudo aptitude install pyload -y
+# sudo apt-get install kodi -y
+# sudo apt-get install pyload -y
 
 
 #######  SI ERREUR APT UPDATE #######
@@ -426,11 +451,11 @@ echo "${msg_login_info3} admin"
 
 
 ########### METTRE LES LOGS EN RAM #####################
-#Mettre dans /etc/fstab
+	#Mettre dans /etc/fstab
 
-#tmpfs /tmp tmpfs defaults,noatime,nosuid,size=10m 0 0
-#tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=10m 0 0
-#tmpfs /var/log tmpfs defaults,noatime,nosuid,mode=0755,size=10m 0 0
+	#tmpfs /tmp tmpfs defaults,noatime,nosuid,size=10m 0 0
+	#tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=10m 0 0
+	#tmpfs /var/log tmpfs defaults,noatime,nosuid,mode=0755,size=10m 0 0
 
 	####### AJOUTER LE SCRIPT /etc/init.d/apache2-tmpfs #########
 		 #sudo chmod 0755 /etc/init.d/apache2-tmpfs
@@ -442,98 +467,96 @@ echo "${msg_login_info3} admin"
 
 ########### INSTALLER DRIVER CLE WIFI SAGEM ########################
 
-#wget http://daemonizer.de/prism54/prism54-fw/fw-usb/2.13.1.0.lm86.arm --no-check-certificate 
-#wget http://daemonizer.de/prism54/prism54-fw/fw-usb/2.13.25.0.lm87.arm --no-check-certificate
-#sudo mv 2.13.1.0.lm86.arm /lib/firmware/isl3886usb
-#sudo mv 2.13.25.0.lm87.arm /lib/firmware/isl3887usb
+	#wget http://daemonizer.de/prism54/prism54-fw/fw-usb/2.13.1.0.lm86.arm --no-check-certificate 
+	#wget http://daemonizer.de/prism54/prism54-fw/fw-usb/2.13.25.0.lm87.arm --no-check-certificate
+	#sudo mv 2.13.1.0.lm86.arm /lib/firmware/isl3886usb
+	#sudo mv 2.13.25.0.lm87.arm /lib/firmware/isl3887usb
 
 
 ###### A METTRE DANS /etc/network/interfaces ####
 
-#auto lo
+	#auto lo
 
-#iface lo inet loopback
-#iface eth0 inet dhcp
+	#iface lo inet loopback
+	#iface eth0 inet dhcp
 
-#allow-hotplug wlan0
-#auto wlan0
-##iface wlan0 inet dhcp
- ##       wpa-ssid "NOM DE LA BOX"
-  ##      wpa-psk CLE DE LA BOX
+	#allow-hotplug wlan0
+	#auto wlan0
+	##iface wlan0 inet dhcp
+	 ##       wpa-ssid "NOM DE LA BOX"
+	  ##      wpa-psk CLE DE LA BOX
 
-#iface wlan0 inet static
-        #address 192.168.1.25
-        #netmask 255.255.255.0
-        #gateway 192.168.1.1
-        #wpa-ssid "NOM DE LA BOW "
-        #wpa-psk CLE DE LA BOX
+	#iface wlan0 inet static
+	        #address 192.168.1.25
+	        #netmask 255.255.255.0
+	        #gateway 192.168.1.1
+	        #wpa-ssid "NOM DE LA BOW "
+	        #wpa-psk CLE DE LA BOX
 
-#iface default inet dhcp
+	#iface default inet dhcp
 
 ####### DESACTIVER IPV6 ###################
-#sudo echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-#sudo echo 0 > /proc/sys/net/ipv6/conf/all/autoconf
-#sudo echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
-#sudo echo 0 > /proc/sys/net/ipv6/conf/default/autoconf
-#sudo echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6   
-#sudo echo '1' > /proc/sys/net/ipv6/conf/all/disable_ipv6   
-#sudo echo '1' > /proc/sys/net/ipv6/conf/default/disable_ipv6
+	#sudo echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+	#sudo echo 0 > /proc/sys/net/ipv6/conf/all/autoconf
+	#sudo echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
+	#sudo echo 0 > /proc/sys/net/ipv6/conf/default/autoconf
+	#sudo echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6   
+	#sudo echo '1' > /proc/sys/net/ipv6/conf/all/disable_ipv6   
+	#sudo echo '1' > /proc/sys/net/ipv6/conf/default/disable_ipv6
 
 ######## STATUS RC.LOCAL ##############
-#sudo systemctl status -l rc-local.service
+	#sudo systemctl status -l rc-local.service
+	
+	
+############# INSTALL PYTHON 3.4 IF NOT AVAILABLE WITH apt-get INSTALL ##########################
 
+	## Download latest Python sources
+	#curl -O https://www.python.org/ftp/python/3.4.3/Python-3.4.3.tgz
 
+	## Unpack sources archive
+	#tar xf Python-3.4.3.tgz
 
+	## Install packages needed for Python build process
+	## (build-essential is maybe already preinstalled on Raspbian)
+	#sudo apt-get install build-essential
+	#sudo apt-get install python3-dev
 
-############# INSTALL PYTHON 3.4 IF NOT AVAILABLE WITH APTITUDE INSTALL ##########################
+	# Build Python
+	#cd Python-3.4.3
+	#./configure
+	#make
 
-## Download latest Python sources
-#curl -O https://www.python.org/ftp/python/3.4.3/Python-3.4.3.tgz
+	# Make independent python3.4 virtual environment in your home directory
+	#mkdir ~/python
+	#./python -m venv --copies ~/python/python3.4
 
-## Unpack sources archive
-#tar xf Python-3.4.3.tgz
+	# Activate python3.4 virtual environment
+	#source ~/python/python3.4/bin/activate
 
-## Install packages needed for Python build process
-## (build-essential is maybe already preinstalled on Raspbian)
-#sudo apt-get install build-essential
-#sudo apt-get install python3-dev
-
-# Build Python
-#cd Python-3.4.3
-#./configure
-#make
-
-# Make independent python3.4 virtual environment in your home directory
-#mkdir ~/python
-#./python -m venv --copies ~/python/python3.4
-
-# Activate python3.4 virtual environment
-#source ~/python/python3.4/bin/activate
-
-# Upgrade setuptools and pip
-#pip install -U setuptools
-#pip install -U pip
+	# Upgrade setuptools and pip
+	#pip install -U setuptools
+	#pip install -U pip
 
 
 
 ######## RUN PYTHON 3.4 #################
 
-#run source ~/python/python3.4/bin/activate
+	#run source ~/python/python3.4/bin/activate
 
 ########### STOP PYTHON 3.4 ##########
 
-#deactivate 
+	#deactivate 
 
 
 
 
 #########SSH CONFIGURATION ###########
 
-#ssh-keygen -t dsa
+	#ssh-keygen -t dsa
 
-#La clé privée sera stockée dans ~/.ssh/id_dsa et la clé publique dans ~/.ssh/id_dsa.pub.
+	#La clé privée sera stockée dans ~/.ssh/id_dsa et la clé publique dans ~/.ssh/id_dsa.pub.
 
-#Renommer le rsa_id.pub en authorized_keys 
-#copier le rsa_id (la clé privée) sous Windows
-#Utiliser Puttygen pour importer la clé: votre clé RSA est valide, mais n’est pas encore une clé au format Putty.
-#Faites “Sauver la clé privée sous…” et enregistrez-là à l’emplacement de votre choix.
+	#Renommer le rsa_id.pub en authorized_keys 
+	#copier le rsa_id (la clé privée) sous Windows
+	#Utiliser Puttygen pour importer la clé: votre clé RSA est valide, mais n’est pas encore une clé au format Putty.
+	#Faites “Sauver la clé privée sous…” et enregistrez-là à l’emplacement de votre choix.

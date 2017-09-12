@@ -11,9 +11,9 @@ import msql
 
 try:
 	db = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
-	time.sleep(0.2)
+#	time.sleep(0.2)
+	time.sleep(20)
 	cursor = db.cursor()
-	strSQL = db.cursor()
 
 except db.Error, e:
 	print "Error %d: %s" % (e.args[0],e.args[1])
@@ -23,11 +23,13 @@ except db.Error, e:
 #while True:
 try:
 	time.sleep(0.2)
-	cursor.execute("INSERT INTO Temperature (date,temp,lieux,Lieux_ID,cmd_device_ID) select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') as date , ROUND(AVG(temp),1) as avg, lieux, Lieux_ID, cmd_device_ID from Temperature_Temp where date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) group by lieux")			
-	cursor.execute("DELETE FROM Temperature_Temp WHERE date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL  20 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00'))")
+	cursor.execute("INSERT INTO Temperature (date,Temp,Lieux_ID,Cmd_device_ID) select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') as date , ROUND(AVG(temp),1) as avg, Lieux_ID, Cmd_device_ID from Temperature_Temp where Date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) group by lieux")			
+	cursor.execute("DELETE FROM Temperature_Temp WHERE Date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL  20 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00'))")
+	db.commit()
 	mon_fichier = open("/home/pi/text.txt","w")
 	mon_fichier.write ("test")
 	mon_fichier.close()
+	cursor.close()
 	db.close()
 	time.sleep(1)
 	sys.exit()			

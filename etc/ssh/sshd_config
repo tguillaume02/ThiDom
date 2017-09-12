@@ -16,7 +16,7 @@ UsePrivilegeSeparation yes
 
 # Lifetime and size of ephemeral version 1 server key
 KeyRegenerationInterval 3600
-ServerKeyBits 1024
+ServerKeyBits 768
 
 # Logging
 SyslogFacility AUTH

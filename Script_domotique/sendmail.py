@@ -145,6 +145,6 @@ def SendMessage(service, user_id, message):
 #print sys.argv[2]
 #print sys.argv[3]
 
-message = CreateMessage(sender='notifyme87@gmail.com', to=sys.argv[1], subject=sys.argv[2], message_text=sys.argv[3])
+message = CreateMessage(sender='**@**.com', to=sys.argv[1], subject=sys.argv[2], message_text=sys.argv[3])
 
 SendMessage(gmail_service, 'me', message)

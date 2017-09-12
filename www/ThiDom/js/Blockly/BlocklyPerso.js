@@ -4,9 +4,9 @@ Blockly.Blocks.controls_if = {
   init: function() {
     this.setColour(120);
     this.appendValueInput('IF0')
-        .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_IF);
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
     this.appendStatementInput('DO0')
-        .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
     this.setTooltip(Blockly.Msg.CONTROLS_IF_TOOLTIP_1);
     //this.setPreviousStatement(true);
     //this.setNextStatement(true);
@@ -19,9 +19,9 @@ Blockly.Blocks.controls_ifelseif = {
   init: function() {
     this.setColour(120);
     this.appendValueInput('IF0')
-        .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_IF);
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
     this.appendStatementInput('DO0')
-        .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
     this.setMutator(new Blockly.Mutator(['controls_if_elseif']));
     // Assign 'this' to a variable for use in the tooltip closure below.
     this.setTooltip(Blockly.Msg.CONTROLS_IF_TOOLTIP_1);
@@ -42,9 +42,9 @@ Blockly.Blocks.controls_ifelseif = {
     this.elseifCount_ = window.parseInt(xmlElement.getAttribute('elseif'), 10);
     for (var x = 1; x <= this.elseifCount_; x++) {
       this.appendValueInput('IF' + x)
-          .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
+          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
       this.appendStatementInput('DO' + x)
-          .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+          .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
     }
   },
   decompose: function(workspace) {
@@ -73,9 +73,9 @@ Blockly.Blocks.controls_ifelseif = {
         case 'controls_if_elseif':
           this.elseifCount_++;
           var ifInput = this.appendValueInput('IF' + this.elseifCount_)
-              .appendTitle(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
+              .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
           var doInput = this.appendStatementInput('DO' + this.elseifCount_);
-          doInput.appendTitle(Blockly.Msg.CONTROLS_IF_MSG_IF);
+          doInput.appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
           // Reconnect any child blocks.
           if (clauseBlock.valueConnection_) {
             ifInput.connection.connect(clauseBlock.valueConnection_);
@@ -140,9 +140,9 @@ Blockly.Blocks.logic_set = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput('A')
-    .appendTitle(Blockly.Msg.logic_set);
+    .appendField(Blockly.Msg.logic_set);
     this.appendValueInput('B')
-    .appendTitle("=");
+    .appendField("=");
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
 
@@ -154,9 +154,9 @@ Blockly.Blocks.logic_setlevel = {
   init: function() {
     this.setColour(120);
     this.appendDummyInput()
-    .appendTitle(Blockly.Msg.logic_setlevel);
+    .appendField(Blockly.Msg.logic_setlevel);
     this.appendDummyInput()
-    .appendTitle(new Blockly.FieldTextInput('0',
+    .appendField(new Blockly.FieldTextInput('0',
       this.percentageValidator), 'NUM');
     this.setOutput(true, 'Number');
     this.setInputsInline(true);
@@ -171,13 +171,13 @@ Blockly.Blocks.logic_setdelayed = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput('A')
-    .appendTitle(Blockly.Msg.logic_set);
+    .appendField(Blockly.Msg.logic_set);
     this.appendValueInput('B')
-    .appendTitle("=");
+    .appendField("=");
     this.appendValueInput('C')
-    .appendTitle(Blockly.Msg.For );
+    .appendField(Blockly.Msg.For );
     this.appendDummyInput()
-    .appendTitle(Blockly.Msg.Minutes);
+    .appendField(Blockly.Msg.Minutes);
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -189,7 +189,7 @@ Blockly.Blocks.logic_Execute={
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput('A')
-    .appendTitle(Blockly.Msg.logic_Execute);
+    .appendField(Blockly.Msg.logic_Execute);
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
 
@@ -202,8 +202,8 @@ Blockly.Blocks.logic_timeofday = {
     this.setColour(120);
     this.setOutput(true, null);
     this.appendValueInput(Blockly.Msg.Time)
-    .appendTitle("Time:")
-    .appendTitle(new Blockly.FieldDropdown(this.OPERATORS), 'OP');
+    .appendField("Time:")
+    .appendField(new Blockly.FieldDropdown(this.OPERATORS), 'OP');
     this.setInputsInline(true);
     var thisBlock = this;
     this.setTooltip(function() {
@@ -219,10 +219,10 @@ Blockly.Blocks.logic_weekday = {
     this.setColour(120);
     this.setOutput(true, null);
     this.appendDummyInput()
-    .appendTitle(Blockly.Msg.Days)
-    .appendTitle(new Blockly.FieldDropdown(this.OPERATORS), 'OP')
-    .appendTitle(" ")
-    .appendTitle(new Blockly.FieldDropdown(this.DAYS), 'Weekday');
+    .appendField(Blockly.Msg.Days)
+    .appendField(new Blockly.FieldDropdown(this.OPERATORS), 'OP')
+    .appendField(" ")
+    .appendField(new Blockly.FieldDropdown(this.DAYS), 'Weekday');
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
 };   
@@ -231,7 +231,7 @@ Blockly.Blocks.logic_timevalue = {
   init: function() {
     this.setColour(230);
     this.appendDummyInput()
-    .appendTitle(new Blockly.FieldTextInput('00:00',
+    .appendField(new Blockly.FieldTextInput('00:00',
       this.TimeValidator), 'TEXT');
     this.setOutput(true, 'String');
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
@@ -255,8 +255,8 @@ Blockly.Blocks.logic_sunrisesunset = {
     this.setOutput(true, null);
     this.setColour(230);
     this.appendDummyInput()
-    .appendTitle(new Blockly.FieldDropdown(this.VALUES), 'SunriseSunset')
-    .appendTitle(" ");
+    .appendField(new Blockly.FieldDropdown(this.VALUES), 'SunriseSunset')
+    .appendField(" ");
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
 };
@@ -269,9 +269,9 @@ Blockly.Blocks.send_notification = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendValueInput('notificationTextSubject')
-    .appendTitle("Send notification with subject:");
+    .appendField("Send notification with subject:");
     this.appendValueInput('notificationTextBody')
-    .appendTitle("and message:");
+    .appendField("and message:");
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -284,14 +284,14 @@ Blockly.Blocks.send_email = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.appendDummyInput()
-    .appendTitle("Send email with subject:")
-    .appendTitle(new Blockly.FieldTextInput(''), 'TextSubject');
+    .appendField("Send email with subject:")
+    .appendField(new Blockly.FieldTextInput(''), 'TextSubject');
     this.appendDummyInput()
-    .appendTitle("and message:")
-    .appendTitle(new Blockly.FieldTextInput(''), 'TextBody');
+    .appendField("and message:")
+    .appendField(new Blockly.FieldTextInput(''), 'TextBody');
     this.appendDummyInput()
-    .appendTitle("to:")
-    .appendTitle(new Blockly.FieldTextInput(''), 'TextTo');
+    .appendField("to:")
+    .appendField(new Blockly.FieldTextInput(''), 'TextTo');
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -314,8 +314,8 @@ Blockly.Blocks.switchvariablesAF = {
   init: function() {
     this.setColour(30);
     this.appendDummyInput()
-    .appendTitle('A-F ')    
-    .appendTitle(new Blockly.FieldDropdown(switchesAF), 'Switch');
+    .appendField('A-F ')    
+    .appendField(new Blockly.FieldDropdown(switchesAF), 'Switch');
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -327,8 +327,8 @@ Blockly.Blocks.switchvariablesGL = {
   init: function() {
     this.setColour(30);
     this.appendDummyInput()
-    .appendTitle('G-L ')
-    .appendTitle(new Blockly.FieldDropdown(switchesGL), 'Switch');
+    .appendField('G-L ')
+    .appendField(new Blockly.FieldDropdown(switchesGL), 'Switch');
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -340,8 +340,8 @@ Blockly.Blocks.switchvariablesMR = {
   init: function() {
     this.setColour(30);
     this.appendDummyInput()
-    .appendTitle('M-R ')
-    .appendTitle(new Blockly.FieldDropdown(switchesMR), 'Switch');
+    .appendField('M-R ')
+    .appendField(new Blockly.FieldDropdown(switchesMR), 'Switch');
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -353,8 +353,8 @@ Blockly.Blocks.switchvariablesSZ = {
   init: function() {
     this.setColour(30);
     this.appendDummyInput()
-    .appendTitle('S-Z ')
-    .appendTitle(new Blockly.FieldDropdown(switchesSZ), 'Switch');
+    .appendField('S-Z ')
+    .appendField(new Blockly.FieldDropdown(switchesSZ), 'Switch');
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
@@ -396,13 +396,47 @@ Blockly.Blocks.temperaturevariables = {
   init: function() {
     this.setColour(330);
     this.appendDummyInput()
-    .appendTitle(Blockly.Msg.Temp,'TemperatureLabel')
-    .appendTitle(new Blockly.FieldDropdown(temperatures), 'Temperature');
+    .appendField(Blockly.Msg.Temp,'TemperatureLabel')
+    .appendField(new Blockly.FieldDropdown(temperatures), 'Temperature');
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }
 };
+
+
+Blockly.Blocks.logic_LastExecute = {
+  // Comparison operator.
+  init: function() {
+    this.setColour(120);
+    this.setOutput(true, null);
+    this.appendValueInput(Blockly.Msg.logic_LastExecute)
+    .appendField("LastExecute:")
+    .appendField(new Blockly.FieldDropdown(this.OPERATORS), 'OP');
+    this.setInputsInline(true);
+    var thisBlock = this;
+    this.setTooltip(function() {
+      var op = thisBlock.getTitleValue('OP');
+      return thisBlock.TOOLTIPS[op];
+    });
+  }
+}; 
+
+
+Blockly.Blocks.logic_LastUpdate = {
+  init: function() {
+    this.setColour(120);
+    this.setOutput(true, null);
+    this.appendValueInput('A')
+    .appendField(Blockly.Msg.logic_LastUpdate);
+    this.appendValueInput('B')
+    .appendField(new Blockly.FieldDropdown(this.OPERATORS), 'OP');    
+    this.appendDummyInput();
+    this.setInputsInline(true);
+    this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
+  }
+};
+
 
 Blockly.Msg.logic_states_ON = "On";
 Blockly.Msg.logic_states_OFF = "Off";
@@ -411,6 +445,8 @@ Blockly.Msg.logic_states_Close= "Close";
 Blockly.Msg.logic_set = "Set";
 Blockly.Msg.logic_setlevel = "Level (%)";
 Blockly.Msg.logic_Execute = "Execute";
+Blockly.Msg.logic_LastExecute = "Last Execute";
+Blockly.Msg.logic_LastUpdate = "Last Update";
 Blockly.Msg.For = "For";
 Blockly.Msg.Minutes = "Minutes";
 Blockly.Msg.Time = "Time";
@@ -423,6 +459,18 @@ Blockly.Blocks.logic_timeofday.OPERATORS =
 ['<', 'LT'],
 ['\u2264', 'LTE'],
 ['>', 'GT'],
+['\u2265', 'GTE']];
+
+Blockly.Blocks.logic_LastUpdate.OPERATORS =
+[['=', 'EQ'],
+['\u2260', 'NEQ'],
+['<', 'LT'],
+['\u2264', 'LTE'],
+['>', 'GT'],
+['\u2265', 'GTE']];
+
+Blockly.Blocks.logic_LastExecute.OPERATORS =
+[['=', 'EQ'],
 ['\u2265', 'GTE']];
 
 Blockly.Blocks.logic_weekday.DAYS =

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 host = "localhost"
-usr = "thidom"
+usr = ""
 pwd = ""
-db = "thidom"
-
+db = ""
+idnotify = ""

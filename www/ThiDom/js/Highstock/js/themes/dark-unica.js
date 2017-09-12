@@ -5,7 +5,7 @@
 
 // Load the fonts
 Highcharts.createElement('link', {
-	href: 'http://fonts.googleapis.com/css?family=Lucida+Casual',
+	href: 'https://fonts.googleapis.com/css?family=Unica+One',
 	rel: 'stylesheet',
 	type: 'text/css'
 }, null, document.getElementsByTagName('head')[0]);
@@ -22,7 +22,7 @@ Highcharts.theme = {
 			]
 		},
 		style: {
-			fontFamily: "'Lucida Casual', sans-serif"
+			fontFamily: "'Unica One', sans-serif"
 		},
 		plotBorderColor: '#606063'
 	},
@@ -30,15 +30,13 @@ Highcharts.theme = {
 		style: {
 			color: '#E0E0E3',
 			textTransform: 'uppercase',
-			fontSize: '20px',
-			font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			fontSize: '20px'
 		}
 	},
 	subtitle: {
 		style: {
 			color: '#E0E0E3',
-			textTransform: 'uppercase',
-			font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+			textTransform: 'uppercase'
 		}
 	},
 	xAxis: {
@@ -53,8 +51,7 @@ Highcharts.theme = {
 		tickColor: '#707073',
 		title: {
 			style: {
-				color: '#A0A0A3',
-			  font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+				color: '#A0A0A3'
 
 			}
 		}
@@ -72,8 +69,7 @@ Highcharts.theme = {
 		tickWidth: 1,
 		title: {
 			style: {
-				color: '#A0A0A3',
-			  font: '16px Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif'
+				color: '#A0A0A3'
 			}
 		}
 	},

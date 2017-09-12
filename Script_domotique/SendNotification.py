@@ -4,14 +4,14 @@
 import datetime
 import urllib2
 import urllib
-
-idnotify = "thibault"
+import unicodedata
+import msql
 
 def SendNotification(value, id_notif="now"):
-    if idnotify != "":
+    if msql.idnotify != "":        
         url = "http://notify8702.freeheberg.org/"
         data = {}
-        data['id'] = idnotify
+        data['id'] = msql.idnotify
         data['notif'] = value
         if id_notif == "now":
             now = datetime.datetime.now()

@@ -1,75 +1,46 @@
-body {
-	color: #FFFFFF;	
-	/*background-image : url('../pic/login_background.jpg');*/
-	/*background: url(http://www.domosynergies.com/wp-content/uploads/exterieur-piscine-domotique-lyon-1-1603x1080.jpeg)no-repeat !important;*/
-	background: url('../pic/Background/bg_login.jpeg')no-repeat !important;
-	-webkit-background-size: cover!important;
-	-moz-background-size: cover!important;
-	-o-background-size: cover!important;
-	background-size: cover!important;
-}
-
-.ui-body-c/*, .ui-overlay-c*/{
-	/*background-image : url('../pic/login_background.jpg');*/
-	background: rgba(0, 0, 0, 0.62);
-	color : #FFFFFF;
-}
-
-div.numpad_key {
-	background-image: url('../pic/button_login.png');
-	width: 69px;
-	height: 57px;
-	margin: auto;
-	font-size:2em;
-	padding-top: 11px;
-}
-
-.section table {
+body:before{
+	content: "";
+	position: absolute;
+	background-image: url(../Core/pic/Background/bg_login.jpeg);
+	background-size: cover;	
+	z-index: -1;
+	-webkit-filter: blur(5px);
+	-moz-filter: blur(5px);
+	-o-filter: blur(5px);
+	-ms-filter: blur(5px);
+	filter: blur(5px);
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
 	height: 100%;
 	width: 100%;
 }
 
-.section table td {
+body {
+	background-image: url(../Core/pic/Background/bg_login.jpeg);
+	color: #FFFFFF;	
+	margin: 0;
+	padding-top: 0px; 
+}
+
+.form-signin
+{
+	margin: 100px auto;
+	max-width: 500px;
+	color: #5d5d5d;
+	background: rgba(242, 242, 242, 0.87);
+	border-radius: 1.1em;
+	padding: 26px;
+}
+
+.login-logo
+{
 	text-align: center;
+	padding: 0 0 10px;
 }
 
-td.numpad_result {
-	height: 55px;
-}
-div#numpad_result {
-	font-size: 2.5em;
-}
-
-.ui-input-text 
+#CompagnyPic
 {
-	background: transparent!important;
-	border-top: transparent!important;
-	border-right: transparent!important;
-	border-left: transparent!important;
-	border-radius :0 !important;
-}
-
-#user
-{
-	color:white !important;
-	background: url("../pic/icone-login.png") 0 no-repeat !important;
-	background-color : rgba(93, 96, 99, 0.51) !important;
-	padding-left:30px;
-}
-
-#pass_user
-{
-	color:white !important;
-	background: url("../pic/icone-cadena.png") 0 no-repeat !important;
-	background-color : rgba(93, 96, 99, 0.51) !important;
-	padding-left:30px;
-}
-
-#login
-{	
-	margin-top: 5%;
-}
-#header_logo_login
-{
-	margin-top: 3%;	
+	max-width: 30%;	
+	max-height: 30%;
 }

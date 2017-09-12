@@ -1,96 +1,72 @@
 <?php
-include_once('Security.php'); 
 
 header('Content-Type: text/event-stream');
- 
+
+require_once dirname(__FILE__) .'/Core/ListRequire.php';
 
 $lastdate ="";
-
 $Date = "";
-
+$Date_Etat = "";
+$Date_temp = "";
 $lastdate_temp="";
-
 $lastdate_Etat = "";
-
 $lastdate_Sun = "";
 
 while(1)
-
 {
+	/*$req = " SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat
+	FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
+	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
+	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')";*/
 
-	$req = execute_sql(" SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat
-					FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
-					LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
-					WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')"
+	$req = "SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat,  cmd_device.Nom as cmd_deviceNom, cmd_device.Value as cmd_deviceValue, cmd_device.Etat as cmd_deviceEtat, Lieux.Nom as LieuxNom, Type_Device.Widget_Id as Type_Device, Device.Configuration
+	FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
+	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
+	LEFT JOIN cmd_device   on cmd_device.date = (select max(date) from cmd_device)
+	LEFT join Device on Device.Id = cmd_device.Id
+	LEFT join Lieux on Lieux.Id = Device.Lieux_Id
+	LEFT join Type_Device on Device.Type_ID = Type_Device.Id
+	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')
+	group by update_temp, update_etat";
 
-				   ) ;
+	$result = db::execQuery($req,[]);
 
-
-
-	//While ($donnees = mysql_fetch_array($req,MYSQL_ASSOC)) 
-
-	While ($donnees = $req->fetch_array()) 
-
+	foreach($result as $row)  
 	{
+		$Date_temp = $row["update_temp"];
+		$Date_Etat = $row["update_etat"];
+		$cmd_deviceNom = $row["cmd_deviceNom"];
+		$cmd_deviceValue = $row["cmd_deviceValue"];
+		$cmd_deviceEtat = $row["cmd_deviceEtat"];
+		$LieuxNom = $row["LieuxNom"];
+		$Type_Device = $row["Type_Device"];
+		$Configuration =  $row["Configuration"];
 
-		$Date_temp = $donnees["update_temp"];
-		$Date_Etat = $donnees["update_etat"];
-		//$Date_Sun = $donnees["update_sun"];
+		$curDate = date(DATE_ISO8601);
+		$Notification = 0;
+		if (isset(json_decode($Configuration)->Notification))
+		{
+			$Notification = json_decode($Configuration)->{'Notification'};
+		}
 
-	}   
+		/*if($Date_temp != $lastdate_temp)
+		{
+			$info = "UpdateTempDetected";
+			$lastdate_temp = $Date_temp;
+			echo 'data:{"lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Type_Device.'", "Notification":"'.$Notification.'"}';
+			echo "\n\n";
+		}*/
 
- 
-
-	$curDate = date(DATE_ISO8601);
-
-	if($Date_temp != $lastdate_temp)
-
-	{
-
-		$info = "Temp";
-
-		$lastdate_temp = $Date_temp;
-
-		echo 'data:'.$info ."\n\n";
-
+		if($Date_Etat != $lastdate_Etat)
+		{
+			$info = "UpdateDeviceDetected";
+			$lastdate_Etat = $Date_Etat;
+			echo 'data:{"lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Type_Device.'", "Notification":"'.$Notification.'"}';
+			echo "\n\n";
+		}
 	}
-
-	
-
-	else if($Date_Etat != $lastdate_Etat)
-
-	{
-
-		$info = "Etat";
-
-		$lastdate_Etat = $Date_Etat;		
-
-		echo 'data:'.$info . "\n\n";
-
-	}
-
-	
-
-	/*else if($Date_Sun != $lastdate_Sun)
-
-	{
-
-		$info = "Conditions";
-
-		$lastdate_Sun = $Date_Sun;
-
-		echo 'data:'.$info . "\n\n";
-
-	}*/
-
-	
-
 	ob_flush();
-
 	flush();
-
 	sleep(1);
-
 }
-
 ?>
