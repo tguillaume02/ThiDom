@@ -304,13 +304,13 @@ while True:
                                             if ((Device_Etat != Etat) or (Device_Value != Value)):
                                                 val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Etat) + "\n"
 
-                                        if val != "":
-                                            print "############################"
-                                            print ScenarioName
-                                            print "----------------------------"
-                                            print sql_check_etat
-                                            print val
-                                            print "############################"
+                                        #if val != "":
+                                            #print "############################"
+                                            #print ScenarioName
+                                            #print "----------------------------"
+                                            #print sql_check_etat
+                                            #print val
+                                            #print "############################"
                                             written = ser.write(val.replace(' ', ''))
                                             BScenarioExecute = True
 
