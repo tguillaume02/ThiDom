@@ -547,7 +547,10 @@ sudo reboot
 
 	#deactivate 
 
+##########  ENVOYE DE MAIL LORS D'UNE CONNEXION SSH ############
 
+# sudo nano /etc/bash/bash.bashrc
+# echo 'Acces SSH en '`id | cut -d "(" -f2 | cut -d ")" -f1`' sur '`hostname`' le: ' `date` `who` | mail -s "NOTIFICATION - Connexion en "`id | cut -d '(' -f2 | cut -d ')' -f1`" via SSH depuis: `echo $SSH_CONNECTION | cut -d " " -f 1`" ICI_ADRESSE_MAIL
 
 
 #########SSH CONFIGURATION ###########
