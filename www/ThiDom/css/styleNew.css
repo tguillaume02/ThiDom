@@ -116,6 +116,12 @@ legend
   border-radius: 16.1px;
 }
 
+.Corner-bottom
+{
+  border-bottom-right-radius: 16.1px;
+  border-bottom-left-radius: 16.1px;
+}
+
 .table .table
 {
   background-color: transparent;
@@ -231,6 +237,29 @@ legend
   text-align: center;
 }
 
+input[type="color"]
+{
+  -webkit-appearance: none;
+  padding: 0;
+  border: none;
+  width: 64px;
+  height: 64px;
+}
+
+input[type="color"]::-webkit-color-swatch
+{
+  border: none;
+  border-radius: 64px;
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper
+{
+  border: none;
+  border-radius: 64px;
+  padding: 0;
+}
+
 .img_btn_device
 {
 	border:none;
@@ -271,6 +300,10 @@ legend
   border-radius: 1.1em;
 }
 
+.dataTable tr.even
+{
+  background: white;
+}
 
 .bar
 {
@@ -281,10 +314,10 @@ legend
 
 .circle
 {
-    font-size: 20px;
-    line-height: 61px !important;
-    text-shadow: 0px 1px #464a52 !important;
-    cursor: pointer; 
+  font-size: 20px;
+  line-height: 61px !important;
+  text-shadow: 0px 1px #464a52 !important;
+  cursor: pointer; 
 }
 
 .circle_on

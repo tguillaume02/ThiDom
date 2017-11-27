@@ -19,13 +19,13 @@ while(1)
 	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
 	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')";*/
 
-	$req = "SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat,  cmd_device.Nom as cmd_deviceNom, cmd_device.Value as cmd_deviceValue, cmd_device.Etat as cmd_deviceEtat, Lieux.Nom as LieuxNom, Type_Device.Widget_Id as Type_Device, Device.Configuration
+	$req = "SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat,  cmd_device.Nom as cmd_deviceNom, cmd_device.Value as cmd_deviceValue, cmd_device.Etat as cmd_deviceEtat, Lieux.Nom as LieuxNom, Module_Type.Id as Module_Type, Device.Configuration
 	FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
 	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
 	LEFT JOIN cmd_device   on cmd_device.date = (select max(date) from cmd_device)
 	LEFT join Device on Device.Id = cmd_device.Id
 	LEFT join Lieux on Lieux.Id = Device.Lieux_Id
-	LEFT join Type_Device on Device.Type_ID = Type_Device.Id
+	LEFT join Module_Type on Device.Module_Id = Module_Type.Id
 	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')
 	group by update_temp, update_etat";
 
@@ -39,7 +39,7 @@ while(1)
 		$cmd_deviceValue = $row["cmd_deviceValue"];
 		$cmd_deviceEtat = $row["cmd_deviceEtat"];
 		$LieuxNom = $row["LieuxNom"];
-		$Type_Device = $row["Type_Device"];
+		$Module_Type = $row["Module_Type"];
 		$Configuration =  $row["Configuration"];
 
 		$curDate = date(DATE_ISO8601);
@@ -61,7 +61,7 @@ while(1)
 		{
 			$info = "UpdateDeviceDetected";
 			$lastdate_Etat = $Date_Etat;
-			echo 'data:{"lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Type_Device.'", "Notification":"'.$Notification.'"}';
+			echo 'data:{"lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Module_Type.'", "Notification":"'.$Notification.'"}';
 			echo "\n\n";
 		}
 	}

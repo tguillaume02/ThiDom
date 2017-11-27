@@ -1,16 +1,17 @@
 <script type="text/javascript" src="js/jquery/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="js/qtip2/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/Bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/Popper/popper.min.js"></script>
+<script type="text/javascript" src="js/Bootstrap/V3/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/Bootstrap/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="js/Bootstrap/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="js/Bootstrap/bootbox.min.js"></script>
 
 <script type="text/javascript" src="js/jquery.base64.js"></script>
 <script type="text/javascript" src="js/DataTable/V1.10.16/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/DataTable/V1.10.16/dataTables.responsive.min.js"></script>
 <script type="text/javascript" src="js/DataTable/V1.10.16/dataTables.bootstrap.min.js"></script>
-<script type="text/javascript" src="js/DataTable/V1.10.16/responsive.bootstrap.min.js"></script>
+<script type="text/javascript" src="js/DataTable/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="js/DataTable/responsive.bootstrap.min.js"></script>
 <script type="text/javascript" src="js/Highstock/js/highstock.js"></script>
 <script type="text/javascript" src="js/Highstock/js/themes/gray.js"></script>
 
@@ -44,27 +45,7 @@
 		LoadMaison();
 		init_component();
 		getAutorisationNotification();
-		deviceEvent();
 		resizeMaison();
-
-		$("#list-type").change(function(event) {
-			$type = $("#list-type option:selected").val()
-			if ($type != "")
-			{
-				$("#list-device").prop('disabled', false);
-				$("#list-device").val('');
-				$('#list-device option').hide();
-				$('#list-device option').filter(function()
-				{
-					return $(this).data("Widget_Id") == $type
-				}).show();
-			}
-		});
-
-		/*$("#list-device").change(function(event) {
-			data= { "newDevice": "true" };
-			EditDevice(data);
-		})*/
 
 	});
 
@@ -86,16 +67,41 @@
 		resizeMaison();
 	});
 
-	function deviceEvent()
+	$.fn.serializeObject = function()
 	{
-		$("#Content-desktop .div_btn_device ").filter("[data-Type='Action']").bind("click", function (event, ui)
+	    var o = {};
+	    var a = this.serializeArray();
+	    $.each(a, function() {
+	        if (o[this.name] !== undefined) {
+	            if (!o[this.name].push) {
+	                o[this.name] = [o[this.name]];
+	            }
+	            o[this.name].push(this.value || '');
+	        } else {
+	            o[this.name] = this.value || '';
+	        }
+	    });
+	    return o;
+	};
+
+
+	function DeviceEvent()
+	{		
+		$("#Content-desktop .div_btn_device").filter("[data-Type='Action']").bind("click", function (event, ui)
 		{
 			var device_id = $(this).attr('device_id');
 			var device_role = $(this).attr('data-role');
 			var device_type = $(this).attr('data-type');
-			action_domo(device_id,device_role,device_type);
+			if ($(this).filter("[data-role='Color']"))
+			{
+				var value = $(this).children().val()
+			}
+			else
+			{
+				var value = $(this).val();
+			}
+			action_domo(device_id,device_role,device_type,value);
 		});
-
 
 		$("#Content-desktop .bar").filter("[data-Type='Action']").bind('change', function(){
 			var device_id = $(this).attr('device_id');
@@ -117,81 +123,147 @@
 
 	function HideLoading()
 	{
-        $('#Loading').show();
+    	$('#Loading').show();
 	}
 
 	function EditDevice(data = "")
 	{
 		$("#ModalEquipementConfiguration #ConfigurationDevice").html('')
+		$("#ModalEquipementCommande #CommandeDevice").html('')		
 		$("#ModalEquipementConfiguration").hide();
-		if (data.Type == "Plugins" || data.Type == "Webcam")
+		$("#ModalEquipementCommande").hide();		
+		//$("#modal-manage-device #list-device").prop('disabled', true);
+		//$("#modal-manage-device #list-type").prop('disabled', true);
+
+		if (data.ModuleName == "Plugins")
 		{
-			$("#modal-manage-device #ConfigurationDevice").load( "Core/plugins/"+data.Type+"/Config/"+data.Type+".php", {device_id: data.DeviceId},
+			linkConfig = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Config.php";
+			if (!data.newDevice)
+			{
+				linkCommande = "Core/plugins/Commande.php";
+			}
+			else
+			{				
+				linkCommande = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Commande.php";
+			}
+		}
+		else
+		{
+			linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Config.php";
+			linkCommande = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Commande.php";
+		}
+
+		$("#modal-manage-device #ConfigurationDevice").load(linkConfig , {device_id: data.DeviceId},
+ 			function() {
+ 				$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function()
+ 				{
+					if (!data.newDevice)
+					{						
+						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
+						$("#modal-manage-device #list-module-type").val(data.ModuleId).trigger('change')
+						$("#modal-manage-device #list-type").val(data.WidgetId).trigger('change');
+						$("#modal-manage-device #list-device").val(data.TypeId);
+						$("#modal-manage-device #device-name").val(data.DeviceNom);
+						$("#modal-manage-device #list-room").val(data.LieuxId);
+
+						$("#modal-manage-device #carte-id").val(data.CarteId);
+						$("#modal-manage-device #device-id").val(data.Cmd_Device_DeviceId);
+
+						$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
+						$("#modal-manage-device #cmddevice-visible").prop('checked',data.DeviceVisible);
+						$("#modal-manage-device #cmddevice-historiser").prop('checked',data.History);
+
+						if (data.Configuration != null)
+						{
+							var obj = $.parseJSON(data.Configuration);
+							$.each(obj,function(i,el)
+							{
+								$("#modal-manage-device #"+i).val(el);
+							});
+							$("#modal-manage-device #cmddevice-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
+						}
+					}
+					else
+					{
+					/*	if (data.ModuleName == "Plugins")
+						{
+							$("#ModalEquipementConfiguration #add-plugins").show();
+						}
+						*/
+					}
+
+					$('input:checkbox[name=Type]').bootstrapToggle();
+					$("#ModalEquipementCommande").show();
+					$("#ModalEquipementConfiguration").show();
+				});
+			})
+
+
+		/*if (data.WidgetId == "87")
+		{
+			$("#modal-manage-device #ConfigurationDevice").load( "Core/plugins/"+data.Type+"/Config/"+data.Type+"Config.php", {device_id: data.DeviceId},
 		 		function() {
 					if (!data.newDevice)
 					{
-						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
 						$("#modal-manage-device #list-device").prop('disabled', false);
-					}
-					
-					$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
-					$("#modal-manage-device #device-historiser").prop('checked',data.History);
-					if(data.Configuration != null)
-					{
-						var obj = $.parseJSON(data.Configuration);
-						$.each(obj,function(i,el)
+						$("#modal-manage-device #CommandeDevice").load( "Core/plugins/Commande.php", {device_id: data.DeviceId}, function()
 						{
-							$("#modal-manage-device #"+i).val(el);
+							$("#modal-manage-device #carte-id").val(data.CarteId);
+							$("#ModalEquipementCommande").show();
 						});
-						$("#modal-manage-device #device-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
+						$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
+						$("#modal-manage-device #device-historiser").prop('checked',data.History);
+					
+						if(data.Configuration != null)
+						{
+							var obj = $.parseJSON(data.Configuration);
+							$.each(obj,function(i,el)
+							{
+								$("#modal-manage-device #"+i).val(el);
+							});
+							$("#modal-manage-device #device-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
+						}
+						else
+						{
+
+						}
 					}
 					//$("#ModalEquipementGeneral").attr('class','col-xs-12 col-sm-6 col-md-6 col-lg-6');
 					//("#ModalEquipementConfiguration").attr('class','col-xs-12 col-sm-6 col-md-6 col-lg-6');
 					$("#ModalEquipementConfiguration").show();
 				});
-
-			$("#modal-manage-device #CommandeDevice").load( "Core/plugins/"+data.Type+"/Config/"+data.Type+"Commande.php", {device_id: data.DeviceId}, function() {
-					$("#modal-manage-device #carte-id").val(data.CarteId);
-					$("#modal-manage-device #list-room").val(data.LieuxId);
-					$("#modal-manage-device #list-device").val(data.TypeId);
-					$("#modal-manage-device #list-type").val(data.WidgetId);
-					$("#modal-manage-device #device-name").val(data.DeviceNom);
-				$("#ModalEquipementCommande").show();
-			});
 		}
 		else
 		{
 			cmd_device_id = (data.Cmd_device_Id != undefined) ? data.Cmd_device_Id : "null";
-			$("#modal-manage-device #CommandeDevice").load("Core/plugins/Default/Config/DefaultCommande.php", {cmd_device_id: cmd_device_id},
-				function() {
-					if (!data.newDevice)
-					{
-						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
-					 	//$("#modal-manage-device #CmdDeviceid").val(cmd_device_id);
-						$("#modal-manage-device #list-room").val(data.LieuxId);
-						$("#modal-manage-device #list-device").val(data.TypeId);
-						$("#modal-manage-device #list-type").val(data.WidgetId);
-						$("#modal-manage-device #device-name").val(data.DeviceNom);
-						$("#modal-manage-device #device-id").val(data.Cmd_Device_DeviceId);
-						$("#modal-manage-device #carte-id").val(data.CarteId);
-
-						$("#modal-manage-device #list-device").prop('disabled', false);
-
-						if (data.RAZ)
-						{
-							$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
+			$("#modal-manage-device #ConfigurationDevice").load("Core/plugins/Default/Config/DefaultConfig.php", {cmd_device_id: cmd_device_id},
+				function(){
+					$("#modal-manage-device #CommandeDevice").load("Core/plugins/Default/Config/DefaultCommande.php", {cmd_device_id: cmd_device_id},
+						function() {
+							$("#ModalEquipementCommande").show();
+							if (!data.newDevice)
+							{
+							 	//$("#modal-manage-device #CmdDeviceid").val(cmd_device_id);
+								if (data.RAZ)
+								{
+									$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
+								}
+								$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
+								$("#modal-manage-device #device-historiser").prop('checked',data.History);
+								$("#modal-manage-device #device-notification").prop('checked',JSON.parse(data.Configuration) ? parseInt(JSON.parse(data.Configuration).Notification) : 0);
+								$('input:checkbox[name=Type]').bootstrapToggle((data.Cmd_type == "Action")? "on" : "off");
+								$("#modal-manage-device #list-device").prop('disabled', false);
+							}
+							
+							$('input:checkbox[name=Type]').bootstrapToggle();
+							$("#ModalEquipementConfiguration").show();
+							//$("#ModalEquipementGeneral").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');
+							//$("#ModalEquipementConfiguration").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');
+							//$('input:radio[name=Type]').filter('[value='+data.Cmd_type+']').prop('checked', true);
 						}
-					}
-					$("#ModalEquipementCommande").show();
-					//$("#ModalEquipementGeneral").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');
-					//$("#ModalEquipementConfiguration").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');
-					$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
-					$("#modal-manage-device #device-historiser").prop('checked',data.History);
-					$("#modal-manage-device #device-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
-					//$('input:radio[name=Type]').filter('[value='+data.Cmd_type+']').prop('checked', true);
-					$('input:checkbox[name=Type]').bootstrapToggle((data.Cmd_type == "Action")? "on" : "off");
+					);
 			});
-		}
+		}*/
 		if ($("#modal-manage-device").data('bs.modal'))
 		{
 			if (!$("#modal-manage-device").data('bs.modal').isShown)
@@ -218,7 +290,7 @@
 	{
 		$("#modal-manage-user #user-id").val(data.Id);
 		$("#modal-manage-user #user-name").val(data.UserName);
-		$("#modal-manage-user #user-token").val(data.UserHash);
+		$("#modal-manage-user #user-hash").val(data.UserHash);
 		$("#modal-manage-user #user-password").val("***********");
 		$("#modal-manage-user").modal('toggle');
 	}
@@ -261,30 +333,37 @@
 	function DragAndDrop()
 	{
 		$( ".ContentLieux" ).sortable({
-			connectWith: $(this),
+			//connectWith: $(this),
+			connectWith: $(".ContentLieux"),
 			handle: ".Device_title",
 			update: function( event, ui )
 			{
            		$($($(this).parent()).find(".DeviceContent")).each( function(e) {
-      				console.log({li_id: $(this).prop('id'), div_id: $(this).find('div').prop('id')});
+      				console.log({device_Id: $(this).attr('device_id'), Lieux_Id: $(this).parent().parent().parent().attr("Lieux"),  Position: e});
               	})
        			resizeMaison();
            	}
 		});
 	}
 
-	function init_component() {
+	function init_component()
+	{
 		/*var Slider = $(".DeviceSlider");
 		Slider.slider();*/	
+		LoadModuleType();
 		LoadTypeWidget();
-		LoadTypeDevice();
-		LoadCalendar();
-		LoadScenario();
-		LoadEquipement();
-		LoadLieux();
-		LoadUser();
-		GetLog();
+		//LoadEquipement();
+		//LoadLieux();
+		//LoadCalendar();
+		LoadGraph();
+		//LoadScenario();
+		//LoadUser();
+		LoadEvent();
+		//GetLog();
+	};
 
+	function LoadEvent()
+	{
 		var tooltip = $('.tooltip');
 		tooltip.hide();
 
@@ -333,24 +412,34 @@
 				$("#scenario-active").prop('checked', false);	
 			}
 		});
-
-		$('#calendar-link').on('shown.bs.tab', function (e) {
+		
+		$('#calendar-link').on('shown.bs.tab', function (e)
+		{
 			LoadCalendar();
 		})
 
-		$('#scenario-link').on('shown.bs.tab', function (e) {
+		$('#graphic-link').on('shown.bs.tab', function (e)
+		{
+			resizeMaison();
+		})
+
+		$('#scenario-link').on('shown.bs.tab', function (e)
+		{
 			LoadScenario();
 		});
 
-		$('#manage-equipement-link').on('shown.bs.tab', function (e) {
+		$('#manage-equipement-link').on('shown.bs.tab', function (e)
+		{
 			LoadEquipement();
 		});
 
-		$('#manage-room-link').on('shown.bs.tab', function (e) {
+		$('#manage-room-link').on('shown.bs.tab', function (e)
+		{
 			LoadLieux();
 		});
 
-		$('#user-link').on('shown.bs.tab', function (e) {
+		$('#user-link').on('shown.bs.tab', function (e) 
+		{
 			LoadUser();
 		});
 
@@ -364,7 +453,6 @@
 		   $("#modalEnlargeLabel").html($(this).parents(".DeviceContent").text());
 		   $('#modalEnlarge').modal('show'); // modalEnlarge is the id attribute assigned to the bootstrap modal, then i use the show function
 		});
-
 
 		$("#scenario-save").click(function() {
 			SaveScenario();
@@ -382,8 +470,9 @@
 		$("#log-link").click(function(){
 			GetLog();
 		});
-	};
 
+		DeviceEvent();
+	}
 
 	function ShowLieux(LieuxId)
 	{
@@ -403,14 +492,14 @@
 	}
 
 
-	function ShowDevice(DeviceTypeId)
+	function ShowDevice(WidgetId)
 	{
 		$("#Content-desktop").attr('style', 'display: block !important;');
 		$("#Content-mobile").attr('style', 'display: none !important;');
 		$("#Content-desktop .DeviceContainer").hide();
 		$("#Content-desktop .DeviceContent").hide();
-		$("#Content-desktop .DeviceContent").filter('[typeid="'+DeviceTypeId+'"]').parentsUntil( "#Content-desktop" ).show();
-		$("#Content-desktop .DeviceContent").filter('[typeid="'+DeviceTypeId+'"]').show();
+		$("#Content-desktop .DeviceContent").filter('[WidgetId="'+WidgetId+'"]').parentsUntil( "#Content-desktop" ).show();
+		$("#Content-desktop .DeviceContent").filter('[WidgetId="'+WidgetId+'"]').show();
 		resizeMaison();
 	}
 

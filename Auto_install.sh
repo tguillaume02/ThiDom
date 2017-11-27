@@ -307,6 +307,7 @@ sudo mkdir /etc/fw
 sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/
 sudo cp /tmp/ThiDom/etc/init.d/* /etc/init.d/
 sudo cp /tmp/ThiDom/etc/rc.local /etc/
+sudo cp /tmp/ThiDom/etc/fail2ban/jail.local /etc/fail2ban/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
 
@@ -555,9 +556,9 @@ sudo reboot
 
 #########SSH CONFIGURATION ###########
 
-	#ssh-keygen -t dsa
+	#ssh-keygen -t rsa -b 4096
 
-	#La clé privée sera stockée dans ~/.ssh/id_dsa et la clé publique dans ~/.ssh/id_dsa.pub.
+	#La clé privée sera stockée dans ~/.ssh/id_rsa et la clé publique dans ~/.ssh/id_rsa.pub.
 
 	#Renommer le rsa_id.pub en authorized_keys 
 	#copier le rsa_id (la clé privée) sous Windows

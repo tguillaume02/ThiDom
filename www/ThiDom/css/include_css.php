@@ -1,17 +1,17 @@
 <link rel="stylesheet" href="css/jquery-ui/jquery-ui.css" />
 <link rel="stylesheet" href="css/qtip2/jquery.qtip.min.css" />
-<link rel="stylesheet" href="css/Bootstrap/bootstrap.min.css" />
+<link rel="stylesheet" href="css/Bootstrap/V3/bootstrap.min.css" />
 <link rel="stylesheet" href="css/Bootstrap/bootstrap-toggle.min.css" />
 <link rel="stylesheet" href="css/Bootstrap/bootstrap-datetimepicker.min.css" />
-<!--<link rel="stylesheet"  href="css/jquerymobile/jquery.mobile.min.css" />-->
+<link rel="stylesheet"  href="css/jquerymobile/jquery.mobile.min.css" />
 <link rel="stylesheet" href="css/font-awesome/4.5.0/font-awesome.min.css"/>
-<link rel="stylesheet" href="css/datatables/dataTables.jqueryui.min.css" />
 <link rel="stylesheet" href="css/datatables/dataTables.bootstrap.min.css" />
+<!--<link rel="stylesheet" href="css/datatables/jquery.dataTables.min.css" />-->
 <link rel="stylesheet" href="css/datatables/responsive.bootstrap.min.css" />
 <link rel="stylesheet" href="palette-couleur/css/farbtastic.css"/>
 <link rel="stylesheet" href="js/scheduler/dhtmlxscheduler.css"/>
 <link rel='stylesheet' href='font/sofia/stylesheet.css'>
-<link rel="stylesheet" href="css/styleNew.css?v1.01" />
+<link rel="stylesheet" href="css/styleNew.css?v1.02" />
 
 <!--<link rel="stylesheet"  href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/ui-darkness/jquery-ui.css" />
 <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.1/jquery.qtip.min.css" />

@@ -84,12 +84,12 @@
 				</div>
 				<div id="log" role="tabpanel" class="tab-pane ">
 					<div id="content-log"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12 ">
-						<table id="table-content-log" class="table table-striped dt-responsive nowrap dataTable">
+						<table id="table-content-log" class="table table-striped dt-responsive nowrap dataTable text-center">
 							<thead> 
 								<tr> 
-									<th>Date</th> 
-									<th>Action</th> 
-									<th>Message</th> 
+									<th class="text-center">Date</th> 
+									<th class="text-center">Action</th> 
+									<th class="text-center">Message</th> 
 								</tr> 
 							</thead>
 							<tbody id="tbody-content-log">
@@ -101,21 +101,21 @@
 				<div id="manage-equipement" role="tabpanel" class="tab-pane ">
 					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-device"><i class="fa fa-plus"></i></button>
 					<div id="content-manage-equipement"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
-						<table id="table-content-equipement" class="table table-striped dataTable dt-responsive nowrap display">
+						<table id="table-content-equipement" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
 								<tr>
-									<th>Appareil</th> 
-									<th>Pièce</th> 
-									<th>Type</th> 
-									<th>Visible</th> 
-									<th></th>
-									<th>Device</th> 
-									<th>Lieux</th> 
-									<th>Type</th> 
-									<th>Widget</th> 
-									<th>Carte</th> 
-									<th>Raz</th> 
-									<th>Configuration</th> 
+									<th class="text-center">Appareil</th> 
+									<th class="text-center">Pièce</th>
+									<th class="text-center">Visible</th> 
+									<th class="text-center"></th>
+									<th class="text-center">Device</th> 
+									<th class="text-center">Lieux</th> 
+									<th class="text-center">ModuleId</th> 
+									<th class="text-center">ModuleName</th>
+									<th class="text-center">Widget</th> 
+									<th class="text-center">Carte</th> 
+									<th class="text-center">Raz</th> 
+									<th class="text-center">Configuration</th> 
 								</tr> 
 							</thead>
 							<tbody id="tbody-content-equipement">
@@ -127,13 +127,13 @@
 				<div id="manage-room" role="tabpanel" class="tab-pane">
 					<button id="add-room" type="button" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-room"><i class="fa fa-plus"></i></button>
 					<div id="content-manage-room"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
-						<table id="table-content-room" class="table table-striped dataTable dt-responsive nowrap display">
+						<table id="table-content-room" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
 								<tr>
-									<th>ID</th> 
-									<th>Nom de la pièce</th>
-									<th>Position</th>
-									<th>Visible</th>
+									<th class="text-center">ID</th> 
+									<th class="text-center">Nom de la pièce</th>
+									<th class="text-center">Position</th>
+									<th class="text-center">Visible</th>
 									<th></th>
 								</tr> 
 							</thead>
@@ -190,15 +190,15 @@
 				</div>
 
 				<div id="user" role="tabpanel" class="tab-pane">
-					<button type="button" id="add-user" class="btn-add btn-success btn-md pull-right absolute"data-toggle="modal" data-target="#modal-manage-user"><i class="fa fa-plus"></i></button>
+					<button type="button" id="add-user" class="btn-add btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-user"><i class="fa fa-plus"></i></button>
 					<div id="content-user"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
-						<table id="table-content-user" class="table table-striped dataTable dt-responsive nowrap display">
+						<table id="table-content-user" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
 								<tr> 
-									<th>Id</th> 
-									<th>Token</th> 
-									<th>Nom</th> 
-									<th>Last connection</th> 
+									<th class="text-center">Id</th> 
+									<th class="text-center">Token</th> 
+									<th class="text-center">Nom</th> 
+									<th class="text-center">Last connection</th> 
 									<th></th> 
 								</tr> 
 							</thead>

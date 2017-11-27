@@ -4,7 +4,6 @@ import serial
 import MySQLdb
 import datetime
 import time
-import urllib
 import urllib2
 import sys
 import os
@@ -14,22 +13,14 @@ import ssl
 import re
 from SendNotification import SendNotification
 # from sendmail import sendmail
-#import ptvsd
-#ptvsd.enable_attach(secret="my_secret")
-
-#processus = 'mysqld'
-#s = os.popen('ps ax').read()
-
-#while processus not in s:
-    #n = 1
-    #time.sleep(0.2)
-    #s = os.popen('ps ax').read()
+# import ptvsd
+# ptvsd.enable_attach(secret="my_secret")
 
 urlnotify = "http://notify8702.freeheberg.org/"
-print "####### Scenario - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime())
+print("####### Scenario - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
 global BScenarioExecute
 
-##############  TRY CONNECT SQL ##################
+# #############  TRY CONNECT SQL ##################
 DbConnect = None
 while DbConnect is None:
     try:
@@ -39,16 +30,21 @@ while DbConnect is None:
 
     except MySQLdb.Error, e:
         DbConnect = None
-        #if msql.idnotify != "":
-        #    urllib.urlopen(urlnotify + "?id=" + msql.idnotify + "&notif=Erreur connection bdd Scenario&id_notif:-5")
-        #print "####### SCENARIO - Connect BDD #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error Scenario %d: %s" % (e.args[0], e.args[1])
-        #sys.exit(1)
+#        if msql.idnotify != "":
+#            urllib.urlopen(urlnotify + "?id=" + msql.idnotify + "&notif=Erreur connection bdd Scenario&id_notif:-5")
+#        print "####### SCENARIO - Connect BDD #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error Scenario %d: %s" % (e.args[0], e.args[1])
+#        sys.exit(1)
 
 context = ssl._create_unverified_context()
 
-ser = serial.Serial(port='/dev/ttyUSB1', baudrate=115200)
 
-############### REPLACE STRING TO SQL DATA #########################
+def SendDataToUsb(data):
+    if 'ser' not in locals() or not ser.is_open:
+        ser = serial.Serial(port='/dev/ttyUSB1', baudrate=115200)
+    ser.write(data)
+
+
+# ############## REPLACE STRING TO SQL DATA #########################
 def ReplaceStrToSQL(Str, row_id, ScenarioID):
     Str = Str.replace("timeofday", "(HOUR(now())*60+MINUTE(now())+SECOND(now())) ")\
         .replace("timeofsun", "(select DATE_FORMAT(now(), '%H:%i')) ")\
@@ -83,6 +79,7 @@ def ReplaceStrToSQL(Str, row_id, ScenarioID):
 
     return Str
 
+
 def isTimeFormat(input):
     try:
         time.strptime(input, '%H:%M:%S')
@@ -90,11 +87,13 @@ def isTimeFormat(input):
     except ValueError:
         return False
 
+
 def get_sec(time_str):
     h, m, s = time_str.split(':')
     return int(h) * 3600 + int(m) * 60 + int(s)
 
-################ GENERATE SQL ######################
+
+# ############### GENERATE SQL ######################
 def GenerateSQL():
     global Conditions
     global Conditions_SQL
@@ -118,7 +117,8 @@ def GenerateSQL():
     if conditions_Where != "":
         conditions_Where = "where " + conditions_Where
 
-############### GET ACTION COMMAND OF SCENARIO ##########
+
+# ############## GET ACTION COMMAND OF SCENARIO ##########
 def GetActionCommand(index):
     global ActionSplitted
     global ID
@@ -143,7 +143,7 @@ while True:
         Actions_Device = ""
         BLog = True
 
-        #############   LISTE LES SCENARIO ##############
+#        #############   LISTE LES SCENARIO ##############
 
         sql_Liste_Scenario = "SELECT Scenario.ID as ScenarioID, XmlID,Conditions,Actions, SequenceNo,Scenario_Xml.Name, Scenario_Xml.status,Scenario.NextTimeEvents,Scenario.NextActionEvents FROM Scenario  inner join Scenario_Xml on Scenario_Xml.ID = Scenario.XmlID where status = 1  and (NextActionEvents is NULL or NextActionEvents >= Now()) ORDER BY XmlID, SequenceNo"
         cursor.execute(sql_Liste_Scenario)
@@ -167,7 +167,7 @@ while True:
             GenerateSQL()
             Actions = Actions.split(",")
 
-            ############ SI NOUVEAU SCENARIO #################
+#            ############ SI NOUVEAU SCENARIO #################
             if XmlID != Old_XmlID:
                 ID = ""
                 Etat = ""
@@ -184,7 +184,7 @@ while True:
                             conditions_Where = re.sub(r';getdata[[](\d+)[]]', ' '+Dataconditions_Where, conditions_Where)
                     sql_check_etat = "SELECT COUNT(*) as result from cmd_device " + Conditions_SQL + " " + conditions_Where + " ;"
                     cursor.execute(sql_check_etat)
-                    ############### EXECUTION DU SCENARIO SI RESULTAT DE LA REQUETE
+#                    ############### EXECUTION DU SCENARIO SI RESULTAT DE LA REQUETE
                     bTimer = False
                     if int(cursor.fetchone()[0]) > 0:
                         for row_Action in range(len(Actions)):
@@ -204,20 +204,20 @@ while True:
                                 if ID == 'SendNotification':
                                     notif_value = Value_with_space.replace('$', '')  # Actions_Device.replace('$','')
                                     if "getdata" in notif_value:
-                                        sql_getdata = re.sub(r'[^*].*;getdata[[](\d+)[]]*[^*].*',r'SELECT Value from cmd_device where ID = \1', notif_value)
+#                                        sql_getdata = re.sub(r'[^*].*;getdata[[](\d+)[]]*[^*].*',r'SELECT Value from cmd_device where ID = \1', notif_value)
                                         DeviceID = ""
                                         cursor.execute(sql_getdata)
                                         result_sql_getdata = cursor.fetchone()
                                         DataValue = result_sql_getdata[0]
-                                        notif_value = re.sub(r';getdata[[](\d+)[]]',' '+DataValue, notif_value)
+#                                        notif_value = re.sub(r';getdata[[](\d+)[]]',' '+DataValue, notif_value)
                                     # for i in range(0, len(notif_data)):
                                         # if ']' in notif_data[i]:
-                                            # dataID = notif_data[i].split(']')[0]
-                                            # sql_getdata = "SELECT Value from cmd_device where ID = " + dataID
-                                            # cursor.execute(sql_getdata)
-                                            # result_sql_getdata = cursor.fetchone()
-                                            # DataValue = result_sql_getdata[0]
-                                            # notif_value = notif_value.replace(";getdata[" + dataID + "]", " " + DataValue + " ")
+#                                            # dataID = notif_data[i].split(']')[0]
+#                                            # sql_getdata = "SELECT Value from cmd_device where ID = " + dataID
+#                                            # cursor.execute(sql_getdata)
+#                                            # result_sql_getdata = cursor.fetchone()
+#                                            # DataValue = result_sql_getdata[0]
+#                                            # notif_value = notif_value.replace(";getdata[" + dataID + "]", " " + DataValue + " ")
                                     SendNotification(notif_value, XmlID)
                                     BScenarioExecute = True
                                 elif ID == 'SendEmail':
@@ -234,26 +234,66 @@ while True:
                                     BScenarioExecute = True
                                     # sendmail(receiptmail, subject, message)
                                 else:
-                                    sql_Type_device = """SELECT Type_Device.Type, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value,
-                                                            Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request
+                                    sql_Type_device = """SELECT Module_Type.ModuleName, widget.Name, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value                   ,Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request
                                                             FROM cmd_device
                                                             INNER JOIN Device on Device.ID = cmd_device.Device_ID
-                                                            INNER JOIN Type_Device ON Device.Type_ID  = Type_Device.ID
-                                                            LEFT JOIN cmd_device as Sensor_attached on Sensor_attached.ID = cmd_device.sensor_attachID
+                                                            INNER JOIN Module_Type ON Device.Module_Id  = Module_Type.ID
+                                                            INNER JOIN widget on widget.Id = cmd_device.Widget_Id
+                                                            LEFT JOIN cmd_device as Sensor_attached on Sensor_attached.Id = cmd_device.sensor_attachId
                                                             WHERE cmd_device.ID =""" + str(ID) + ";"
                                     cursor.execute(sql_Type_device)
                                     result_sql_Type_device = cursor.fetchone()
-                                    Type_Device = result_sql_Type_device[0]
-                                    CarteID = result_sql_Type_device[1]
-                                    DeviceID = result_sql_Type_device[2]
-                                    Device_Etat = result_sql_Type_device[3]
-                                    Device_Value = result_sql_Type_device[4]
-                                    value_sensor_attached = result_sql_Type_device[5]
-                                    Last_Action_Date = result_sql_Type_device[6]
-                                    ID = result_sql_Type_device[7]
-                                    Request = result_sql_Type_device[8]
+                                    Type_Module = result_sql_Type_device[0]
+                                    Type_widget = result_sql_Type_device[1]
+                                    CarteID = result_sql_Type_device[2]
+                                    DeviceID = result_sql_Type_device[3]
+                                    Device_Etat = result_sql_Type_device[4]
+                                    Device_Value = result_sql_Type_device[5]
+                                    value_sensor_attached = result_sql_Type_device[6]
+                                    Last_Action_Date = result_sql_Type_device[7]
+                                    ID = result_sql_Type_device[8]
+                                    Request = result_sql_Type_device[9]
 
-                                    if Type_Device == "Plugins":
+                                    if Type_Module == "NRF24":
+                                        val = ""
+                                        if (Etat != '' and Value == ''):
+                                            if (Device_Etat != Etat):
+                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Device_Value) + ":" + str(Etat) + "\n"
+                                        elif (Etat == '' and Value != ''):
+                                            if (Device_Value != Value):
+                                                if Type_widget == "Thermostat":
+                                                    if float(value_sensor_attached) < float(Value):
+                                                        Device_Etat = 1
+                                                    else:
+                                                        Device_Etat = 0
+                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Device_Etat) + "\n"
+                                        elif (Etat != '' and Value != ''):
+                                            if ((Device_Etat != Etat) or (Device_Value != Value)):
+                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Etat) + "\n"
+
+#                                        #if val != "":
+#                                            #print "############################"
+#                                            #print ScenarioName
+#                                            #print "----------------------------"
+#                                            #print sql_check_etat
+#                                            #print val
+#                                            #print "############################"
+                                            SendDataToUsb(val.replace(' ', ''))
+                                            BScenarioExecute = True
+
+                                        ############  ACTION SI SCENARIO AVEC ACTION FOR XX MINUTES ##########################
+                                        # if bTimer == True:
+                                        #   Last_Action_Date = datetime.datetime.strptime(Last_Action_Date,"%Y-%m-%d %H:%M:%S")
+                                        #   Next_Action_Date = Last_Action_Date + datetime.timedelta(minutes = tbtimer[1])
+                                        #   if datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"%Y-%m-%d %H:%M:%S") >= Next_Action_Date:
+                                        #       if Type_Device == "Chauffage":
+                                        #           c = str(int(not Etat_Value))
+                                        #       else:
+                                        #           BScenarioExecute = True
+                                        #           val = str(CarteID) + "/" + str(DeviceID) + "@" + str(int(not Etat_Value)) + ":" + str(int(not Etat_Value)) + "\n"
+                                        #           print val
+                                        #           #written = ser.write(val.replace(' ',''))
+                                    else:
                                         ConditionsId = re.sub(r'&&.*', '', re.sub(r'.*DeviceId', '', Conditions)).replace("=", "").replace(" ", "")
                                         # ConditionsId = Conditions.replace("device[","").replace("]","").split("==")[0]
                                         sql_Date_Conditions = "Select Date from cmd_device where ID = " + ConditionsId
@@ -287,45 +327,6 @@ while True:
                                                 except urllib2.HTTPError as e:
                                                     print "####### SCENARIO - Exec URL #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error Scenario Exec url " + e.code + "//" + e.read()
                                                 BScenarioExecute = True
-                                    else:
-                                        val = ""
-                                        if (Etat != '' and Value == ''):
-                                            if (Device_Etat != Etat):
-                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Device_Value) + ":" + str(Etat) + "\n"
-                                        elif (Etat == '' and Value != ''):
-                                            if (Device_Value != Value):
-                                                if Type_Device == "Chauffage":
-                                                    if float(value_sensor_attached) < float(Value):
-                                                        Device_Etat = 1
-                                                    else:
-                                                        Device_Etat = 0
-                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Device_Etat) + "\n"
-                                        elif (Etat != '' and Value != ''):
-                                            if ((Device_Etat != Etat) or (Device_Value != Value)):
-                                                val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Etat) + "\n"
-
-                                        #if val != "":
-                                            #print "############################"
-                                            #print ScenarioName
-                                            #print "----------------------------"
-                                            #print sql_check_etat
-                                            #print val
-                                            #print "############################"
-                                            written = ser.write(val.replace(' ', ''))
-                                            BScenarioExecute = True
-
-                                        ############  ACTION SI SCENARIO AVEC ACTION FOR XX MINUTES ##########################
-                                        # if bTimer == True:
-                                        #   Last_Action_Date = datetime.datetime.strptime(Last_Action_Date,"%Y-%m-%d %H:%M:%S")
-                                        #   Next_Action_Date = Last_Action_Date + datetime.timedelta(minutes = tbtimer[1])
-                                        #   if datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"%Y-%m-%d %H:%M:%S") >= Next_Action_Date:
-                                        #       if Type_Device == "Chauffage":
-                                        #           c = str(int(not Etat_Value))
-                                        #       else:
-                                        #           BScenarioExecute = True
-                                        #           val = str(CarteID) + "/" + str(DeviceID) + "@" + str(int(not Etat_Value)) + ":" + str(int(not Etat_Value)) + "\n"
-                                        #           print val
-                                        #           #written = ser.write(val.replace(' ',''))
                                 if BScenarioExecute is True:
                                     now = datetime.datetime.now()
                                     sNow = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -346,7 +347,7 @@ while True:
                                             pass
                                 time.sleep(1)
                                 # print val
-            ############  SI MEME SCENARIO ###############
+#            ############  SI MEME SCENARIO ###############
             elif XmlID == Old_XmlID:
                 print "Old_XmlID"
         DbConnect.commit()
