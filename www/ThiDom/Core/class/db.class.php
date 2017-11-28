@@ -4,9 +4,9 @@ class db
 	private
 	static $_instance,
 	$_host =  "localhost",
-	$_user = "",
-	$_pwd = "",
-	$_bdd = "",
+	$_user = "{{usersql}}",
+	$_pwd = "{{pwdsql}}",
+	$_bdd = "{{bddsql}}",
 	$_connection;
 	
 

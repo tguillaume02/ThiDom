@@ -270,22 +270,21 @@ echo "********************************************************"
 
 cd "${webserver_home}/ThiDom/Core/class/"
 
-sed -i 's!^\t\t$_user =.*!\t\t$_user = "thidom";!' db.class.php
-sed -i 's!^\t\t$_pwd =.*!\t\t$_pwd = "'${bdd_password}'";!' db.class.php 
-sed -i 's!^\t\t$_bdd =.*!\t\t$_bdd = "thidom";!' db.class.php
+sed -i 's/{{usersql}}/thidom/' db.class.php
+sed -i 's/{{pwdsql}}/'${bdd_password}'/' db.class.php 
+sed -i 's/{{bddsql}}/thidom/' db.class.php
 
 # chown www-data:www-data connect.php 
 
-sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' $HOME/Script_domotique/msql.py
-sed -i 's!^usr =.*!usr = "thidom";!' $HOME/Script_domotique/msql.py
-sed -i 's!^db =.*!db = "thidom";!' $HOME/Script_domotique/msql.py
+sed -i 's/{{pwdsql}}/'${bdd_password}'/' $HOME/Script_domotique/msql.py
+sed -i 's/{{usersql}}/thidom/' $HOME/Script_domotique/msql.py
+sed -i 's/{{bddsql}}/thidom/' $HOME/Script_domotique/msql.py
 
 echo ""
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 
-sed -i 's!^idnotify =.*!idnotify = "'${idnotify}'";!' $HOME/Script_domotique/msql.py
-
+sed -i 's/{{idnotify}}/'${idnotify}'/' $HOME/Script_domotique/msql.py
 
 echo "********************************************************"
 echo "${msg_setup_apache}"

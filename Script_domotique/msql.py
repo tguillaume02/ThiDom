@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 host = "localhost"
-usr = ""
-pwd = ""
-db = ""
-idnotify = ""
+usr = "{{usersql}}"
+pwd = "{{pwdsql}}"
+db = "{{bddsql}}"
+idnotify = "{{idnotify}}"
