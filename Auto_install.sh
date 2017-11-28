@@ -1,6 +1,9 @@
 #!/bin/bash
 # EXPAND FILESYSTEM BEFORE
 
+webserver=${1-apache}
+ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
+
 init_msg()
 {
 	msg_yesno="oui / non : "
@@ -10,7 +13,7 @@ init_msg()
 	msg_answer_yesno="Répondez oui ou non"
 	msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
 	msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
-	msg_warning_install_thidom="Attention : ceci écrasera la configuration par défaut de ${ws_upname} si elle existe !"
+	msg_warning_install_thidom="Attention : cela écrasera la configuration par défaut de ${ws_upname} si elle existe !"
 	msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
 	msg_install_deps="*             Installation des dépendances             *"
 	msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de MySql) ?"
@@ -132,13 +135,10 @@ if [ $(id -u) != 0 ] ; then
 	exit 1
 fi
 
-webserver=${1-apache}
-ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
-
 echo "${msg_question_install_thidom}"
 echo "${msg_warning_install_thidom}"
 webserver_home="/var/www"
-[ -d "${webserver_home}/ThiDom/" ]  && echo "${msg_warning_overwrite_rhidom}"
+[ -d "${webserver_home}/ThiDom/" ]  && echo "${msg_warning_overwrite_thidom}"
 while true ; do
 	echo -n "${msg_yesno}"
 	read ANSWER < /dev/tty
