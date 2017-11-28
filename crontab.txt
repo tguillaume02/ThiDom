@@ -37,3 +37,4 @@ MAILTO=""
 0 0,12 * * * /home/pi/Script\ crontab/backup_bdd.sh
 
 0 */1 * * * sudo ntpdate pool.ntp.org
+
