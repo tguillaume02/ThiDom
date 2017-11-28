@@ -32,11 +32,11 @@ init_msg()
 	msg_install_sql="*                Installation de la base de données    *"
 	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
 	reboot="Votre machine va maintenant redémarrer"
-	reboot1 = "Votre machine va redémarrer dans 1 seconde ";
-	reboot2 = "Votre machine va redémarrer dans 2 secondes ";
-	reboot3 = "Votre machine va redémarrer dans 3 secondes ";
-	reboot4 = "Votre machine va redémarrer dans 4 secondes ";
-	reboot5 = "Votre machine va redémarrer dans 5 secondes ";
+	reboot1 = "Votre machine va redémarrer dans 1 seconde "
+	reboot2 = "Votre machine va redémarrer dans 2 secondes "
+	reboot3 = "Votre machine va redémarrer dans 3 secondes "
+	reboot4 = "Votre machine va redémarrer dans 4 secondes "
+	reboot5 = "Votre machine va redémarrer dans 5 secondes "
 }
 
 install_dependance() {
@@ -77,6 +77,8 @@ install_dependance() {
 		#done
 	#fi
 	
+	sudo service mysql start
+	
 	sudo apt-get autoremove -y 
 	sudo apt-get autoclean -y 
 	sudo apt-get update -y 
@@ -84,7 +86,6 @@ install_dependance() {
 	sudo apt-get dist-upgrade -y
 	sudo rpi-update
 
-	sudo service mysql start
 }
 
 install_php() {
@@ -273,7 +274,7 @@ sed -i 's!^\t\t$_user =.*!\t\t$_user = "thidom";!' db.class.php
 sed -i 's!^\t\t$_pwd =.*!\t\t$_pwd = "'${bdd_password}'";!' db.class.php 
 sed -i 's!^\t\t$_bdd =.*!\t\t$_bdd = "thidom";!' db.class.php
 
-chown www-data:www-data connect.php 
+# chown www-data:www-data connect.php 
 
 sed -i 's!^pwd =.*!pwd = "'${bdd_password}'";!' $HOME/Script_domotique/msql.py
 sed -i 's!^usr =.*!usr = "thidom";!' $HOME/Script_domotique/msql.py
