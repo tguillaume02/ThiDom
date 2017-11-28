@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="css/Bootstrap/V3/bootstrap.min.css" />
 <link rel="stylesheet" href="css/Bootstrap/bootstrap-toggle.min.css" />
 <link rel="stylesheet" href="css/Bootstrap/bootstrap-datetimepicker.min.css" />
-<link rel="stylesheet"  href="css/jquerymobile/jquery.mobile.min.css" />
+<!--<link rel="stylesheet"  href="css/jquerymobile/jquery.mobile.min.css" />-->
 <link rel="stylesheet" href="css/font-awesome/4.5.0/font-awesome.min.css"/>
 <link rel="stylesheet" href="css/datatables/dataTables.bootstrap.min.css" />
 <!--<link rel="stylesheet" href="css/datatables/jquery.dataTables.min.css" />-->
