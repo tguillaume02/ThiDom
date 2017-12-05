@@ -3,12 +3,14 @@
 
 webserver=${1-apache}
 ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
+VERT="\\033[1;32m"
+NORMAL="\\033[0;39m"
 
 init_msg()
 {
-	msg_yesno="oui / non : "
-	msg_yes="oui"
-	msg_no="non"
+	msg_yesno="Y / N : "
+	msg_yes="Y"
+	msg_no="N"
 	msg_cancel_install="Annulation de l'installation"
 	msg_answer_yesno="Répondez oui ou non"
 	msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
@@ -16,7 +18,7 @@ init_msg()
 	msg_warning_install_thidom="Attention : cela écrasera la configuration par défaut de ${ws_upname} si elle existe !"
 	msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
 	msg_install_deps="*             Installation des dépendances             *"
-	msg_passwd_mysql="Quel mot de passe venez vous de taper (mot de passe root de MySql) ?"
+	msg_passwd_mysql="Saisir le mot de passe que vous souhaitez attribuer à l'utilisateur SQL root ?"
 	msg_confirm_passwd_mysql="Confirmez vous que le mot de passe est :"
 	msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
 	msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
@@ -124,9 +126,9 @@ install_php() {
 
 init_msg
 
-echo "****************************************************************"
+echo "${VERT}****************************************************************"
 echo "${msg_installer_welcome}"
-echo "****************************************************************"
+echo "****************************************************************${NORMAL}"
 
 # Check for root priviledges
 
@@ -145,20 +147,20 @@ while true ; do
 	read ANSWER < /dev/tty
 	case $ANSWER in
 		${msg_yes})
-break
-;;
-${msg_no})
-echo "${msg_cancel_install}"
-exit 1
-;;
-esac
+			break
+			;;
+		${msg_no})
+			echo "${msg_cancel_install}"
+			exit 1
+			;;
+	esac
 echo "${msg_answer_yesno}"
 done
 
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_install_deps}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 install_dependance
 
@@ -172,13 +174,13 @@ while true ; do
 		read ANSWER < /dev/tty
 		case $ANSWER in
 			${msg_yes})
-break
-;;
-${msg_no})
-echo "${msg_passwd_mysql}"
-break
-;;
-esac
+				mysqladmin -u root password ${MySQL_root}
+				;;
+			${msg_no})
+				echo "${msg_passwd_mysql}"
+				break
+				;;
+		esac
 echo "${msg_answer_yesno}"
 done    
 if [ "${ANSWER}" = "${msg_yes}" ] ; then
@@ -196,18 +198,18 @@ if [ "${ANSWER}" = "${msg_yes}" ] ; then
     fi
 done
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_setup_dirs_and_privs}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 sudo mkdir -p "${webserver_home}"
 cd "${webserver_home}"
 sudo chown www-data:www-data -R "${webserver_home}"
 sudo usermod -a -G dialout www-data
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_copy_thidom_files}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 #mkdir /tmp/ThiDom
 #cd /tmp/ThiDom
@@ -252,9 +254,9 @@ sudo chown  $USER:$USER -R $HOME/Script\ crontab/
 chmod 775 -R "${webserver_home}"
 chown -R www-data:www-data "${webserver_home}"
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_config_db}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 bdd_password=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
 echo "DROP USER 'thidom'@'localhost'" | mysql -uroot -p"${MySQL_root}"
@@ -264,9 +266,9 @@ echo "CREATE DATABASE thidom;" | mysql -uroot -p"${MySQL_root}"
 echo "GRANT ALL PRIVILEGES ON thidom.* TO 'thidom'@'localhost';" | mysql -uroot -p"${MySQL_root}"
 
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_install_thidom}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 cd "${webserver_home}/ThiDom/Core/class/"
 
@@ -286,9 +288,9 @@ read idnotify < /dev/tty
 
 sed -i 's/{{idnotify}}/'${idnotify}'/' $HOME/Script_domotique/msql.py
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_setup_apache}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 sudo cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
 sudo cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
@@ -312,9 +314,9 @@ sudo cp /tmp/ThiDom/etc/fail2ban/jail.local /etc/fail2ban/
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
 
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_optimize_webserver_cache_opcache}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 yes '' | pecl install -fs zendopcache-7.0.3
 #for i in fpm cli ; do
@@ -331,18 +333,18 @@ done
 #done
 
 
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_install_sql}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 
 sudo cp /etc/resolvconf/resolv.conf.d/original /etc/resolvconf/resolv.conf.d/base
 
 rm -rf /tmp/ThiDom
-echo "********************************************************"
+echo "${VERT}********************************************************"
 echo "${msg_install_complete}"
-echo "********************************************************"
+echo "********************************************************${NORMAL}"
 
 IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
 if  [ -z $IP ]; then
