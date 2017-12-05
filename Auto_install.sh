@@ -23,6 +23,7 @@ init_msg()
 	msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
 	msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
 	msg_copy_thidom_files="*             Copie des fichiers de Thidom             *"
+	msg_config_db = "*             Configuration de la base de donnée             *"
 	msg_unable_to_download_file="Impossible de télécharger le fichier"
 	msg_install_thidom="*                Installation de Thidom                *"
 	msg_setup_apache="*         Paramétrage de la configuration apache       *"
@@ -41,13 +42,28 @@ init_msg()
 	reboot5 = "Votre machine va redémarrer dans 5 secondes "
 }
 
-install_dependance() {
-	sudo apt-get dist-upgrade -y
+install_upgrade()
+{
+	echo "${VERT}"
+	echo "********************************************************"
+	echo "Demarrage des mises à jour"
+	echo "********************************************************"
+	echo "${NORMAL}"
+
 	sudo apt-get update -y
 	sudo apt-get upgrade -y
+	sudo apt-get dist-upgrade -y	
+}
+
+install_dependance() {
+	echo "${VERT}"
+	echo "********************************************************"
+	echo "${msg_install_deps}"
+	echo "********************************************************"
+	echo "${NORMAL}"
+
 	sudo apt-get install resolvconf -y
 	sudo apt-get install curl -y
-	install_php
 	sudo apt-get install apache2 -y
 	sudo apt-get install apache2-utils -y
 	sudo apt-get install libexpat1 -y
@@ -78,16 +94,13 @@ install_dependance() {
 			#fi
 		#done
 	#fi
-	
-	sudo service mysql start
-	
+		
 	sudo apt-get autoremove -y 
 	sudo apt-get autoclean -y 
 	sudo apt-get update -y 
 	sudo apt-get upgrade -y
 	sudo apt-get dist-upgrade -y
 	sudo rpi-update
-
 }
 
 install_php() {
@@ -157,11 +170,7 @@ while true ; do
 echo "${msg_answer_yesno}"
 done
 
-
-echo "${VERT}********************************************************"
-echo "${msg_install_deps}"
-echo "********************************************************${NORMAL}"
-
+install_upgrade
 install_dependance
 
 echo  "**********************************************************************"
@@ -175,18 +184,16 @@ while true ; do
 		case $ANSWER in
 			${msg_yes})
 				mysqladmin -u root password ${MySQL_root}
-				break
 				;;
 			${msg_no})
 				echo "${msg_passwd_mysql}"
-				break
 				;;
 		esac
 echo "${msg_answer_yesno}"
 done    
 if [ "${ANSWER}" = "${msg_yes}" ] ; then
         # Test access immediately
-        # to ensure that the provided password is valid
+        # to ensure that the provided password is valide
         echo "show databases;" | mysql -uroot -p"${MySQL_root}"
         if [ $? -eq 0 ] ; then
             # good password
