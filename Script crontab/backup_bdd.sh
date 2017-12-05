@@ -2,10 +2,11 @@
 
 ########## SUPPRIME LES BACKUPS SUPERIEUR à 3 JOURS  ###############
 
-find /home/pi/backup_bdd_* -mtime +2 -exec rm -rf {} \;
+#NOW=$(date +"%d_%m_%Y")
+#FILE="/home/pi/backup_bdd_$NOW.sql"
 
+#mysqldump thidom > $FILE
 
-NOW=$(date +"%d_%m_%Y")
-FILE="/home/pi/backup_bdd_$NOW.sql"
+#find /home/pi/backup_bdd_* -mtime +2 -exec rm -rf {} \;
 
-mysqldump thidom > $FILE
+python /home/pi/Script_domotique/backup_bdd.py  >> /home/pi/Script\ crontab/debug/console.log 2>&1 &
