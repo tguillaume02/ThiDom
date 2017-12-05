@@ -3,8 +3,8 @@
 
 webserver=${1-apache}
 ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
-VERT="\\033[1;32m"
-NORMAL="\\033[0;39m"
+VERT="\033[32m"
+NORMAL="\033[0m"
 
 init_msg()
 {
@@ -12,7 +12,7 @@ init_msg()
 	msg_yes="Y"
 	msg_no="N"
 	msg_cancel_install="Annulation de l'installation"
-	msg_answer_yesno="Répondez oui ou non"
+	msg_answer_yesno="Répondez Y ou N"
 	msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
 	msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
 	msg_warning_install_thidom="Attention : cela écrasera la configuration par défaut de ${ws_upname} si elle existe !"
@@ -175,6 +175,7 @@ while true ; do
 		case $ANSWER in
 			${msg_yes})
 				mysqladmin -u root password ${MySQL_root}
+				break
 				;;
 			${msg_no})
 				echo "${msg_passwd_mysql}"
