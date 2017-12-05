@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 # EXPAND FILESYSTEM BEFORE
 
 webserver=${1-apache}
 ws_upname="$(echo ${webserver} | tr 'a-z' 'A-Z')"
+
 VERT="\033[32m"
 NORMAL="\033[0m"
 
@@ -34,12 +35,12 @@ init_msg()
 	msg_login_info3="Votre mot de passe par défault est: "
 	msg_install_sql="*                Installation de la base de données    *"
 	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
-	reboot="Votre machine va maintenant redémarrer"
-	reboot1 = "Votre machine va redémarrer dans 1 seconde "
-	reboot2 = "Votre machine va redémarrer dans 2 secondes "
-	reboot3 = "Votre machine va redémarrer dans 3 secondes "
-	reboot4 = "Votre machine va redémarrer dans 4 secondes "
-	reboot5 = "Votre machine va redémarrer dans 5 secondes "
+	restart="Votre machine va maintenant redémarrer"
+	restart1="Votre machine va redémarrer dans 1 seconde "
+	restart2="Votre machine va redémarrer dans 2 secondes "
+	restart3="Votre machine va redémarrer dans 3 secondes "
+	restart4="Votre machine va redémarrer dans 4 secondes "
+	restart5="Votre machine va redémarrer dans 5 secondes "
 }
 
 install_upgrade()
@@ -184,9 +185,11 @@ while true ; do
 		case $ANSWER in
 			${msg_yes})
 				mysqladmin -u root password ${MySQL_root}
+				break
 				;;
 			${msg_no})
 				echo "${msg_passwd_mysql}"
+				break
 				;;
 		esac
 echo "${msg_answer_yesno}"
@@ -392,22 +395,22 @@ sudo sed -e '/bind-address/ s/^#*/#/' -i /etc/mysql/my.cnf
 ##### ADD IPTABLES RULES ON START
 update-rc.d DefaultFirewall defaults
 
-echo "${reboot5}"
+echo "${restart5}"
 sleep 1
 
-echo "${reboot4}"
+echo "${restart4}"
 sleep 1
 
-echo "${reboot3}"
+echo "${restart3}"
 sleep 1
 
-echo "${reboot2}"
+echo "${restart2}"
 sleep 1
 
-echo "${reboot1}"
+echo "${restart1}"
 sleep 1
 
-echo "${reboot}"
+echo "${restart}"
 
 sudo reboot
 
