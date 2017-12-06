@@ -2,7 +2,7 @@
 
 # Installation 
 ### Exécuter la commande suivante dans votre terminal :
- `wget https://raw.githubusercontent.com/tguillaume02/ThiDom/master/Get_ThiDom.sh && chmod +x Get_ThiDom.sh && ./Get_Thidom`
+ `wget https://raw.githubusercontent.com/tguillaume02/ThiDom/master/Get_ThiDom.sh && chmod +x Get_ThiDom.sh && ./Get_Thidom.sh`
 
 ### Puis laissez vous guider :)
     
