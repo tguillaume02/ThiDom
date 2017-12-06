@@ -8,7 +8,7 @@
     
 # SSL ( Let's Encrypt )
 ### Pour ajouter un certificat SSL reconnu à votre site il vous faut :
-* Autoriser le port https (433) sur votre box
+* Autoriser le port https (443) sur votre box
 * un nom de domaine
     Si vous n'en avez pas vous pouvez utiliser le service de https://www.noip.com/
     
