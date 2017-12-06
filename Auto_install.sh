@@ -77,7 +77,7 @@ install_dependance() {
 	sudo apt-get install htop -y
 	sudo apt-get install python-jinja2 -y
 	sudo apt-get install python-pip -y
-	sudo apt-get install python-certbot-apache
+	sudo apt-get install python-certbot-apache -y
 	sudo pip install -U pip 
 	sudo pip install tweepy
 	sudo pip install httplib2
@@ -176,7 +176,7 @@ done
 install_upgrade
 install_dependance
 
-echo  "**********************************************************************"
+echo  "${VERT}**********************************************************************"
 echo "${msg_passwd_mysql}"
 while true ; do
 	read MySQL_root < /dev/tty
