@@ -10,7 +10,7 @@ include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 			<div class="form-group">
 				<label for="url" class="col-lg-1 col-md-5 col-sm-6 col-xs-6 control-label">URL :</label>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-					<input type="url" class="form-control" id="url" name="urlWebcam" placeholder="url/IP de la webcam:" required />
+					<input type="url" class="form-control" id="url" name="url" placeholder="url/IP de la webcam:" required />
 				</div>
 			</div>
 

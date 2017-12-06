@@ -294,6 +294,7 @@ sed -i 's/{{usersql}}/thidom/' /home/Thidom/Script_domotique/msql.py
 sed -i 's/{{bddsql}}/thidom/' /home/Thidom/Script_domotique/msql.py
 
 echo ""
+echo "${VERT}"
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 
@@ -307,8 +308,8 @@ sudo cp /tmp/ThiDom/etc/apache2/sites-available/000-default.conf /etc/apache2/si
 sudo cp /tmp/ThiDom/etc/apache2/sites-available/default-ssl.conf  /etc/apache2/sites-available/default-ssl.conf 
 sudo sed -i '/<Directory \/var\/www\/>/a \\tOptions +MultiViews' /etc/apache2/apache2.conf
 sudo cp /tmp/ThiDom/etc/apache2/ports.conf  /etc/apache2/ports.conf
-#sudo mkdir /etc/apache2/ssl
-#sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
+sudo mkdir /etc/apache2/ssl
+sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key && sudo openssl genrsa -out client.key 2048 
 
 #sudo openssl req  -new -key client.key -out client.req && sudo openssl x509 -req -in client.req -CA ca.cer -CAkey ca.key -set_serial 101  -extensions client -days 3650 -outform PEM -out client.cer && sudo openssl pkcs12 -export -inkey client.key -in client.cer -out client.p12 
 
@@ -330,6 +331,7 @@ echo "${VERT}********************************************************"
 echo "${msg_optimize_webserver_cache_opcache}"
 echo "********************************************************${NORMAL}"
 
+sudo pecl channel-update pecl.php.net 
 yes '' | pecl install -fs zendopcache-7.0.3
 #for i in fpm cli ; do
 for file in $(find /etc/ -iname php.ini -type f); do

@@ -21,41 +21,13 @@ $holiday = "";
 $EjpToday = "";
 $EjpTomorrow = "";
 $Season = "";
+$departement = "";
+$city = "";
+$holidayZone = "";
+$EJPZone = "";
+$Device_id = getPost("Device_id");
+$act = getpost('act');
 
-$departement = Device::byNom($Name_Script)->get_Configuration("Departement",99);
-$city = Device::byNom($Name_Script)->get_Configuration("City","Paris");
-$holidayZone = Device::byNom($Name_Script)->get_Configuration("HolidaysZone","");
-$EJPZone = Device::byNom($Name_Script)->get_Configuration("EJPZone","");
-
-
-$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
-
-$Sunrise = $SunSatus->{'heureLeveSoleil'};
-$Sunrise = str_replace("h", ":", $Sunrise);
-$Sunset = $SunSatus->{'heureCoucheSoleil'};
-$Sunset = str_replace("h", ":", $Sunset);
-$Sunrise = date("H:i:s", strtotime($Sunrise));
-$Sunset = date("H:i:s", strtotime($Sunset));
-
-/*  ##############   GET WEATHER CONDITIONS ######## */
-
-$WeatherStatus = file_get_contents($urldomogeek.'weather/'.$city.'/all/today');
-
-$WeatherStatus = str_replace("u'", "'",$WeatherStatus);
-$WeatherStatus = str_replace("'", "\"",$WeatherStatus);
-$result = json_decode($WeatherStatus);
-$Conditions =  "";
-if (isset($result->{'weather'}[0]->{'description'}))
-{
-	$Conditions = $result->{'weather'}[0]->{'description'};
-	$Conditions = ucwords($Conditions);
-}
-
-$WeatherVigilance = new DOMDocument();
-$WeatherVigilance->load($urlvigilance);
-
-$WeatherVigilanceRisk = new DOMDocument();
-$WeatherVigilanceRisk->load($urlvigilanceRisk);
 
 class color
 {
@@ -124,32 +96,83 @@ function risklong($number)
 	}
 }
 
-$a = "@attributes";
-$vigilancerisk = "";
-
-foreach($WeatherVigilance->getElementsByTagName("datavigilance") as $item)
+if($Device_id)
 {
-	if($item->getAttribute("dep") == $departement)
-	{	
-		$vigilancecolor = color($item->getAttribute("couleur"))->color;
-		/*foreach($item->getElementsByTagName("risque") as $risque)
-		{	
-			$vigilancerisk .= risklong($risque->getAttribute("val"))." ".$vigilancecolorObject->text." ";
-		}*/
-	}
+	$departement = Device::byId($Device_id)->get_Configuration("Departement","");
+	$city = Device::byId($Device_id)->get_Configuration("City","");
+	$holidayZone = Device::byId($Device_id)->get_Configuration("HolidaysZone","");
+	$EJPZone = Device::byId($Device_id)->get_Configuration("EJPZone","");
 }
 
-foreach($WeatherVigilanceRisk->getElementsByTagName("DV") as $item)
+if ($departement != "")
 {
-	if($item->getAttribute("dep") == $departement)
+	$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
+
+	$Sunrise = $SunSatus->{'heureLeveSoleil'};
+	$Sunrise = str_replace("h", ":", $Sunrise);
+	$Sunset = $SunSatus->{'heureCoucheSoleil'};
+	$Sunset = str_replace("h", ":", $Sunset);
+	$Sunrise = date("H:i:s", strtotime($Sunrise));
+	$Sunset = date("H:i:s", strtotime($Sunset));
+}
+
+/*  ##############   GET WEATHER CONDITIONS ######## */
+if ($city != "")
+{
+	$WeatherStatus = file_get_contents($urldomogeek.'weather/'.$city.'/all/today');
+
+	$WeatherStatus = str_replace("u'", "'",$WeatherStatus);
+	$WeatherStatus = str_replace("'", "\"",$WeatherStatus);
+	$result = json_decode($WeatherStatus);
+	$Conditions =  "";
+	if (isset($result->{'weather'}[0]->{'description'}))
 	{
-		foreach($item->getElementsByTagName("risque") as $risque)
-		{		
-			$vigilancecolorObject = color($item->getAttribute("coul"));
-			$vigilancerisk .= "&bull;".risklong($risque->getAttribute("val"))." ".$vigilancecolorObject->text." ";
+		$Conditions = $result->{'weather'}[0]->{'description'};
+		$Conditions = ucwords($Conditions);
+	}
+
+	$WeatherVigilance = new DOMDocument();
+	$WeatherVigilance->load($urlvigilance);
+
+	$WeatherVigilanceRisk = new DOMDocument();
+	$WeatherVigilanceRisk->load($urlvigilanceRisk);
+
+	foreach($WeatherVigilance->getElementsByTagName("datavigilance") as $item)
+	{
+		if($item->getAttribute("dep") == $departement)
+		{	
+			$vigilancecolor = color($item->getAttribute("couleur"))->color;
+			/*foreach($item->getElementsByTagName("risque") as $risque)
+			{	
+				$vigilancerisk .= risklong($risque->getAttribute("val"))." ".$vigilancecolorObject->text." ";
+			}*/
 		}
 	}
+
+	foreach($WeatherVigilanceRisk->getElementsByTagName("DV") as $item)
+	{
+		if($item->getAttribute("dep") == $departement)
+		{
+			$i = 0;
+			foreach($item->getElementsByTagName("risque") as $risque)
+			{		
+				if ($i > 0)
+				{
+					$vigilancerisk .="<br>&nbsp;&nbsp;&nbsp;&nbsp;&bull;";
+				}
+				else
+				{
+					$vigilancerisk .="&bull;";
+				}
+				$vigilancecolorObject = color($item->getAttribute("coul"));
+				$vigilancerisk .= risklong($risque->getAttribute("val"))." ".$vigilancecolorObject->text." ";
+				$i++;
+			}
+		}
+	}
+
 }
+
 
 /*  ##############   GET HOLIDAY / WEEKEND / SCHOOLHOLIDAY ######## */
 
@@ -224,87 +247,61 @@ curl_setopt_array($GetEJPToday, array(
 $status = curl_exec($GetEJPToday);
 curl_close($GetEJPToday); 
 $result = json_decode($status);
-$Season = $result->{'season'};
-
-
-
-if (isset($_POST['act']))
+if(is_object($result))
 {
-	$act = $_POST['act'];
-	if ($act == "Sunrise")
-	{
-		CmdDevice::Update_Device_Value($Sunrise,'',"Sunrise",$type,$Name_Script);
-	}
-	else if ($act == "Sunset")
-	{
-		CmdDevice::Update_Device_Value($Sunset,'',"Sunset",$type,$Name_Script);
-	}
-	else if ($act == "Conditions")
-	{
-		CmdDevice::Update_Device_Value($Conditions,'',"Conditions",$type,$Name_Script);
-	}
-	else if ($act == "vigilancecolor")
-	{
-		CmdDevice::Update_Device_Value($vigilancecolor,'',"vigilancecolor",$type,$Name_Script);
-	}
-	else if ($act == "vigilancerisk")
-	{
-		CmdDevice::Update_Device_Value($vigilancerisk,'',"vigilancerisk",$type,$Name_Script);
-	}
-	else if ($act == "SchoolHolidays")
-	{
-		CmdDevice::Update_Device_Value($SchoolHolidays,'',"SchoolHolidays",$type,$Name_Script);
-	}
-	else if ($act == "weekend")
-	{
-		CmdDevice::Update_Device_Value($weekend,'',"weekend",$type,$Name_Script);
-	}
-	else if ($act == "holiday")
-	{
-		CmdDevice::Update_Device_Value($holiday,'',"holiday",$type,$Name_Script);
-	}
-	else if ($act == "EjpToday")
-	{
-		CmdDevice::Update_Device_Value($EjpToday,'',"EjpToday",$type,$Name_Script);
-	}
-	else if ($act == "EjpTomorrow")
-	{
-		CmdDevice::Update_Device_Value($EjpTomorrow,'',"EjpTomorrow",$type,$Name_Script);
-	}
-	else if ($act == "Season")
-	{
-		CmdDevice::Update_Device_Value($Season,'',"Season",$type,$Name_Script);
-	}
-	else
-	{
-		CmdDevice::Update_Device_Value($Sunrise,'',"Sunrise",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($Sunset,'',"Sunset",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($Conditions,'',"Conditions",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($vigilancecolor,'',"vigilancecolor",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($vigilancerisk,'',"vigilancerisk",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($SchoolHolidays,'',"SchoolHolidays",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($weekend,'',"weekend",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($holiday,'',"holiday",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($EjpToday,'',"EjpToday",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($EjpTomorrow,'',"EjpTomorrow",$type,$Name_Script);
-		CmdDevice::Update_Device_Value($Season,'',"Season",$type,$Name_Script);
-	}
-}
-else
-{
-	CmdDevice::Update_Device_Value($Sunrise,'',"Sunrise",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($Sunset,'',"Sunset",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($Conditions,'',"Conditions",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($vigilancecolor,'',"vigilancecolor",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($vigilancerisk,'',"vigilancerisk",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($SchoolHolidays,'',"SchoolHolidays",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($weekend,'',"weekend",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($holiday,'',"holiday",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($EjpToday,'',"EjpToday",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($EjpTomorrow,'',"EjpTomorrow",$type,$Name_Script);
-	CmdDevice::Update_Device_Value($Season,'',"Season",$type,$Name_Script);
+	$Season = $result->{'season'};
 }
 
+$a = "@attributes";
+
+switch ($act) {
+	case 'Sunrise':
+		CmdDevice::Update_Device_Value($Device_id, $Sunrise, '', $act );
+		break;
+	case 'Sunset':
+		CmdDevice::Update_Device_Value($Device_id, $Sunset, '', $act );
+		break;
+	case 'Conditions':
+		CmdDevice::Update_Device_Value($Device_id, $Conditions, '', $act );
+		break;
+	case 'vigilancecolor':
+		CmdDevice::Update_Device_Value($Device_id, $vigilancecolor, '', $act );
+		break;
+	case 'vigilancerisk':
+		CmdDevice::Update_Device_Value($Device_id, $vigilancerisk, '', $act );
+		break;
+	case 'SchoolHolidays':
+		CmdDevice::Update_Device_Value($Device_id, $SchoolHolidays, '', $act );
+		break;
+	case 'weekend':
+		CmdDevice::Update_Device_Value($Device_id, $weekend, '', $act );
+		break;
+	case 'holiday':
+		CmdDevice::Update_Device_Value($Device_id, $holiday, '', $act );
+		break;
+	case 'EjpToday':
+		CmdDevice::Update_Device_Value($Device_id, $EjpToday, '', $act );
+		break;
+	case 'EjpTomorrow':
+		CmdDevice::Update_Device_Value($Device_id, $EjpTomorrow, '', $act );
+		break;
+	case 'Season':
+		CmdDevice::Update_Device_Value($Device_id, $Season, '', $act );
+		break;	
+	default:
+		CmdDevice::Update_Device_Value($Device_id, $Sunrise, '', "Sunrise" );
+		CmdDevice::Update_Device_Value($Device_id, $Sunset, '', "Sunset" );
+		CmdDevice::Update_Device_Value($Device_id, $Conditions, '', "Conditions" );
+		CmdDevice::Update_Device_Value($Device_id, $vigilancecolor, '', "vigilancecolor" );
+		CmdDevice::Update_Device_Value($Device_id, $vigilancerisk, '', "vigilancerisk" );
+		CmdDevice::Update_Device_Value($Device_id, $SchoolHolidays, '', "SchoolHolidays" );
+		CmdDevice::Update_Device_Value($Device_id, $weekend, '', "weekend" );
+		CmdDevice::Update_Device_Value($Device_id, $holiday, '', "holiday" );
+		CmdDevice::Update_Device_Value($Device_id, $EjpToday, '', "EjpToday" );
+		CmdDevice::Update_Device_Value($Device_id, $EjpTomorrow, '', "EjpTomorrow" );
+		CmdDevice::Update_Device_Value($Device_id, $Season, '', "Season" );
+		break;
+}
 
 $JSON = array();
 $row_array["Sunrise"] = $Sunrise ;

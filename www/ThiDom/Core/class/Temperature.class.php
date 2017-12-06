@@ -11,16 +11,6 @@ class Temperature
 		$sql = " SELECT date, Temp FROM ".self::table_name." where Lieux_ID=:Lieux_ID ORDER BY date";		
 		return db::execQuery($sql,$values);
 	}
-	
-	public function GetTemperatureForAllLieux() 
-	{
-		$sql = "SELECT Lieux.Nom as Lieux, Device.Nom as DeviceName, date_format(cmd_device.DATE, '%Y-%m-%d %H:%i') as Date,Round(Value,1) as Temp, Type_Device.Widget, cmd_device.Id as cmd_device_id, Device.id  AS id  from Type_Device 
-		inner join Device on Device.Type_Id = Type_Device.ID
-		inner join cmd_device on cmd_device.Device_Id = Device.ID
-		inner join Lieux on Device.Lieux_Id = Lieux.ID
-		where Type_Device.Type like '%Temperature%'";
-		return db::execQuery($sql,[]);
-	}
 
 	public function GetTemperatureTempByLieux($Lieux,$cmd_device_id) 
 	{
@@ -39,8 +29,24 @@ class Temperature
 
 	public function GetTemperatureHistory()
 	{
-		$sql = " SELECT * FROM ".self::table_name." ORDER BY Temperature.date, Temperature.lieux";
+		$sql = " SELECT * FROM ".self::table_name." ORDER BY ".self::table_name.".date, ".self::table_name.".lieux";
 
+		return db::execQuery($sql,null);
+	}
+
+	public function GetTemperatureHistoryOnOneMonth()
+	{
+		$sql = "SELECT t.*, Lieux.Nom, cmd_device.Nom as cmd_deviceName FROM (SELECT * FROM ".self::table_name." 
+				WHERE ".self::table_name.".date > ( SELECT CURRENT_DATE - INTERVAL 2 MONTH )
+				UNION ALL
+				SELECT * FROM ".self::table_name." 
+				WHERE (".self::table_name.".date BETWEEN CURRENT_DATE - INTERVAL 1 Year  - INTERVAL 2 Month AND  CURRENT_DATE - INTERVAL 1 Year  + INTERVAL 2 Month)
+                ORDER BY Lieux_Id, cmd_device_Id, date
+                ) AS t 
+                LEFT JOIN cmd_device on cmd_device.Id = t.cmd_device_Id
+                LEFT JOIN Device on Device.Id = cmd_device.Device_Id
+                LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
+		
 		return db::execQuery($sql,null);
 	}
 
@@ -50,7 +56,7 @@ class Temperature
 			':DeviceId' =>$DeviceId
 			);
 
-		$sql = " SELECT Temperature.temp FROM Temperature where cmd_device_ID = :DeviceId order by date desc limit 1";
+		$sql = " SELECT Temperature.temp FROM ".self::table_name." WHERE cmd_device_ID = :DeviceId ORDER BY date DESC LIMIT 1";
 		return db::execQuery($sql,$values);
 	}
 

@@ -17,7 +17,8 @@ class Lieux
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE id=:id';
+		WHERE id=:id
+		ORDER BY Lieux.Position';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 		
 	}
@@ -29,7 +30,8 @@ class Lieux
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE Nom=:Nom';
+		WHERE Nom=:Nom
+		ORDER BY Lieux.Position';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
 		
 	}
@@ -38,7 +40,8 @@ class Lieux
 	{
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE Visible = 1';
+		WHERE Visible = 1
+		ORDER BY Lieux.Position';
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
 		
 	}
@@ -49,13 +52,13 @@ class Lieux
 		inner join Device on Device.Lieux_ID= Lieux.Id
 		where Lieux.Visible = 1 and Device.Visible = 1
 		group by nom
-		order by Position";
+		ORDER BY Lieux.Position";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
 	}
 
 	public function withHistoric()
 	{
-		$sql = "SELECT Lieux_Id, Nom FROM Temperature 
+		$sql = "SELECT Lieux_Id as Id, Lieux.Nom FROM Temperature 
 		inner join Lieux on Lieux.Id = Temperature.Lieux_Id
 		GROUP BY Lieux_Id ";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
@@ -64,7 +67,7 @@ class Lieux
 	public function GetAll()
 	{
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
-		FROM '.self::table_name;
+		FROM '.self::table_name .' ORDER BY Lieux.Position';
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 		
 	}

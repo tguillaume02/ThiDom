@@ -7,8 +7,7 @@ class db
 	$_user = "{{usersql}}",
 	$_pwd = "{{pwdsql}}",
 	$_bdd = "{{bddsql}}",
-	$_connection;
-	
+	$_connection;	
 
 	const FETCH_TYPE_ROW = 0;
 	const FETCH_TYPE_ALL = 1;
@@ -150,6 +149,19 @@ class db
 			}*/
 			echo json_encode($data);
 		}
+	}
+
+	public function save($object)
+	{
+
+
+$productsArray = get_object_vars($object);
+foreach($productsArray as $key => $attribute){
+   echo  $attribute . '-' . $key . '<br/>';  
+}
+
+		//echo var_dump($object)); 
+		//echo "INSERT INTO ".$object::table_name." SET ";
 	}
 }
 ?>

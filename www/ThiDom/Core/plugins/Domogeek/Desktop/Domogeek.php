@@ -17,37 +17,58 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Conditions',$Device_id)->get_Id()?>">
-					Conditions: <span id="InfoDeviceConditions_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Conditions',$Device_id)->get_Id()?>"></span>
+					Conditions: 
+				</td>
+				<td>
+					<span id="InfoDeviceConditions_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Conditions',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('SchoolHolidays',$Device_id)->get_Id()?>">
-					SchoolHolidays: <span id="InfoDeviceSchoolHolidays_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('SchoolHolidays',$Device_id)->get_Id()?>"></span>
+					SchoolHolidays: 
+				</td>
+				<td>
+					<span id="InfoDeviceSchoolHolidays_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('SchoolHolidays',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('weekend',$Device_id)->get_Id()?>">
-					weekend: <span id="InfoDeviceweekend_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('weekend',$Device_id)->get_Id()?>"></span>
+					weekend: 
+				</td>
+				<td>
+					<span id="InfoDeviceweekend_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('weekend',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('holiday',$Device_id)->get_Id()?>">
-					holiday: <span id="InfoDeviceholiday_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('holiday',$Device_id)->get_Id()?>"></span>
+					holiday: 
+				</td>
+				<td>
+					<span id="InfoDeviceholiday_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('holiday',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('EjpToday',$Device_id)->get_Id()?>">
-					EjpToday: <span id="InfoDeviceEjpToday_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('EjpToday',$Device_id)->get_Id()?>"></span>
+					EjpToday: 
+				</td>
+				<td>
+					<span id="InfoDeviceEjpToday_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('EjpToday',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('EjpTomorrow',$Device_id)->get_Id()?>">
-					EjpTomorrow: <span id="InfoDeviceEjpTomorrow_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('EjpTomorrow',$Device_id)->get_Id()?>"></span>
+					EjpTomorrow: 
+				</td>
+				<td>
+					<span id="InfoDeviceEjpTomorrow_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('EjpTomorrow',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Season',$Device_id)->get_Id()?>">
-					Season: <span id="InfoDeviceSeason_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Season',$Device_id)->get_Id()?>"></span>
+					Season: 
+				</td>
+				<td>
+					<span id="InfoDeviceSeason_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Season',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 		</tbody>
@@ -62,7 +83,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 							<tr>
 								<td>
 									<span id="Contentcmd_<?php echo CmdDevice::GetCmdId('vigilancecolor',$Device_id)->get_Id()?>">
-										<img id="InfoDevicevigilancecolor_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('vigilancecolor',$Device_id)->get_Id() ?>" src="Core/plugins/Domogeek/Desktop/weatherwarning.png" class="img-circle" style="width: 40px;">
+										<img id="InfoDevicevigilancecolor_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('vigilancecolor',$Device_id)->get_Id() ?>" src="Core/plugins/Domogeek/Desktop/weatherwarning.png" class="img-circle rounded-circle" style="width: 40px;">
 									</span>
 									<span id="Contentcmd_<?php echo CmdDevice::GetCmdId('vigilancerisk',$Device_id)->get_Id()?>">
 										<span id="InfoDevicevigilancerisk_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('vigilancerisk',$Device_id)->get_Id()?>"></span>
@@ -78,14 +99,14 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 </div>
 <script>
 
-	function LoadDomogeekData()
+	function LoadDomogeekData($Id)
 	{
 		var request = $.ajax({
 			dataType: "json",
 			type: "POST",
 			url: 'Core/plugins/Domogeek/Desktop/Domogeek_ajax.php',
 			data: {
-				act: ""
+				Device_id: $Id
 			},
 			cache: false,
 			async: true
@@ -98,7 +119,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		});
 	}
 
-	LoadDomogeekData();
+	LoadDomogeekData(<?php echo $Device_id?>);
 
 
 </script>

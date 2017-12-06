@@ -15,12 +15,12 @@ class CmdDevice
 	protected $Date;
 	protected $Alert_Time;
 	protected $RAZ;
-	protected $Type_Id;
+	protected $Widget_Id;
 	protected $Visible;
 	protected $Type;	
 	protected $Unite;
-
-
+	protected $History;
+	protected $Notification;
 
 	public static function byId($Id)
 	{
@@ -66,14 +66,14 @@ class CmdDevice
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
 
-	public static function byType_Id($Type_Id)
+	public static function byWidget_Id($Widget_Id)
 	{
 		$values = array(
-			':Type_Id' => $Type_Id,
+			':Widget_Id' => $Widget_Id,
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE Type_Id=:Type_Id';
+		WHERE Widget_Id=:Widget_Id';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
 
@@ -122,9 +122,10 @@ class CmdDevice
 		$values = array(
 			':Id' => $Device_Id
 			);
-		$sql = 'SELECT cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, Device.Type_Id 
+		$sql = 'SELECT cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName
 					FROM cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
+					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
 				WHERE cmd_device.Device_Id  = :Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
@@ -140,34 +141,33 @@ class CmdDevice
 		db::execQuery($req,$values);
 	}
 
-	public function Update_Device_Value($Value,$Etat,$Name1,$type,$Name2)
+	public function Update_Device_Value($DeviceId, $Value, $Etat, $Name1)
 	{
 		$values = array(
+			":DeviceId" => $DeviceId,
 			':Value' => $Value,
 			':Etat' => $Etat,
-			':Name1' => $Name1,
-			':type' => $type,
-			':Name2' => $Name2
+			':Name1' => $Name1
 			);	
 
-		$req = "UPDATE cmd_device INNER JOIN Device on Device.Id = cmd_device.Device_Id  SET cmd_device.Value =:Value , cmd_device.Etat =:Etat, cmd_device.Date =now() WHERE cmd_device.Nom = :Name1 and Device.Type_ID =:type and Device.Nom = :Name2";
+		$req = "UPDATE cmd_device INNER JOIN Device on Device.Id = cmd_device.Device_Id  SET cmd_device.Value =:Value , cmd_device.Etat =:Etat, cmd_device.Date =now() WHERE cmd_device.Device_Id = :DeviceId and cmd_device.Nom = :Name1";
 		db::execQuery($req,$values);
 
-		if ($type == 8) // PLUGINS
-		{
-			$values1 = array(
-				':Name1' => $Name1,
-				':type' => $type,
-				':Name2' => $Name2
+		/*if ($type == 8) // PLUGINS
+		{*/
+		/*	$values1 = array(
+				":DeviceId" => $DeviceId,
+				':Name1' => $Name1
 				);	
 
 			$req = "SELECT RAZ,cmd_device.Id as cmd_id  
 			FROM cmd_device 
 			INNER JOIN Device on cmd_device.Device_ID = Device.Id 
-			WHERE cmd_device.Nom = :Name1 and Device.Type_ID =:type and Device.Nom = :Name2";
+			WHERE cmd_device.Device_Id = :DeviceId and cmd_device.Nom = :Name1";
 
 			$ResultFectAll =  db::execQuery($req,$values1);
-			foreach ($ResultFectAll as $donnees) {
+			foreach ($ResultFectAll as $donnees)
+			{
 				$RAZ = $donnees["RAZ"];
 				$cmd_id = $donnees["cmd_id"];
 
@@ -180,8 +180,8 @@ class CmdDevice
 
 				$req = "UPDATE cmd_device set date =(select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL :interval MINUTE)  WHERE Id = :cmd_id";
 				db::execQuery($req,$ValUpdate);
-			}
-		}
+			}*/
+		/*}*/
 	}
 
 	public function Update_Any_Value_By_id($Id,$colonne,$value)
@@ -217,6 +217,101 @@ class CmdDevice
 		//}
 	}
 
+	public function set_Name($name)
+	{
+		$this->Nom = str_replace(array('&', '#', ']', '[', '%', "'"), '', $name);
+		return $this;
+	}
+
+	public function set_device_Id($Id)
+	{
+		$this->Device_Id = $Id;
+		return $this;
+	}
+
+	public function set_deviceId($Id)
+	{
+		$this->DeviceId = $Id;
+		return $this;
+	}
+
+	public function set_sensorAttachId($id)
+	{
+		$this->Sensor_attachId = $id;
+		return $this;
+	}
+
+	public function set_request($key, $value)
+	{		
+		$this->Request = setJsonAttr($this->Request, $key, $value);
+	}
+
+	public function set_value($value)
+	{
+		$this->Value = $value;
+		return $this;
+	}
+
+	public function set_etat($etat)
+	{
+		$this->Etat = $etat;
+		return $this;
+	}
+
+	public function set_date($date)
+	{
+		$this->Date = $date;
+		return $this;
+	}
+
+	public function set_alertTime($alertTime)
+	{
+		$this->Alert_Time = $alertTime;
+		return $this;
+	}
+
+	public function set_raz($raz)
+	{
+		$this->RAZ = $raz;
+		return $this;
+	}
+
+	public function set_typeId($TypeId)
+	{
+		$this->Type_Id = $TypeID;
+		return $this;
+	}
+
+	public function set_visible($visible)
+	{
+		$this->Visible = $visible;
+		return $this;
+	}
+
+	public function set_type($type)
+	{
+		$this->Type = $type;
+		return $this;
+	}
+
+	public function set_unite($unite)
+	{
+		$this->Unite = $unite;
+		return $this;
+	}
+
+	public function set_history($history)
+	{
+		$this->History = $history;
+		return $this;
+	}
+
+	public function set_notification($notification)
+	{
+		$this->Notification = $notification;
+		return $this;
+	}
+
 	public function get_Id()
 	{
 		return $this->Id;
@@ -244,7 +339,7 @@ class CmdDevice
 
 	public function get_Type()
 	{
-		return $this->type;
+		return $this->Type;
 	}
 
 	public function get_Request()
@@ -294,12 +389,31 @@ class CmdDevice
 
 	public function get_History()
 	{
+		return $this->History;
 
 	}
 
 	public function get_Notification()
 	{
+		return $this->Notification;
+	}
 
+	public function save()
+	{
+		if ($this->get_Name() == '')
+		{
+			throw new Exception('Le nom de la commande ne peut pas être vide :' . print_r($this, true));
+		}
+		if ($this->get_Type() == '')
+		{
+			throw new Exception('Le type de la commande ne peut pas être vide :' . print_r($this, true));
+		}
+
+		if ($this->get_Device_Id() == '')
+		{
+			throw new Exception('Vous ne pouvez pas créer une commande sans la rattacher à un équipement' . print_r($this, true));
+		}
+		return db::save($this);
 	}
 
 	public function showCommandeListHtml($deviceId)
@@ -320,11 +434,11 @@ class CmdDevice
 										  Visible
 									</label>
 									<label class="btn btn-success">
-										<input type="checkbox" name="Historiser" id="device-historiser" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_History()? "checked" : "").'>
+										<input type="checkbox" name="History" id="cmddevice-historiser" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_History()? "checked" : "").'>
 										Historiser
 									</label>	
 									<label class="btn btn-success">
-										<input type="checkbox" name="Notification" id="device-notification" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_Notification() ? "checked" : "").'>
+										<input type="checkbox" name="Notification" id="cmddevice-notification" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_Notification() ? "checked" : "").'>
 										Notification
 									</label>
 									<label class="col-sm-5 col-xs-6 col-md-12 col-lg-5" style="padding: 0;">Remise à Zero / màj : </label>

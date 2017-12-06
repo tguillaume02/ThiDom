@@ -27,7 +27,7 @@ if ($DeviceData)
 		$pinID = $donnees["DeviceId"];
 		$Value = $donnees["Value"];
 		$Etat = $donnees["Etat"];
-		$TypeId = $donnees["Type_Id"];
+		$WidgetType = $donnees["WidgetName"];
 	}
 
 	/*if($role == "Alerte")
@@ -42,7 +42,7 @@ if ($DeviceData)
 
 		if ($type == "Action")
 		{
-			if ($role == "Thermostat" && $defaultVal != "undefined")
+			if ($WidgetType == "Thermostat" && $defaultVal != "undefined")
 			{
 				$ResultFectAll = CmdDevice::GetValueSensorAttached($pinID, $carte_id);
 
@@ -81,7 +81,7 @@ if ($DeviceData)
 					$act = "";
 				} 
 				
-				$act = $act.$pinID."@".$val.":".$val; 
+				$act = $act.$pinID."@".$Value.":".$val; 
 			}
 
 			$comPort = "/dev/ttyUSB1"; /*change to correct com port */

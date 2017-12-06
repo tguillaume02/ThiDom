@@ -48,11 +48,11 @@
 									<!-- FOR SLIDER  -->
 									<td class="Slider Thermostat Dimmer widgetType">
 										<div class="div_btn_device Corner" style="background-color: transparent; user-select: none; cursor: default;">
-											<input class="img_btn_device circle Corner" id="planning-info-slider" name="commande" readonly value="15">
+											<input class="img-circle img_btn_device circle" id="planning-info-slider" name="commande" readonly value="15">
 										</div>
 									</td>
 									<td class="Slider Thermostat Dimmer widgetType" style="width: 80%;padding: 15px;">
-										<input class="bar" value="0" type="range" step="0.5" min="15" max="30" id="planning-slider" oninput="$('#planning-info-slider').html(this.value);$('#planning-info-slider').attr('value',this.value)">
+										<input class="bar" value="0" type="range" step="0.5" min="15" max="30" id="planning-slider" onchange="$('#planning-info-slider').val(this.value);">
 									</td>
 
 									<!-- FOR TEXT-->

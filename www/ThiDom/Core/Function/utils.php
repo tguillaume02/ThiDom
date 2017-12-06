@@ -85,5 +85,39 @@ function getJsonAttr($_attr, $_key = '', $_default = '') {
   return (isset($attr[$_key]) && $attr[$_key] !== '') ? $attr[$_key] : $_default;
 }
 
+function setJsonAttr($_attr, $_key, $_value = null) {
+  if ($_value === null && !is_array($_key)) {
+    if ($_attr != '' && is_json($_attr)) {
+      $attr = json_decode($_attr, true);
+      unset($attr[$_key]);
+      $_attr = json_encode($attr, JSON_UNESCAPED_UNICODE);
+    }
+  } else {
+    if ($_attr == '' || !is_json($_attr)) {
+      $attr = array();
+    } else {
+      $attr = json_decode($_attr, true);
+    }
+    if (is_array($_key)) {
+      $attr = array_merge($attr, $_key);
+    } else {
+      $attr[$_key] = $_value;
+    }
+    $_attr = json_encode($attr, JSON_UNESCAPED_UNICODE);
+  }
+  return $_attr;
+}
+
+function getPost($post)
+{
+  if(isset($_POST[$post]))
+  {
+    return $_POST[$post];
+  }
+  else
+  {
+    return "";
+  }
+}
 
 ?>

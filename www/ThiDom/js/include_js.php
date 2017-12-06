@@ -355,8 +355,8 @@
 		//LoadEquipement();
 		//LoadLieux();
 		//LoadCalendar();
-		LoadGraph();
 		//LoadScenario();
+		//LoadGraph();
 		//LoadUser();
 		LoadEvent();
 		//GetLog();
@@ -850,7 +850,7 @@
 	}
 
 	function parseXml(xml) {
-		if ($(xml).children().length > 1) {
+		if ($(xml).children().length > 2) {
 			return "err:Please make sure there is only a single block structure";
 		}
 		var firstBlockType = $(xml).find("block").first().attr("type");
@@ -1291,7 +1291,7 @@ function SaveScenario() {
 		var exists = false; 
 		var doSave = false;
 		$('#scenario-list  option').each(function(){
-			if (this.value == ScenarioName) {
+			if (this.value == ScenarioId) {
 				exists = true;
 			}
 		});

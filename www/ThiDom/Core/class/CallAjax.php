@@ -4,134 +4,141 @@ require_once dirname(__FILE__) .'/../ListRequire.php';
 ?>
 <script>
 
-	function action_domo(device_id,role,type,value)
+function action_domo(device_id,role,type,value)
+{
+	value = value+"";
+	$.ajax({
+		type: 'POST',
+		url: 'Core/ajax/action_domo.php',
+		data: 'Device_Id=' + device_id +'&Role='+role+'&Type='+type+'&Value='+value,
+		cache: false
+	})
+	.done( function (msg) 
 	{
-		value = value+"";
-		$.ajax({
-			type: 'POST',
-			url: 'Core/ajax/action_domo.php',
-			data: 'Device_Id=' + device_id +'&Role='+role+'&Type='+type+'&Value='+value,
-			cache: false,
-			success: function (msg) {
-			}
-		});
-	}
+	})
+}
 
-	function Recup_Etat()
+function Recup_Etat()
+{
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'Etat',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+
+	request.done(function (data)
 	{
-		var request = $.ajax({
-			type: 'POST',
-			dataType: "json",
-			url: 'Core/class/GetAjaxResult.php',
-			data: {
-				Act: 'Etat',
-				Property: '',
-				Lieux:'',
-				Id:'',
-				Mode:''
-			}
-		});
-
-		request.done(function (data)
+		$.each(data, function (index, item)
 		{
-			$.each(data, function (index, item)
+			Widget_icons = undefined;
+			Device_Nom = $.trim(item.Cmd_nom).replace(/\ /g, "_");
+			item_Nom = $.trim(item.Nom).replace(/\ /g, "_");
+			item_Lieux = $.trim(item.Lieux).replace(/\ /g,"_");
+			device_id = item.Id;
+			Cmd_device_Id = item.Cmd_device_Id;
+			isVisible = item.cmd_visible;
+			dDate = item.Date;
+			Etat = item.Etat;
+			Value = item.Value;
+			Unite = item.Unite;
+			StringEtat = Boolean(parseInt(Etat)) ? "on" : "off";
+			StringColorEtat = Boolean(parseInt(Etat)) ? "#276941" : "#FF0000";
+			Widget_Id = item.WidgetId;
+			Widget_Name = item.WidgetName;
+			Widget_Type = item.WidgetType;
+			//Type_Device_Action = item.Type_Device_Action;
+			Configuration  = item.Configuration;
+			TypeTemplate  = item.TypeTemplate;
+			device_format =  item_Nom + "_" + item_Lieux+"_"+device_id;
+			cmd_device_format =  Device_Nom + "_" + item_Lieux+"_"+Cmd_device_Id;
+
+
+			if (isVisible == 0)
+			{					
+				$("#Contentcmd_"+Cmd_device_Id).hide();
+				$("#InfoDevice"+cmd_device_format).hide();
+				$("#Contentcmd_"+Cmd_device_Id).parent().hide();
+			}
+			else
+		 	{
+				$("#Contentcmd_"+Cmd_device_Id).show();
+				$("#InfoDevice"+cmd_device_format).show();
+				$("#Contentcmd_"+Cmd_device_Id).parent().show();
+		 	}
+
+
+			$("#Date"+cmd_device_format).html(dDate);
+			if (Configuration != "" && Configuration != null)
 			{
-				Widget_icons = undefined;
-				Device_Nom = (item.Cmd_nom).replace(/\ /g, "_");
-				item_Nom = (item.Nom).replace(/\ /g, "_");
-				item_Lieux = (item.Lieux).replace(/\ /g,"_");
-				device_id = item.Id;
-				Cmd_device_Id = item.Cmd_device_Id;
-				isVisible = item.cmd_visible;
-				dDate = item.Date;
-				Etat = item.Etat;
-				Value = item.Value;
-				Unite = item.Unite;
-				StringEtat = Boolean(parseInt(Etat)) ? "on" : "off";
-				StringColorEtat = Boolean(parseInt(Etat)) ? "#276941" : "#FF0000";
-				Widget_Id = item.WidgetId;
-				//Type_Device_Action = item.Type_Device_Action;
-				Configuration  = item.Configuration;
-				TypeTemplate  = item.TypeTemplate;
-				device_format =  item_Nom + "_" + item_Lieux+"_"+device_id;
-				cmd_device_format =  Device_Nom + "_" + item_Lieux+"_"+Cmd_device_Id;
-
-
-				if (isVisible == 0)
-				{					
-					$("#Contentcmd_"+Cmd_device_Id).hide();
-				}
-				else
-			 	{
-					$("#Contentcmd_"+Cmd_device_Id).show();
-			 	}
-
-
-				$("#Date"+cmd_device_format).html(" depuis "+dDate);
-				if (Configuration != "" && Configuration != null)
+				Obj_Configuration = $.parseJSON(Configuration);
+				if (Obj_Configuration.hasOwnProperty("icons"))
 				{
-					Obj_Configuration = $.parseJSON(Configuration);
-					if (Obj_Configuration.hasOwnProperty("icons"))
-					{
-						Widget_icons =  Obj_Configuration.icons;
-					}
-				}
-
-				if (Widget_icons == undefined && TypeTemplate != null)
-				{
-					Obj_Configuration = $.parseJSON(TypeTemplate);
 					Widget_icons =  Obj_Configuration.icons;
 				}
+			}
 
-				if (Unite != null)
-				{
-					Value = Value + " " + Unite;
-				}
+			if (Widget_icons == undefined && TypeTemplate != null)
+			{
+				Obj_Configuration = $.parseJSON(TypeTemplate);
+				Widget_icons =  Obj_Configuration.icons;
+			}
 
-				if (Widget_Id == "5") // Numeric
+			if (Unite != null)
+			{
+				Value = Value + " " + Unite;
+			}
+
+			if (Widget_Type == "Text") // Numeric
+			{
+				$("#InfoDevice"+cmd_device_format).html(Value);
+				$("#InfoDevice"+cmd_device_format).val(Value);
+			}
+			else if (Widget_Type == "Slider") // Thermostat
+			{				
+				$("#InfoDevice"+cmd_device_format).html(Value);
+				$("#Range_"+cmd_device_format).val(Value);
+				$("#InfoDevice"+cmd_device_format).attr('value',this.value);
+				$("#InfoDevice"+cmd_device_format).removeClass('circle_on circle_off');
+				$("#InfoDevice"+cmd_device_format).addClass('circle_'+StringEtat);
+			}
+			else if (Widget_Type == "Color") // RGB
+			{
+				$("#InfoDevice"+cmd_device_format).css("background",Value);
+				$("#InfoDevice"+cmd_device_format).val(colourNameToHex(Value));
+				$("#InfoDevice"+cmd_device_format).html("&nbsp;");
+			}
+			else
+			{
+				if (Widget_icons != undefined)
 				{
-					$("#InfoDevice"+cmd_device_format).html(Value);
-					$("#InfoDevice"+cmd_device_format).val(Value);
-				}
-				else if (Widget_Id == "6") // Thermostat
-				{				
-					$("#InfoDevice"+cmd_device_format).html(Value);
-					$("#Range_"+cmd_device_format).val(Value);
-					$("#InfoDevice"+cmd_device_format).attr('value',this.value);
-					$("#InfoDevice"+cmd_device_format).removeClass('circle_on circle_off');
-					$("#InfoDevice"+cmd_device_format).addClass('circle_'+StringEtat);
-				}
-				else if (Widget_Id == "3") // RGB
-				{
-					$("#InfoDevice"+cmd_device_format).css("background",Value);
-					$("#InfoDevice"+cmd_device_format).val(colourNameToHex(Value));
-					$("#InfoDevice"+cmd_device_format).html("&nbsp;");
+					$("#"+cmd_device_format+" img").attr("src","Core/pic/Widget/"+Widget_icons+"_"+StringEtat);
+					Widget_icons = undefined	
 				}
 				else
 				{
-					if (Widget_icons != undefined)
-					{
-						$("#"+cmd_device_format+" img").attr("src","Core/pic/Widget/"+Widget_icons+"_"+StringEtat);
-						Widget_icons = undefined	
-					}
-					else
-					{
-						$("#"+cmd_device_format+" img").attr("src","Core/pic/Widget/"+widget+"_"+StringEtat);						
-					}
-
-
-					$("#InfoDevice"+cmd_device_format).html(Value);
-					$("#InfoDevice"+cmd_device_format).val(Value);
+					$("#"+cmd_device_format+" img").attr("src","Core/pic/Widget/"+Widget_Name+"_"+StringEtat);						
 				}
-			});
-			resizeMaison();
-		});
 
-		request.fail(function (jqXHR, textStatus, errorThrown) 
-		{
-			ErrorLoading('recup_etat');
+
+				$("#InfoDevice"+cmd_device_format).html(Value);
+				$("#InfoDevice"+cmd_device_format).val(Value);
+			}
 		});
-	}
+		resizeMaison();
+	});
+
+	request.fail(function (jqXHR, textStatus, errorThrown) 
+	{
+		ErrorLoading('recup_etat');
+	});
+}
 
 function SetToolTipLog(device_id,balise_id)
 {
@@ -216,7 +223,6 @@ function GetLog()
 	var request = $.ajax({
 		type: 'POST',
 		dataType: "json",
-        async : false,
 		url: 'Core/class/GetAjaxResult.php',
 		data: {
 			Act: 'AllLog',
@@ -252,8 +258,7 @@ function LoadMaison()
 	var request = $.ajax({
 		type: "POST",
 		url: 'Desktop/Home_device.php',
-		cache: false,
-		async: false
+		cache: false
 	});
 
 	request.done(function (data) {
@@ -265,7 +270,10 @@ function LoadMaison()
 		// permet de definir la hauteur des conteneurs
 		$(".ui-content .ui-last-child").height("auto");
 		$(".conteneur_device").height("auto");
-		deviceEvent();
+		//DeviceEvent();
+		Recup_Etat();
+		resizeMaison();
+		LoadEvent();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -386,7 +394,6 @@ function SaveUser(data)
 	});
 }
 
-
 function LoadUser()
 {
 	if ($.fn.DataTable.isDataTable("#table-content-user"))
@@ -478,6 +485,33 @@ function getNewHash()
     	});
 }
 
+function LoadModuleType()
+{
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'GetModuleType',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+
+	request.done(function (data) {
+		$("#list-module-type option").siblings("[value!='']").remove();
+		$.each(data, function (index, item) {
+			$("#list-module-type").append(new Option(item.ModuleName, item.Id));
+		})
+	})
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+		ErrorLoading();
+	});	
+}
+
 function LoadTypeWidget()
 {
 	var request = $.ajax({
@@ -493,67 +527,44 @@ function LoadTypeWidget()
 		}
 	});
 
-	request.done(function (data) {
+	request.done(function (data)
+	{
 		$("#list-type option").siblings("[value!='']").remove();
+		$("#modal-manage-device #list-type").prop('disabled', true);
 		$.each(data, function (index, item) {
-			$("#list-type").append(new Option(item.Name, item.Id));
-		})
-	})
-
-	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
-	});	
-}
-
-function LoadTypeDevice()
-{
-	var request = $.ajax({
-		type: 'POST',
-		dataType: "json",
-		url: 'Core/class/GetAjaxResult.php',
-		data: {
-			Act: 'GetTypeDevice',
-			Property: '',
-			Lieux:'',
-			Id:'',
-			Mode:''
-		}
-	});
-
-	request.done(function (data) {
-		$("#list-device option").siblings("[value!='']").remove();
-		$.each(data, function (index, item) {
-			//$("#list-device").append(new Option(item.Type, item.Id));
-
 			$('<option/>', {
-				text: item.Type,
+				text: item.Name,
 				value: item.Id,
 				data: {					
-					Widget_Id: item.Widget_Id
+					module_Id: item.ModuleType_Id
 				}
-			}).appendTo($("#list-device"));
+			}).appendTo($("#list-type"));
 
 
+			$("#modal-manage-device #list-type").prop('disabled', false);
 		})
+
+
 	})
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
 		ErrorLoading();
-	});
+		$("#modal-manage-device #list-type").prop('disabled', true);
+	});	
 }
 
 function LoadGraph()
 {
 	$.ajax({
 		type: "POST",
-		url: 'Desktop/test.php',
-		cache: true,
-		async: false,
-		success: function (data) {
-			$("#graph").html("");
-			$("#graph").html(data);
-			resizeMaison();
-		}
+		url: 'Desktop/Graph.php',
+		cache: true
+	})
+	.done( function (data)
+	{
+		$("#graph").html("");
+		$("#graph").html(data);
+		resizeMaison();
 	});
 }
 
@@ -661,8 +672,7 @@ function LoadCalendar()
 	var request = $.ajax({
 		type: "POST",
 		url: 'Desktop/Calendar.php',
-		cache: false,
-		async: true
+		cache: false
 	});	
 
 	request.done(function (data) {
@@ -720,7 +730,6 @@ function SaveCalendar()
 		ErrorLoading('SaveCalendar');
 	});
 }
-
 
 function DeleteCalendar()
 {
@@ -862,7 +871,6 @@ function ListScenario()
 	});
 }
 
-
 function SaveScenarioXMLAndScenarioExec(ScenarioId, UpdateScenario, ScenarioName, blockXml, isActive, logicArray)
 {
 	var request = $.ajax({
@@ -917,11 +925,40 @@ function DeleteScenario(id)
 	});
 }
 
-function SaveDevice(Device, CmdDevice)
+/*function AddPlugins(Device, DeviceConfiguration)
+{	
+	Device += "&DeviceConfiguration="+DeviceConfiguration
+	Device += "&Act=AddPlugins";
+
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',		
+		data: Device
+	});
+
+	request.done(function (data) {
+		$.each(data, function (index, item)
+		{
+			linkCommande = "Core/plugins/Commande.php";
+			$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: item.Id}, function()
+			{
+				$("#ModalEquipementGeneral #device-deviceid").val(item.Id);
+			})
+		});
+	});
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+		ErrorLoading('SaveDevice');
+	});
+}*/
+
+function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
 {
 	//Data.Act = "SaveDevice";
 	//Data = JSON.stringify(Data);
 	Device += "&CmdDevice="+CmdDevice;
+	Device += "&DeviceConfiguration="+DeviceConfiguration
 	Device += "&Act=SaveDevice";
 
 	var request = $.ajax({
@@ -935,17 +972,27 @@ function SaveDevice(Device, CmdDevice)
 		if (data.status == "error")
 		{
 			ErrorLoading(data.msg);
+			return false;
 		}
 		else
 		{
 			info(data.msg);
-			LoadMaison();
+			if(data.refresh == true)
+			{
+				return true;
+				LoadMaison();
+				LoadEquipement();
+			}
+			else
+			{
+				return false;
+			}
 		}
-		//LoadEquipement();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
 		ErrorLoading('SaveDevice');
+		return false;
 	});
 }
 
@@ -973,12 +1020,14 @@ function DeleteDevice(data, RowSelected)
 					type: 'POST',
 					dataType: "json",
 					url: 'Core/class/GetAjaxResult.php',		
-					data: data
+					data: data,
+					cache: false
 				});
 
 				request.done(function (data) {
-					$("#table-content-equipement").DataTable().row(RowSelected).remove().draw();
 					info(data.msg);
+					$("#table-content-equipement").DataTable().row(RowSelected).remove();//.draw();
+					RowSelected.hide();
 					LoadMaison();
 				});
 
@@ -1062,11 +1111,11 @@ function LoadEquipement()
 
 	var equipementTable = $("#table-content-equipement").dataTable({
         "order": [[ 1, "asc" ]],
+        "responsive": true,
 		"columnDefs": [
 		{"className": "dt-center", "targets": "_all"},
 		{"className": "dt-body-right", "targets": [4]},
-		{ "visible": false, "targets": [5,6,7,8,9,10,11] },
-		{ "type": "alt-string", "targets": [3] }
+		{ "visible": false, "targets": [4,5,6,7,8,9,10,11] }
     	//{ "width": "5%", "targets": 8 }
     	],
     	"searching": true,
@@ -1077,7 +1126,6 @@ function LoadEquipement()
     	"columns": [
     	{data: "DeviceNom"},
     	{data: "NamePiece"},
-    	{data: "Type"},
     	{
     		data: "DeviceVisible",
     		render : function(data)
@@ -1092,7 +1140,8 @@ function LoadEquipement()
     	},
     	{data: "DeviceId"},
     	{data: "LieuxId"},
-    	{data: "TypeId"},
+    	{data: "ModuleId"},
+    	{data: "ModuleName"},
     	{data: "WidgetId"},
     	{data: "CarteId"},
     	{data: "RAZ"},
@@ -1134,8 +1183,8 @@ function LoadEquipement()
 		DeviceData.DeviceVisible = parseInt(DeviceData.DeviceVisible)?0:1;	
 		$(this).attr("src",DeviceData.DeviceVisible?"Core/pic/view.png":"Core/pic/notview.png");
 		$(this).attr("alt",DeviceData.DeviceVisible?"view":"notview");
-		DeviceData = $.param({deviceId: DeviceData.DeviceId, LieuxId: DeviceData.LieuxId, TypeId: DeviceData.WidgetId, ModelTypeId: DeviceData.TypeId, DeviceName: DeviceData.DeviceNom, CarteDeviceId: DeviceData.Cmd_Device_DeviceId, CarteId: DeviceData.CarteId, RAZ: DeviceData.RAZ, DeviceVisible: DeviceData.DeviceVisible, CmdDeviceid: DeviceData.Cmd_device_Id})
-		SaveDevice(DeviceData);
+		Device = $.param({deviceId: DeviceData.DeviceId, LieuxId: DeviceData.LieuxId, ModuleId: DeviceData.ModuleId, ModelTypeId: DeviceData.TypeId, DeviceName: DeviceData.DeviceNom, CarteDeviceId: DeviceData.Cmd_Device_DeviceId, CarteId: DeviceData.CarteId, RAZ: DeviceData.RAZ, DeviceVisible: DeviceData.DeviceVisible, CmdDeviceid: DeviceData.Cmd_device_Id })
+		SaveDevice(Device, DeviceData.Configuration);
 	})
 	.on( 'click', '.btn-primary', function ()
 	{
@@ -1188,8 +1237,6 @@ function LoadEquipement()
 	*/
 
 	// ##############   SCRIPT POUR SCENARIO ############### //
-
-
 
 /*	function LoadScenarioXML(Scenario_id)
 	{

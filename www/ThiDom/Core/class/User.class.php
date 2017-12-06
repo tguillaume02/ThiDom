@@ -76,7 +76,15 @@ class User
 
 	public function SaveUser($Id, $Name, $Password, $Hash)
 	{
-		$Password = hash('sha256', $Password);
+		if ($Password != "***********")
+		{
+			$Password = hash('sha256', $Password);
+		}		
+		else
+		{
+			$Password = $_SESSION['pass'];
+		}
+
 		if ($Id == "")
 		{		
 			$values = array(
@@ -87,7 +95,7 @@ class User
 			$sql = "INSERT INTO User (UserName, UserPass, UserHash) VALUES (:UserName, :UserPass, :UserHash)";
 			db::execQuery($sql,$values);
 
-			$msg = "L'utilisateur "+$Name+" a bien été ajouté";
+			$msg = "L'utilisateur ".$Name." a bien été ajouté";
 			$value = Array( "msg"=>$msg, "clear"=>"on");
 			return json_encode($value);
 		}
@@ -99,10 +107,10 @@ class User
 				':UserPass' => $Password,
 				':UserHash' => $Hash
 			);
-			$sql = "UPDATE INTO User SET UserName=:UserName, UserPass=:UserPass, UserHash=:UserHash where Id=:Id";
+			$sql = "UPDATE User SET UserName=:UserName, UserPass=:UserPass, UserHash=:UserHash where Id=:Id";
 			db::execQuery($sql,$values);
 
-			$msg = "L'utilisateur "+$Name+" a bien été mis à jour";
+			$msg = "L'utilisateur ".$Name." a bien été mis à jour";
 			$value = Array( "msg"=>$msg, "clear"=>"on");
 			return json_encode($value);
 		}

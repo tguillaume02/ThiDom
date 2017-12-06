@@ -18,6 +18,7 @@ $tempratureObject = new Temperature();
 $scenarioObject = new Scenario();
 $lieuxObject = new Lieux();
 $UserObject = new User();
+$ModuleObject= new Module();
 
 if (isset($_POST['Mode']))
 {
@@ -52,33 +53,56 @@ if ($act == "SaveDevice")
 {
 	$SensorAttach = "-1";
 	$DeviceVisible = "0";
-	$id = "";
+	$Id = "";
 	$Unite = "";
 	$CmdDeviceId = "";
 
-	$Id = $_POST['deviceId']; 
-	$LieuxID = $_POST['LieuxId']; // Id de la piece
-	$TypeID = $_POST['ModelTypeId']; // Type de widget
-	$DeviceName = $_POST['DeviceName']; // Nom du device
-	$DeviceVisible = $_POST['DeviceVisible']; // Device Visible ou pas	
-	$CmdDevice = $_POST['CmdDevice']; // Liste des actions des differentes commandes
-	$DeviceHistoriser = $_POST['DeviceHistoriser'];
-
-	$CarteID = $_POST['CarteId']; // Numero de la carte
+	$Id = getPost('deviceId'); 
+	$LieuxId = getPost('LieuxId'); // Id de la piece
+	$ModuleId = getPost('ModuleId'); 
+	$DeviceName = getPost('DeviceName'); // Nom du device
+	$DeviceVisible = getPost('DeviceVisible'); // Device Visible ou pas	
+	$CmdDevice = getPost('CmdDevice'); // Liste des actions des differentes commandes
+	$DeviceHistoriser = getPost('DeviceHistoriser');
+	$Configuration = getPost('DeviceConfiguration');
+	$CarteID = getPost('CarteId'); // Numero de la carte
 
 	//$DeviceID = $_POST['CarteDeviceId']; // Id de la broche de la carte
 	//$RAZDevice = $_POST['RAZ']; // Remise à zero apres X temps
 	//$CmdDeviceId = $_POST['CmdDeviceid']; // Id de la commande correspondante
 
-	$CmdDevice = json_decode($CmdDevice);
-	foreach($CmdDevice as $v){
-		$CmdId = $v->id;
-		$Colonne = $v->cmdname;
-		$Value = $v->value;
-		$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $Configuration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId, $SensorAttach/*, $CmdDeviceId*/))
+	{
+		//return  $CmdDevice;
+		if (!empty($CmdDevice))
+		{
+			$CmdDevice = json_decode($CmdDevice);
+			foreach($CmdDevice as $v)
+			{
+				$CmdId = $v->id;
+				$Colonne = $v->cmdname;
+				$Value = $v->value;
+				$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+			}
+		}
+		else
+		{		
+			$ModelType = $ModuleObject->byId($ModuleId)->get_ModuleName();
+			$object = new $ModelType;
+			$object->Install();		
+			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
+		}
 	}
 
-	echo $deviceObject->SaveDevice($Id, $CarteID,/* $DeviceID, $RAZDevice,*/ $DeviceName, $DeviceVisible, $TypeID, $LieuxID, $SensorAttach/*, $CmdDeviceId*/);
+	if ($CmdDevice)
+	{
+		echo $result;
+	}
+	else
+	{
+		$value = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"off","refresh"=>False);
+		echo json_encode($value);
+	}
 
 }
 
@@ -87,6 +111,24 @@ if ($act == "DeleteDevice")
 	$deviceId = $_POST['DeviceId'];
 	echo $deviceObject->DeleteDevice($deviceId);
 }
+
+/*if ($act == "AddPlugins")
+{
+	$Id = getPost('deviceId');
+	$LieuxId = getPost('LieuxId'); // Id de la piece
+	$TypeId = getPost('ModelTypeId'); // Type de widget
+	$ModuleId = getPost('ModuleTypeId'); 
+	$DeviceName = getPost('DeviceName'); // Nom du device
+	$DeviceVisible = getPost('DeviceVisible'); // Device Visible ou pas	
+	$CmdDevice = getPost('CmdDevice'); // Liste des actions des differentes commandes
+	$DeviceHistoriser = getPost('DeviceHistoriser');
+	$Configuration = getPost('DeviceConfiguration');
+	$CarteID = getPost('CarteId'); // Numero de la carte
+	
+	$deviceObject->SaveDevice("", "", $Configuration , $DeviceName, $DeviceVisible , $TypeId,  $ModuleId , $LieuxId , "");
+	$ModelType = $deviceObject->GetTypeDevice($TypeId)->get_Type_Name();
+	$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $ModelType));
+}*/
 
 if ($act == "SaveLieux")
 {
@@ -144,7 +186,7 @@ if ($act == "GetLastLog")
 
 if ($act == "Temp")
 {
-	$dbObject->ResultToJsonArray($tempratureObject->GetTemperatureHistory());
+	$dbObject->ResultToJsonArray($tempratureObject->GetTemperatureHistoryOnOneMonth());
 }
 
 if ($act == "GetListScenario")
@@ -154,11 +196,11 @@ if ($act == "GetListScenario")
 
 if($act == "SaveScenario")
 {
-	$UpdateScenario = $_POST['UpdateScenario'];
-	$Scenario_Name = $_POST['Scenario_Name'];
-	$Xml_Scenario = $_POST['Xml_Scenario'];
-	$Xml_Status = $_POST['Xml_Status'];
-	$logicArray = $_POST['LogicArray'];
+	$UpdateScenario = getPost('UpdateScenario');
+	$Scenario_Name = getPost('Scenario_Name');
+	$Xml_Scenario = getPost('Xml_Scenario');
+	$Xml_Status = getPost('Xml_Status');
+	$logicArray = getPost('LogicArray');
 
 	echo $scenarioObject->SaveScenario($id, $Scenario_Name, $UpdateScenario, $Xml_Scenario, $Xml_Status, $logicArray);
 }
@@ -188,15 +230,16 @@ if ($act == "GetNewHash")
 	echo $UserObject->getNewHash();
 }
 
+if ($act == "GetModuleType") 
+{	
+	$dbObject->ResultToJsonArray($deviceObject->GetModuleType());
+}
+
 if ($act == "GetTypeWidget") 
 {	
 	$dbObject->ResultToJsonArray($deviceObject->GetTypeWidget());
 }
 
-if ($act == "GetTypeDevice")
-{	
-	$dbObject->ResultToJsonArray($deviceObject->GetTypeDevice());
-}
 
 if ($act == "AddPlanning")
 {

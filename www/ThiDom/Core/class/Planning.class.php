@@ -5,13 +5,12 @@ class Planning
 
 	public function GetAllPlanning() 
 	{
-		$sql = "SELECT Planning.Id,  Planning.Date, Planning.Days, Planning.Hours, Planning.Status, Device.Id as DeviceId, cmd_device.Id as CmdDevice_Id, cmd_device.Nom as DeviceName, Lieux.Nom as LieuxName, Type_Device.Widget_Id, widget.Type as WidgetType, Planning.Activate
+		$sql = "SELECT Planning.Id,  Planning.Date, Planning.Days, Planning.Hours, Planning.Status, Device.Id as DeviceId, cmd_device.Id as CmdDevice_Id, cmd_device.Nom as DeviceName, Lieux.Nom as LieuxName, widget.Type as WidgetType, Planning.Activate
 		from Planning 
 		inner join cmd_device on cmd_device.Id  = Planning.CmdDevice_Id 
 		inner join Device on Device.Id = cmd_device.Device_Id 
 		inner join Lieux on Lieux.Id = Device.Lieux_Id 
-		inner join Type_Device on Type_Device.Id = Device.Type_Id 
-		inner join widget on Type_Device.Widget_Id = widget.Id 
+		inner join widget on cmd_device.Widget_Id = widget.Id 
 		where Activate = 1";
 		return db::execQuery($sql,[]);
 	}

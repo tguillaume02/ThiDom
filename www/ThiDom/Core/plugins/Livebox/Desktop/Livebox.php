@@ -1,12 +1,12 @@
 <?php
 require_once dirname(__FILE__)  .'/../../../Security.php'; 
 require_once dirname(__FILE__) .'/../../../ListRequire.php';
-require_once ('Livebox.class.php');
+
 ?>
 
 <div> <!--/* class="DeviceDetail Corner"*/-->
 	<img id="Livebox_pic" src="Core/plugins/Livebox/pic/Livebox.png">
-
+	
 	<table class="table table-borderless WidgetContent">
 		<tbody>
 			<tr class="WidgetStatus-center">
@@ -35,26 +35,27 @@ require_once ('Livebox.class.php');
 		<tbody>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Reboot Livebox',$Device_id)->get_Id()?>">
-					<div class="btn btn-primary pull-left" data-i18n="Edit" data-theme="a" id="rebootLivebox">Reboot </div>
+					<div class="btn btn-primary pull-left" data-i18n="Edit" data-theme="a" id="rebootLivebox" deviceId="<?php echo $Device_id ?>">Reboot </div>
 				</td>
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Update Livebox',$Device_id)->get_Id()?>">
-					<div class="btn btn-primary pull-right" data-i18n="Edit" data-theme="a" id="UpdateLivebox">Rafraichir </div>
+					<div class="btn btn-primary pull-right" data-i18n="Edit" data-theme="a" id="UpdateLivebox" deviceId="<?php echo $Device_id ?>">Rafraichir </div>
 				</td>
 			</tr>
 		</tbody>
-	</table>	
+	</table>
 </div>
 
 <script>
 
-	function loadData()
+	function loadData($deviceId = "")
 	{
 		var request = $.ajax({
 			dataType: "json",
 			type: "POST",
-			url: 'Core/plugins/Livebox/Desktop/Livebox.class.php',            
+			url: 'Core/plugins/Livebox/Desktop/Livebox_ajax.php',            
 			data: {
-				act: "loadData"
+				act: "loadData",
+				deviceId: $deviceId
 			},
 			cache: false,
 			async: true
@@ -72,9 +73,10 @@ require_once ('Livebox.class.php');
 		var request = $.ajax({
 			dataType: "json",
 			type: "POST",
-			url: 'Core/plugins/Livebox/Desktop/Livebox.class.php',             
+			url: 'Core/plugins/Livebox/Desktop/Livebox_ajax.php',             
 			data: {
-				act: "rebootLivebox"
+				act: "rebootLivebox",
+				Device_id: $(this).attr("deviceId")
 			},
 			cache: false,
 			async: true
@@ -89,9 +91,9 @@ require_once ('Livebox.class.php');
 	})
 
 	$("#UpdateLivebox").click(function(){
-		loadData();
+		loadData($(this).attr("deviceId"));
 	})
 
-	loadData();
+	loadData($(this).attr("deviceId"));
 
 </script>
