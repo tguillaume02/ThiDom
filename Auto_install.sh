@@ -35,6 +35,7 @@ init_msg()
 	msg_login_info3="Votre mot de passe par défault est: "
 	msg_install_sql="*                Installation de la base de données    *"
 	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
+	End ="L'installation de ThiDom est terminé, il est recommandé de redémarrer: sudo reboot"
 	restart="Votre machine va maintenant redémarrer"
 	restart1="Votre machine va redémarrer dans 1 seconde "
 	restart2="Votre machine va redémarrer dans 2 secondes "
@@ -251,16 +252,14 @@ echo "********************************************************${NORMAL}"
 
 sudo cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 
-sudo mkdir $HOME/Script\ crontab/
-sudo cp -Rf /tmp/ThiDom/Script\ crontab/* $HOME/Script\ crontab/
-sudo chmod +x $HOME/Script\ crontab/*
+sudo mkdir /home/Thidom
+sudo mkdir /home/Thidom/Script\ crontab/
+sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/Thidom/Script\ crontab/
+sudo chmod +x /home/Thidom/Script\ crontab/*
 
-sudo mkdir $HOME/Script_domotique/
-sudo cp -Rf /tmp/ThiDom/Script_domotique/* $HOME/Script_domotique/
-sudo chmod +x $HOME/Script_domotique/*
-
-sudo chown  $USER:$USER -R $HOME/Script_domotique/
-sudo chown  $USER:$USER -R $HOME/Script\ crontab/
+sudo mkdir /home/Thidom/Script_domotique/
+sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/Thidom/Script_domotique/
+sudo chmod +x /home/Thidom/Script_domotique/*
 
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
@@ -290,15 +289,15 @@ sed -i 's/{{bddsql}}/thidom/' db.class.php
 
 # chown www-data:www-data connect.php 
 
-sed -i 's/{{pwdsql}}/'${bdd_password}'/' $HOME/Script_domotique/msql.py
-sed -i 's/{{usersql}}/thidom/' $HOME/Script_domotique/msql.py
-sed -i 's/{{bddsql}}/thidom/' $HOME/Script_domotique/msql.py
+sed -i 's/{{pwdsql}}/'${bdd_password}'/' /home/Thidom/Script_domotique/msql.py
+sed -i 's/{{usersql}}/thidom/' /home/Thidom/Script_domotique/msql.py
+sed -i 's/{{bddsql}}/thidom/' /home/Thidom/Script_domotique/msql.py
 
 echo ""
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 
-sed -i 's/{{idnotify}}/'${idnotify}'/' $HOME/Script_domotique/msql.py
+sed -i 's/{{idnotify}}/'${idnotify}'/' /home/Thidom/Script_domotique/msql.py
 
 echo "${VERT}********************************************************"
 echo "${msg_setup_apache}"
@@ -367,12 +366,13 @@ fi
 if  [ -z $IP ]; then
 	IP="localhost"
 fi
+echo "${VERT}"
 HOST=$(hostname -f)
 echo "${msg_login_info1}"
 echo "\n\t\thttp://$IP/ThiDom ${msg_or} http://$HOST/ThiDom\n"
 echo "${msg_login_info2} admin"
 echo "${msg_login_info3} admin"
-
+echo ""
 
 ############# DEFINE STATIC ID TO USB  ##############
 	# sudo udevadm info --query=all --name=ttyUSB0
@@ -397,25 +397,28 @@ sudo sed -e '/bind-address/ s/^#*/#/' -i /etc/mysql/my.cnf
 ##### ADD IPTABLES RULES ON START
 update-rc.d DefaultFirewall defaults
 
-echo "${restart5}"
-sleep 1
+#echo "${restart5}"
+#sleep 1
 
-echo "${restart4}"
-sleep 1
+#echo "${restart4}"
+#sleep 1
 
-echo "${restart3}"
-sleep 1
+#echo "${restart3}"
+#sleep 1
 
-echo "${restart2}"
-sleep 1
+#echo "${restart2}"
+#sleep 1
 
-echo "${restart1}"
-sleep 1
+#echo "${restart1}"
+#sleep 1
 
-echo "${restart}"
+#echo "${restart}"
 
-sudo reboot
+#sudo reboot
 
+echo "${End}"
+
+##############################################################################################
 # Modifier le fichier /etc/apache2/ports.conf
                     #/etc/apache2/sites-available
 	# APACHE MODIFIER CHEMIN FICHIER LOG EN /VAR/LOG/
