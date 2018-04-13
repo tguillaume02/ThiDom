@@ -82,6 +82,7 @@ install_dependance() {
 	sudo pip install tweepy
 	sudo pip install httplib2
 	sudo pip install --upgrade google-api-python-client
+	sudo pip install requests
 	install_php
 	sudo apt-get install ca-certificates -y
 	sudo apt-get install ntpdate -y
@@ -124,6 +125,7 @@ install_php() {
 	sudo apt-get install php7.0-zip -y
 	sudo apt-get install php7.0-ssh2 -y
 	sudo apt-get install php7.0-calendar -y
+	sudo apt-get install php7.0-intl -y
 	if [ $? -ne 0 ]; then
 		sudo apt-get install libapache2-mod-php5 -y
 		sudo apt-get install php5 -y
