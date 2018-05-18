@@ -139,6 +139,7 @@ install_php() {
 		sudo apt-get install php5-cli -y
 		sudo apt-get install php5-ssh2 -y
 	fi	
+	sudo apt-get install php-curl -y
 	sudo apt-get install php-pear build-essential -y
 }
 
