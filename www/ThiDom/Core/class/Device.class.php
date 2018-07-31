@@ -55,8 +55,8 @@ class Device
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE Lieux_ID = :LieuxId';
-		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+		WHERE Lieux_Id = :LieuxId';
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 		
 	}
 
@@ -78,6 +78,14 @@ class Device
 		WHERE Visible = 1';
 		return db::execQuery($sql, [], db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}	
+
+	public static function getAllDevice()
+	{
+		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
+		FROM '.self::table_name;
+
+		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
+	}
 
 	public function GetAll()
 	{
@@ -148,7 +156,8 @@ class Device
 		(
 		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
 	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
-			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning 
+			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning
+			,IFNULL(Device.Position,999) as DevicePosition  
 		FROM Lieux
 		LEFT JOIN Device on Device.Lieux_ID= Lieux.Id
 		LEFT JOIN cmd_device on cmd_device.Device_ID = Device.Id
@@ -159,24 +168,25 @@ class Device
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T WHERE T.LieuxId= :LieuxId
-		GROUP BY Id, Position, Lieux, Nom";
+		GROUP BY Id, Position, Lieux, Nom
+		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
 	public function GetDeviceWidgetVisible()
 	{
-		$sql = "SELECT widget.Id as widgetId, widget.Name as widgetName, '' as ModuleId, '' as ModuleName FROM Device 
+		$sql = "SELECT widget.Id as WidgetId, widget.Name as WidgetName FROM Device 
 					INNER JOIN cmd_device on Device.Id = cmd_device.Device_Id
 					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
 					WHERE Device.Visible = 1
 				UNION
-				SELECT '' as widgetId, '' as widgetName, Module_Type.Id as moduleId, Module_Type.ModuleName as ModuleName FROM Device 
+				SELECT Module_Type.Id as WidgetId, Module_Type.ModuleName as WidgetName FROM Device 
 					INNER JOIN cmd_device on Device.Id = cmd_device.Device_Id
 					LEFT JOIN widget on widget.Id = cmd_device.Widget_Id
 					LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
 					WHERE Device.Visible = 1
-				GROUP BY widgetId,widgetName, moduleId, ModuleName
-				ORDER BY widgetId,widgetName, moduleId, ModuleName";
+				GROUP BY WidgetId,WidgetName
+				ORDER BY WidgetId,WidgetName";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
@@ -197,7 +207,7 @@ class Device
 			db::execQuery($sql,$values);
 
 			$msg = "Le Device ".$DeviceName." a bien été ajouté";
-			$value = Array( "msg"=>$msg, "clear"=>"on");
+			$value = Array( "msg"=>$msg, "clear"=>"on", "deviceId" => $this->DeviceNewId()->get_Id(), "refresh"=>false);
 			return json_encode($value);
 		}
 		else
@@ -228,7 +238,7 @@ class Device
 			db::execQuery($sql,$values);		*/	
 
 			$msg = "Le Device ".$DeviceName." a bien été mis à jour";
-			$value = Array( "msg"=>$msg, "clear"=>"on");
+			$value = Array( "msg"=>$msg, "clear"=>"on", "deviceId" => $Id, "refresh"=>true);
 			return json_encode($value);
 		}
 	}
@@ -307,7 +317,7 @@ class Device
 
 	public function GetModuleType()
 	{
-		$sql = 'SELECT Id, ModuleName FROM Module_Type order by ModuleName';
+		$sql = 'SELECT Id, ModuleName, ModuleType FROM Module_Type order by ModuleName';
 		return db::execQuery($sql, []);	
 	}
 

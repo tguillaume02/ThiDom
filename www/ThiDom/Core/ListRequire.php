@@ -1,4 +1,10 @@
 <?php 
+
+if(!isset($_SESSION['userId']))
+{
+	$_SESSION['userId'] = -1;
+}
+
 spl_autoload_register(function($class) {
 	$class=preg_replace("/[^a-z0-9_ ]/i", "", $class);
 	if (file_exists(dirname(__FILE__) .'/class/' . $class . '.class.php'))

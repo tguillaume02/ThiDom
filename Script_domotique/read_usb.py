@@ -2,34 +2,23 @@
 # -*- coding: utf-8 -*-
 
 import serial
-import MySQLdb
 import sys
 import datetime
 import time
 import json
 import msql
 from SendNotification import SendNotification
-# import ptvsd
-# ptvsd.enable_attach(secret="my_secret")
+#import ptvsd
+#ptvsd.enable_attach(secret = 'my_secret')
 
 print("####### READ USB - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
 
 
 # #############  TRY CONNECT SQL ##################
-DbConnect = None
-while DbConnect is None:
-    try:
-        DbConnect = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
-        time.sleep(0.2)
-        cursor = DbConnect.cursor()
-        try:
-            SendNotification("Demarrage read usb", "-1")
-        except:
-            setError("Start")
-            pass
-    except MySQLdb.Error, e:
-        DbConnect = None
-        time.sleep(10)
+cursor = msql.cursor
+DbConnect = msql.DbConnect
+
+SendNotification("Demarrage read usb", "-1")
 
 ser = serial.Serial(port='/dev/ttyUSB1', baudrate=115200)
 
@@ -96,12 +85,12 @@ def ReadArduino():
                 else:
                     if SlaveCarteId != "" and pinID != "":
                         cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID, int(SlaveCarteId)))
-                        setHistory(SlaveCarteId, pinID, value, status)
+
                     elif pinID != "":
                         SlaveCarteId = "0"
 #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
                         cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=0 and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID))
-                        setHistory(SlaveCarteId, pinID, value, status)
+                    setHistory(SlaveCarteId, pinID, value, status)
 
                     if status == 0 or status == "0":
                         sstatus = "off"
@@ -111,30 +100,35 @@ def ReadArduino():
                         status = status
 
                     try:
-                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom, widget.Id, Device.Configuration FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
+                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
                         for row in cursor.fetchall():
                             cmd_device_ID = row[0]
                             nom = row[1]
                             lieux = row[2]
                             widget_Id = row[3]
-                            try:
-                                Configuration = json.loads(row[4])
-                            except ValueError, e:
-                                Configuration = ''
+                            bHistory = row[5]
+                            Notification = row[6]
+                            bLog = row[7]
+                           # try:
+                           #     Configuration = json.loads(row[4])
+                           # except ValueError, e:
+                           #     Configuration = ''
 
                         if cmd_device_ID != "":
                             if widget_Id == "slider":
                                 value = ""
 
-                            cursor.execute("INSERT INTO Log (DeviceId, DATE, ACTION, Message) VALUES (%s, %s, %s, %s)", (cmd_device_ID, getDate(), str_usb_read, nom + " " + lieux + " " + str(value) + " : " + sstatus))
+                            if int(bLog) == 1:
+                                setLog(cmd_device_ID, str_usb_read, nom, lieux, value, sstatus )
 
-                            if 'Notification' in Configuration:
-                                if Configuration['Notification'] == '1':
-                                    try:
-                                        SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
-                                    except:
-                                        setError("Send Notification New Status")
-                                        pass
+                            # if 'Notification' in Configuration:
+                            #    if Configuration['Notification'] == '1':
+                            if Notification == 1:
+                                try:
+                                    SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
+                                except:
+                                    setError("Send Notification New Status")
+                                    pass
                         else:
                             NewDevice(SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
                     except:
@@ -160,11 +154,11 @@ def Alert(str_usb_read):
         cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", ("", getDate(), "", "Alert : " + str_usb_read))
         try:
             SendNotification(str_usb_read)
-        except IOError, e:
+        except:
             setError("Send Notification Alert")
 #            print "####### READ USB -  Send Notification Alert #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error %d: %s" % (e.args[0], e.args[1])
             pass
-    except IOError, e:
+    except:
         setError("Save Notification Alert")
 #        print "####### READ USB - Save Notification Alert #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error %d: %s" % (e.args[0], e.args[1])
         pass
@@ -176,7 +170,7 @@ def NewDevice(SlaveCarteId, pinID, value, module_type, widget_type="-99"):
         maxId = cursor.fetchone()[0]
         cursor.execute("INSERT INTO Device (ID, Nom, CarteId, Module_Id) VALUES (%s, %s, %s, %s) ", (maxId, "New Device", SlaveCarteId, module_type))
         cursor.execute("INSERT INTO cmd_device (Nom, Device_Id, DeviceId, Value, Date, Widget_Id) VALUES (%s, %s, %s, %s, %s, %s) ", ("New Device", maxId, pinID, value, getDate(), widget_type))
-        setHistory(SlaveCarteId, pinID, value, value)
+        setLog(maxId, '', 'New Device', '', value, value )
     except:
         setError("New Device")
         pass
@@ -198,8 +192,8 @@ def getDate():
 
 
 def setHistory(CarteId, pinId, value, etat):
-    cursor.execute(""" SELECT Device.History, cmd_device.Id, Device.Lieux_Id, widget.Type FROM cmd_device 
-                        INNER JOIN Device on Device.Id = cmd_device.Device_Id 
+    cursor.execute(""" SELECT cmd_device.History, cmd_device.Id, Device.Lieux_Id, widget.Type FROM cmd_device
+                        INNER JOIN Device on Device.Id = cmd_device.Device_Id
                         INNER JOIN widget ON cmd_device.Widget_Id = widget.Id
                         WHERE DeviceId = %s and Device.CarteId = %s""",
                     (pinId, CarteId)
@@ -210,6 +204,8 @@ def setHistory(CarteId, pinId, value, etat):
             cursor.execute("INSERT INTO Temperature_Temp (Date, Temp, Lieux_Id, Cmd_device_Id) VALUES (%s, %s, %s, %s)", (getDate(), value if result[3] == "Text" else etat, result[2], result[1]))
     cursor.execute("delete from Log where Log.date < SUBDATE(CURRENT_DATE, INTERVAL 15 DAY)")
 
+def setLog(cmd_device_ID, str_usb_read, nom, lieux, value, sstatus ):
+    cursor.execute("INSERT INTO Log (DeviceId, DATE, ACTION, Message, Value, Etat) VALUES (%s, %s, %s, %s, %s, %s)", (cmd_device_ID, getDate(), str_usb_read, nom + " " + lieux + " " + str(value) + " : " + sstatus, str(value), sstatus))
 
 def setError(situ, value=(sys.exc_info()[0])):
     print("####### READ USB  "+situ+" #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % value)

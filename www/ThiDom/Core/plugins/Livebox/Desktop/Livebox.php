@@ -5,18 +5,19 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 ?>
 
 <div> <!--/* class="DeviceDetail Corner"*/-->
-	<img id="Livebox_pic" src="Core/plugins/Livebox/pic/Livebox.png">
-	
 	<table class="table table-borderless WidgetContent">
 		<tbody>
 			<tr class="WidgetStatus-center">
-				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>">
+				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>" style="vertical-align: middle;">
 					<img src="Core/pic/temp_up.png"/>
-					<span id="InfoDeviceUp_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>"></span>
+					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>"></span>
 				</td>
-				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>">
+				<td>
+					<img id="Livebox_pic" src="Core/plugins/Livebox/pic/Livebox.png">
+				</td>
+				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>" style="vertical-align: middle;">
 					<img src="Core/pic/temp_down.png"/>
-					<span id="InfoDeviceDown_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>"></span>
+					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 		</tbody>
@@ -26,7 +27,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Last Change',$Device_id)->get_Id()?>">	
 					<img src="Core/pic/Synchronize.png"/>
-					<span id="InfoDeviceLast_Change_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Last Change',$Device_id)->get_Id()?>"></span>
+					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Last Change',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
 		</tbody>
@@ -47,7 +48,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 
 <script>
 
-	function loadData($deviceId = "")
+	function loadData($deviceId)
 	{
 		var request = $.ajax({
 			dataType: "json",
@@ -55,7 +56,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			url: 'Core/plugins/Livebox/Desktop/Livebox_ajax.php',            
 			data: {
 				act: "loadData",
-				deviceId: $deviceId
+				Device_id: $deviceId
 			},
 			cache: false,
 			async: true
@@ -94,6 +95,6 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		loadData($(this).attr("deviceId"));
 	})
 
-	loadData($(this).attr("deviceId"));
+	loadData(<?php echo $Device_id?>);
 
 </script>

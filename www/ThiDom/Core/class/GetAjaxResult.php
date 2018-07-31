@@ -56,6 +56,7 @@ if ($act == "SaveDevice")
 	$Id = "";
 	$Unite = "";
 	$CmdDeviceId = "";
+	$ModuleType = "";
 
 	$Id = getPost('deviceId'); 
 	$LieuxId = getPost('LieuxId'); // Id de la piece
@@ -66,6 +67,8 @@ if ($act == "SaveDevice")
 	$DeviceHistoriser = getPost('DeviceHistoriser');
 	$Configuration = getPost('DeviceConfiguration');
 	$CarteID = getPost('CarteId'); // Numero de la carte
+	$ModuleType = getPost("ModuleType");
+	$TypeId = getPost("TypeId");
 
 	//$DeviceID = $_POST['CarteDeviceId']; // Id de la broche de la carte
 	//$RAZDevice = $_POST['RAZ']; // Remise à zero apres X temps
@@ -74,24 +77,40 @@ if ($act == "SaveDevice")
 	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $Configuration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId, $SensorAttach/*, $CmdDeviceId*/))
 	{
 		//return  $CmdDevice;
-		if (!empty($CmdDevice))
+		$Id = json_decode($result)->{'deviceId'};
+		if ($ModuleType == "Plugins")
 		{
-			$CmdDevice = json_decode($CmdDevice);
-			foreach($CmdDevice as $v)
-			{
-				$CmdId = $v->id;
-				$Colonne = $v->cmdname;
-				$Value = $v->value;
-				$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
-			}
-		}
-		else
-		{		
 			$ModelType = $ModuleObject->byId($ModuleId)->get_ModuleName();
 			$object = new $ModelType;
 			$object->Install();		
 			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
 		}
+		else
+		{			
+			if (!empty($CmdDevice))
+			{
+				$CmdDevice = json_decode($CmdDevice);
+				foreach($CmdDevice as $v)
+				{
+					$CmdId = $v->id;
+					$Colonne = $v->cmdname;
+					$Value = $v->value;
+					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+				}
+			}
+			else
+			{
+				$cmdDeviceObject->set_Name($DeviceName);
+				$cmdDeviceObject->set_device_Id($Id);
+				$cmdDeviceObject->set_WidgeId($TypeId);
+				$cmdDeviceObject->set_type('Action');
+				$resultCmdDevice = $cmdDeviceObject->save();
+				
+				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
+				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
+				$result =  json_encode($newresult);
+			}
+		}		
 	}
 
 	if ($CmdDevice)
@@ -100,15 +119,16 @@ if ($act == "SaveDevice")
 	}
 	else
 	{
-		$value = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"off","refresh"=>False);
-		echo json_encode($value);
+		//$value = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>json_decode($result)->{'clear'}, "refresh"=>json_decode($result)->{'refresh'}, "deviceId"=>json_decode($result)->{'deviceId'});
+		//echo json_encode($value);
+		echo $result;
 	}
 
 }
 
 if ($act == "DeleteDevice")
 {	
-	$deviceId = $_POST['DeviceId'];
+	$deviceId = getPost('DeviceId');
 	echo $deviceObject->DeleteDevice($deviceId);
 }
 
@@ -135,20 +155,20 @@ if ($act == "SaveLieux")
 	$Img = "";
 	$Position = "";
 	$Backgd = "";
-	$PieceVisible = ""; 
+	$Visible = ""; 
 
-	$Img = $_POST['Img'];
-	$Name = $_POST['Name'];
-	$Backgd = $_POST['Backgd'];
-	$Position = $_POST['Position'];
-	$Visible = $_POST['Visible'];
+	$Img = getPost('Img');
+	$Name = getPost('Name');
+	$Backgd = getPost('Backgd');
+	$Position = getPost('Position');
+	$Visible = getPost('Visible');
 
 	echo $lieuxObject->SaveLieux($id, $Name, $Visible, $Position, $Img);
 }
 
 if ($act == "DeleteLieux")
 {	
-	$Name = $_POST['Nom'];
+	$Name = getPost('Nom');
 	echo $lieuxObject->DeleteLieux($id, $Name);
 }
 
@@ -158,9 +178,9 @@ if ($act == "SaveUser")
 	$Password = "";
 	$Hash = "";
 
-	$Name = $_POST['Name'];
-	$Password = $_POST['Password'];
-	$Hash = $_POST['Hash'];
+	$Name = getPost('Name');
+	$Password = getPost('Password');
+	$Hash = getPost('Hash');
 	echo $UserObject->SaveUser($id, $Name, $Password, $Hash);
 }
 
@@ -182,6 +202,11 @@ if ($act == "AllLog")
 if ($act == "GetLastLog")
 {
 	$dbObject->ResultToJsonArray($historyObject->LastLogbyId($id));
+}
+
+if ($act == "RemoveLog")
+{
+	$dbObject->ResultToJsonArray($historyObject->RemoveLog());
 }
 
 if ($act == "Temp")
@@ -249,7 +274,7 @@ if ($act == "AddPlanning")
 	$active = "";
 	$days = "";
 
-	$cmddeviceId = $_POST['cmddeviceId'];
+	$cmddeviceId = getPost('cmddeviceId');
 
 
 	if (isset($_POST['commande']) )
@@ -280,7 +305,7 @@ if ($act == "AddPlanning")
 
 if ($act == "DeletePlanning")
 {
-	$planningId = $_POST['planningId'];
+	$planningId = getPost('planningId');
 	echo $planningObject->DeletePlanning($planningId);
 }
 ?>

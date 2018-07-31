@@ -12,19 +12,25 @@
 			<form class="white_text form_planning form-horizontal" id="form-planning">
 				<div class="modal-body">
 					<div>
-						<input id="planning-cmddeviceId" type="text" name="cmddeviceId" style="display: none;"/>
-						<input id="planning-planningId" type="text" name="planningId" style="display: none;"/>
-						<h4><span><u>Activé : </u></span></h4>
-						<table>
-							<tr>
-								<td>									
-									<label class="btn btn-success">
-										<input type="checkbox" name="active" id="active" value="1"/>Active
-									</label>
-								</td>
-							</tr>
-						</table>
+						<div class="form-group">
+							<input id="planning-cmddeviceId" type="text" name="cmddeviceId" style="display: none;"/>
+							<input id="planning-planningId" type="text" name="planningId" style="display: none;"/>
+						</div>
+						
+						<div class="form-group">
+							<h4><span><u>Activé : </u></span></h4>
+							<table>
+								<tr>
+									<td>									
+										<label class="btn btn-success">
+											<input type="checkbox" name="active" id="active" value="1"/>Active
+										</label>
+									</td>
+								</tr>
+							</table>
+						</div>
 						<hr>
+
 						<h4><span><u>Action</u></span></h4>
 						<table class="WidgetContent">
 							<tbody>
@@ -62,14 +68,39 @@
 								</tr>
 							</tbody>
 						</table>
-						<hr>
-						<h4><span><u>Jour / Heure</u></span></h4>
+						<hr>						
+						
+						<div class="form-group">
+							<label style="" class="col-xs-3 col-sm-3 control-label">Jour / Heure<</label>
+							<div class="col-xs-3 col-sm-3 col-md-2">
+								<input type="text" id="planning-datetime" name="dateheure" class="form-control">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label style="" class="col-xs-3 col-sm-3 control-label">Répéter tous les</label>
+							<div class="col-xs-3 col-sm-3 col-md-2">
+								<input class="form-control">
+							</div>
+							<div class="col-xs-5 col-sm-5 col-md-5">
+								<select class="form-control">
+									<option value="minutes">Minutes(s)</option>
+									<option value="hours">Heure(s)</option>
+									<option value="days" selected="">Jour(s)</option>
+									<option value="month">Mois</option>
+									<option value="years">Année(s)</option>
+								</select>
+							</div>
+						</div>
+						
+
+						<!--<h4><span><u>Jour / Heure</u></span></h4>-->
 						<table>
-							<tr>
+							<!--<tr>
 								<td>
-									<input type="text" id="planning-datetime" name="dateheure">											
+									<input type="text" id="planning-datetime" name="dateheure" class="form-control">											
 								</td>
-							</tr>
+							</tr>-->
 							<tr>
 								<td>
 									<h4><span><u>Chaque</u></span></h4>
@@ -125,13 +156,13 @@
 									</table>
 								</td>
 							</tr>
-						</table>			
+						</table>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-success" data-dismiss="modal" id="planning-save"><i class="fa fa-floppy-o"></i><span id="text-button-save"> Save</span></button>
-					<button type="button" class="btn btn-danger" data-dismiss="modal" id="planning-delete"><i class="fa fa-trash-o"></i> Delete</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal" id=planning-close><i class="fa fa-times"></i> Close</button>
+					<button type="button" class="btn btn-success" data-dismiss="modal" id="planning-save"><i class="far fa-save"></i><span id="text-button-save"> Save</span></button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal" id="planning-delete"><i class="fas fa-trash"></i> Delete</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" id=planning-close><i class="fas fa-times"></i> Close</button>
 				</div>
 			</form>
 		</div>

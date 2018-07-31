@@ -29,8 +29,18 @@
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-5">
 								<div class="input-group">
 									<input type="text" class="form-control"  name="Hash" id="user-hash" placeholder="hash" readonly>								
-									<span class="input-group-addon" id="newHash"><i class="fa fa-refresh"></i></span>		
+									<span class="input-group-addon" id="newHash"><i class="fas fa-sync"></i></span>		
 								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-lg-2 col-md-3 col-sm-4 col-xs-7 control-label"></label>
+							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-5">
+								<label class="btn btn-success">
+									<input type="checkbox" name="UserIsAdmin" id="user-isAdmin" value="1">
+									Administrateur
+								</label>
 							</div>
 						</div>
 					</fieldset>
@@ -39,10 +49,10 @@
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-success" id="user-save">
-					<i class="fa fa-floppy-o"></i>Save
+					<i class="far fa-save"></i> Save
 				</button>
 				<button type="button" class="btn btn-primary" data-dismiss="modal" id="user-close">
-					<i class="fa fa-times"></i>Close
+					<i class="fas fa-times"></i> Close
 				</button>
 			</div>
 		</div>

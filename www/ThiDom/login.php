@@ -28,11 +28,11 @@
 							<img src="Core/pic/home.png" alt="Company Logo" class="center-block" id="CompagnyPic">
 						</div>
 						<div class="form-group input-group ">						
-  							<span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+  							<span class="input-group-addon"><i class="fas fa-user fa-fw"></i></span>
 							<input id="user" name="user" type="text" class="form-control" placeholder="Login">
 						</div>
 						<div class="form-group input-group ">
-							<span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+							<span class="input-group-addon"><i class="fas fa-key fa-fw"></i></span>
 							<input id="pass_user" name="pass_user" type="password" class="form-control" placeholder="Password">
 						</div>
 						<div class="form-group text-center">
@@ -41,7 +41,7 @@
 							</label>
 						</div>
 						<div class="form-group">
-							<button id="btn_login" name="submit" class="btn btn-lg btn-primary btn-block"><i class="fa fa-sign-in"> </i>
+							<button id="btn_login" name="submit" class="btn btn-lg btn-primary btn-block"><i class="fas fa-sign-in-alt"> </i>
 								Connexion
 							</button>
 						</div>
@@ -52,15 +52,18 @@
 	</div>
 
 	<script type="text/javascript" src="js/jquery/jquery-2.2.0.min.js"></script>
+	<script type="text/javascript" src="js/fontawesome/fontawesome.min.js"></script>
+	<script type="text/javascript" src="js/fontawesome/fa-solid.min.js"></script>
+	<script type="text/javascript" src="js/fontawesome/fa-regular.min.js"></script>
 	<script>
 		$("#user, #pass_user").keypress(function (e) {
-			var key = e.which;
-			 	if(key == 13)  // the enter key code
-			 	{
-			 		checkpwd();
-			 		return false;  
-			 	}
-			 });   
+			var key = (e.keyCode ? e.keyCode : e.which);
+		 	if(key == 13)  // the enter key code
+		 	{
+		 		checkpwd();
+		 		return false;  
+		 	}
+		 });   
 
 		$('#btn_login').click(function(){
 			checkpwd();
@@ -70,14 +73,16 @@
 		{
 			if ($('#Loading').length == 0)
 			{
-				$('body').prepend('<div id="Loading"><div class="overlay"></div><i class="fa fa-cog fa-spin"></i></div>');
+				$('body').prepend('<div id="Loading"><div class="waitspin"><i class="fas fa-cog fa-spin"></i></div></div>');
 			}
 			$('#Loading').show();
 		}
 
 		function HideLoading()
 		{
-			$('#Loading').show();
+			$('#Loading').hide('slow/400/fast', function() {
+				
+			});
 		}
 
 		function ErrorLoading(textStatus)
@@ -104,7 +109,8 @@
 				cache: false,
 				async: true
 			});
-			request.done(function (data) {
+			request.done(function (data)
+			{
 				if (data.status == "error") 
 				{
 					HideLoading();

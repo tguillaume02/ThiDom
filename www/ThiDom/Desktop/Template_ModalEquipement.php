@@ -15,7 +15,7 @@
 						<div class="col-lg-8 col-md-6 col-sm-6 col-xs-6">
 							<div class="form-group">
 								<label for="list-room" class="col-lg-2 col-md-5 col-sm-5 col-xs-5 control-label">Emplacement :</label>
-								<div class="col-lg-10 col-md-6 col-sm-6 col-xs-6">	
+								<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">
 									<select id="list-room" name="LieuxId" class="form-control" required>
 										<option value="">Nom de la pièce:</option>
 									</select>
@@ -23,7 +23,7 @@
 							</div>
 							<div class="form-group">
 								<label for="list-module-type" class="col-lg-2 col-md-5 col-sm-5 col-xs-5 control-label">Type de module: </label>
-								<div class="col-lg-10 col-md-6 col-sm-6 col-xs-6">
+								<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">
 									<select id="list-module-type" name="ModuleId" class="form-control" required>
 										<option value="">Type de module:</option>
 									</select>
@@ -31,7 +31,7 @@
 							</div>
 							<div class="form-group grouplistType">
 								<label for="list-type" class="col-lg-2 col-md-5 col-sm-5 col-xs-5 control-label">Categorie : </label>
-								<div class="col-lg-10 col-md-6 col-sm-6 col-xs-6">
+								<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">
 									<select id="list-type" name="TypeId" class="form-control" required>
 										<option value="">Categorie:</option>
 									</select>
@@ -39,14 +39,19 @@
 							</div>
 							<div class="form-group">
 								<label for="device-name" class="col-lg-2 col-md-5 col-sm-5 col-xs-5 control-label">Nom : </label>
-								<div class="col-lg-10 col-md-6 col-sm-6 col-xs-6">
+								<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">
 									<input type="text" class="form-control" id="device-name"  name="DeviceName" placeholder="Nom de l'appareil (qui apparaitras sur le site):" required>
 								</div>
+								<button id='add-plugins' class='col-lg-1 col-md-3 col-sm-3 col-xs-3 btn btn-success' type='button'><i class='fas fa-plus' aria-hidden='true'></i></button><br/>
 							</div>	
-							<div class="form-group dropdown">
+							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 form-group dropdown">
 							  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Icons
 							  <span class="caret"></span></button>
+							  <img id="defaulticons" src="" alt="defaulticons" style="width: 50px; height: 50px;">
 							  <ul class="dropdown-menu" style="overflow: scroll;max-height: 408px;">
+							  	<li>
+							  		<a href='#' onclick="$('#CustomIcons').val('')" title="">Default</a>
+							  	</li>
 								<?php
 									if ($handle = opendir('Core/pic/Widget/')) {
 									    /* Ceci est la façon correcte de traverser un dossier. */
@@ -55,7 +60,7 @@
 									    	if ($entry != "." && $entry != ".." && (strpos($entry, '_on') === false && strpos($entry, '_On') === false && strpos($entry, '_off') === false && strpos($entry, '_Off') === false))
 									    	{
 									    		$filename = substr($entry, 0, strrpos($entry, "."));
-									        	echo "<li><a href='#' onclick=\"$('#CustomIcons').val('$filename')\" title=\"$entry\"><img class='img-circle img_btn_device rounded-circle' src='Core/pic/Widget/$entry'>$filename</a></li>";
+									        	echo "<li><a href='#' onclick=\"$('#CustomIcons').val('$filename');$('#defaulticons').attr('src',$filename);$('#defaulticons').show();\" title=\"$entry\"><img class='img-circle img_btn_device rounded-circle' src='Core/pic/Widget/$entry'>$filename</a></li>";
 								        	}
 									    }
 									    closedir($handle);
@@ -65,13 +70,15 @@
 								<input id="CustomIcons" name="icons" type="text" class="form-control" style="display: none">
 							</div>													
 							<div class="row form-group">
-								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+								<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">  
 									<label class="btn btn-success">
 										<input type="checkbox" name="DeviceVisible" id="device-visible" value="1">Visible
 									</label>
+									<label class="btn btn-success">
+										<input type="checkbox" name="DeviceLog" id="device-Log" value="1">Log
+									</label>
 								</div>
 							</div>	
-							<button id='add-plugins' class='btn btn-success' type='button'><i class='fa fa-plus' aria-hidden='true'></i></button><br/>
 						</div>
 					</fieldset>
 
@@ -89,10 +96,10 @@
 			</form>
 			<div class="modal-footer">
 				<button id="device-save" class="btn btn-success" type="button" >
-					<i class="fa fa-floppy-o"></i> Save
+					<i class="far fa-save"></i> Save
 				</button>
 				<button id="device-close" class="btn btn-primary" data-dismiss="modal" type="button" >
-					<i class="fa fa-times"></i>Close
+					<i class="fas fa-times"></i> Close
 				</button>
 			</div>
 		</div>
@@ -107,6 +114,7 @@
 		$("#modal-manage-device #list-type").prop('disabled', true);
 		$("#modal-manage-device #list-device").prop('disabled', true);
 		$("#modal-manage-device #device-visible").prop( "checked", false);				
+		$("#modal-manage-device #device-log").prop( "checked", false);				
 		$("#modal-manage-device #ConfigurationDevice").html("");			
 		$("#modal-manage-device #CommandeDevice").html("");		
 	})
@@ -114,9 +122,12 @@
 		$("#ModalEquipementConfiguration").hide();
 		$("#ModalEquipementCommande").hide();
 		$("#modal-manage-device .grouplistType").hide();
-		//$("#add-plugins").hide();		
+		$("#add-plugins").show();
 		$("#modal-manage-device #ConfigurationDevice").html("");			
 		$("#modal-manage-device #CommandeDevice").html("");	
+		$("#modal-manage-device #list-type").prop('disabled', false);
+		$("#modal-manage-device #list-device").prop('disabled', false);
+		$("#modal-manage-device #list-module-type").prop('disabled', false);
 		//$("#ModalEquipementGeneral").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');		
 	})
 
@@ -125,14 +136,17 @@
 		bFormValidate = $('form#form-device')[0].reportValidity();
 		if (bFormValidate)
 		{
+			
+			var disabled = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration").find(':input:disabled').removeAttr('disabled');
 			if (DeviceId == "")
 			{
-				Device = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration input[id='carte-id']").serialize();
+				Device = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration input[id='carte-id']").serialize()+"&ModuleType="+$("#list-module-type option:selected").data("moduleType");
 				//DeviceConfiguration = JSON.stringify($("#form-device #ModalEquipementConfiguration").find("input, select, textarea").not("#device-visible, #carte-id").serializeObject());
 				//AddPlugins(Device,DeviceConfiguration);	
-				SaveDevice(Device);	
-				$("#add-plugins").hide();		
+				$result = SaveDevice(Device);	
+				$("#add-plugins").hide();
 			}
+			disabled.attr('disabled','disabled');
 		}
 	})
 
@@ -174,13 +188,6 @@
 			}
 		});
 
-		$("#list-device").change(function(event)
-		{
-			/*data= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text()};
-			EditDevice(data);*/
-
-		})
-
 
 	$("#device-save").click(function(event)
 	{
@@ -191,8 +198,9 @@
 			var CmdDevice = "";
 			var DeviceConfiguration = "";
 			var listcmd = new Array();
+			var disabled = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration, #form-device #ModalEquipementCommande").find(':input:disabled').removeAttr('disabled');
 
-			Device = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration input[id='carte-id']").serialize();
+			Device = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration input[id='carte-id']").serialize()+"&ModuleType="+$("#list-module-type option:selected").data("moduleType");
 
 			DeviceConfiguration = JSON.stringify($("#form-device #ModalEquipementConfiguration").find("input, select, textarea").not("#carte-id").add($("#CustomIcons")).serializeObject())
 
@@ -246,12 +254,8 @@
 
 				CmdDevice = JSON.stringify(listcmd);
 			}
-
-			if (SaveDevice(Device, DeviceConfiguration, CmdDevice))
-			{				
-   				$('#modal-manage-device').modal('toggle');
-			}
-
+			disabled.attr('disabled','disabled');
+			SaveDevice(Device, DeviceConfiguration, CmdDevice);
 		}
 	});
 

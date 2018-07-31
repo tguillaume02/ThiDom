@@ -19,7 +19,10 @@ while(1)
 	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
 	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')";*/
 
-	$req = "SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat,  cmd_device.Nom as cmd_deviceNom, cmd_device.Value as cmd_deviceValue, cmd_device.Etat as cmd_deviceEtat, Lieux.Nom as LieuxNom, Module_Type.Id as Module_Type, Device.Configuration
+	$req = "SELECT temp_update_time.UPDATE_TIME AS update_temp, etat_update_time.UPDATE_TIME  AS update_etat,  cmd_device.Nom as cmd_deviceNom, 
+		cmd_device.Value as cmd_deviceValue, cmd_device.Etat as cmd_deviceEtat, 
+		Lieux.Nom as LieuxNom, Module_Type.Id as Module_Type, Device.Configuration,
+		cmd_device.Notification
 	FROM INFORMATION_SCHEMA.TABLES AS temp_update_time 
 	LEFT JOIN INFORMATION_SCHEMA.TABLES AS etat_update_time ON etat_update_time.TABLE_SCHEMA = 'thidom' AND etat_update_time.TABLE_NAME = 'cmd_device'
 	LEFT JOIN cmd_device   on cmd_device.date = (select max(date) from cmd_device)
@@ -33,6 +36,7 @@ while(1)
 
 	foreach($result as $row)  
 	{
+		$Notification = 0;
 		$Date_temp = $row["update_temp"];
 		$Date_Etat = $row["update_etat"];
 		$cmd_deviceNom = $row["cmd_deviceNom"];
@@ -41,13 +45,14 @@ while(1)
 		$LieuxNom = $row["LieuxNom"];
 		$Module_Type = $row["Module_Type"];
 		$Configuration =  $row["Configuration"];
-
+		$Notification = $row["Notification"];
 		$curDate = date(DATE_ISO8601);
-		$Notification = 0;
-		if (isset(json_decode($Configuration)->Notification))
+		/*if (isset(json_decode($Configuration)->Notification))
 		{
 			$Notification = json_decode($Configuration)->{'Notification'};
-		}
+		}*/
+
+
 
 		/*if($Date_temp != $lastdate_temp)
 		{

@@ -2,7 +2,8 @@
 require_once '../Core/Security.php';
 require_once '../Core/ListRequire.php';
 
-	$TemperatureData = Temperature::GetTemperatureHistoryOnOneMonth();
+	//$TemperatureData = Temperature::GetTemperatureHistoryOnOneMonth();
+	$TemperatureData = Temperature::GetAllTemperature();
 	$cmd_device_Id_old = "";
 	$result = "";
 	$Series = "";
@@ -10,7 +11,14 @@ require_once '../Core/ListRequire.php';
 	$temp_year_old = 0;
 	$temp_year = 0; 
 
-	foreach($TemperatureData as $TempData)
+$rows = array();
+while($r = $TemperatureData) {
+    $rows[] = $r;
+}
+print json_encode($rows);
+
+
+/*	foreach($TemperatureData as $TempData)
 	{		
 		$cmd_device_Id = $TempData["cmd_device_Id"];
 
@@ -75,10 +83,10 @@ require_once '../Core/ListRequire.php';
 		
 	if ($Series != "")
 	{
-		$result .= "<script>GenerateGraph(\"".$lieuxWithouSpace.$cmd_device_Id_old."\",[".$Series."])</script>";
+		$result .= "<script>GenerateGraph(\"".$lieuxWithouSpace.$cmd_device_Id_old."\",\"".$lieux."\",[".$Series."])</script>";
 		$Series ="";
 	}
 
-	echo $result;
+	echo $result;*/
 
 ?>

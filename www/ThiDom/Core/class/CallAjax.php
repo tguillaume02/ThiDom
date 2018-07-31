@@ -57,28 +57,28 @@ function Recup_Etat()
 			Configuration  = item.Configuration;
 			TypeTemplate  = item.TypeTemplate;
 			device_format =  item_Nom + "_" + item_Lieux+"_"+device_id;
-			cmd_device_format =  Device_Nom + "_" + item_Lieux+"_"+Cmd_device_Id;
+			cmd_device_format = /* Device_Nom + "_" +*/ item_Lieux+"_"+Cmd_device_Id;
 
 
 			if (isVisible == 0)
 			{					
 				$("#Contentcmd_"+Cmd_device_Id).hide();
-				$("#InfoDevice"+cmd_device_format).hide();
+				$("#InfoDevice_"+cmd_device_format).hide();
 				$("#Contentcmd_"+Cmd_device_Id).parent().hide();
 			}
 			else
 		 	{
 				$("#Contentcmd_"+Cmd_device_Id).show();
-				$("#InfoDevice"+cmd_device_format).show();
+				$("#InfoDevice_"+cmd_device_format).show();
 				$("#Contentcmd_"+Cmd_device_Id).parent().show();
 		 	}
 
 
-			$("#Date"+cmd_device_format).html(dDate);
+			$("#Date_"+cmd_device_format).html(dDate);
 			if (Configuration != "" && Configuration != null)
 			{
 				Obj_Configuration = $.parseJSON(Configuration);
-				if (Obj_Configuration.hasOwnProperty("icons"))
+				if (!$.isEmptyObject(Obj_Configuration.icons))
 				{
 					Widget_icons =  Obj_Configuration.icons;
 				}
@@ -97,22 +97,22 @@ function Recup_Etat()
 
 			if (Widget_Type == "Text") // Numeric
 			{
-				$("#InfoDevice"+cmd_device_format).html(Value);
-				$("#InfoDevice"+cmd_device_format).val(Value);
+				$("#InfoDevice_"+cmd_device_format).html(Value);
+				$("#InfoDevice_"+cmd_device_format).val(Value);
 			}
 			else if (Widget_Type == "Slider") // Thermostat
 			{				
-				$("#InfoDevice"+cmd_device_format).html(Value);
+				$("#InfoDevice_"+cmd_device_format).html(Value);
 				$("#Range_"+cmd_device_format).val(Value);
-				$("#InfoDevice"+cmd_device_format).attr('value',this.value);
-				$("#InfoDevice"+cmd_device_format).removeClass('circle_on circle_off');
-				$("#InfoDevice"+cmd_device_format).addClass('circle_'+StringEtat);
+				$("#InfoDevice_"+cmd_device_format).attr('value',this.value);
+				$("#InfoDevice_"+cmd_device_format).removeClass('circle_on circle_off');
+				$("#InfoDevice_"+cmd_device_format).addClass('circle_'+StringEtat);
 			}
 			else if (Widget_Type == "Color") // RGB
 			{
-				$("#InfoDevice"+cmd_device_format).css("background",Value);
-				$("#InfoDevice"+cmd_device_format).val(colourNameToHex(Value));
-				$("#InfoDevice"+cmd_device_format).html("&nbsp;");
+				$("#InfoDevice_"+cmd_device_format).css("background",Value);
+				$("#InfoDevice_"+cmd_device_format).val(colourNameToHex(Value));
+				$("#InfoDevice_"+cmd_device_format).html("&nbsp;");
 			}
 			else
 			{
@@ -127,8 +127,8 @@ function Recup_Etat()
 				}
 
 
-				$("#InfoDevice"+cmd_device_format).html(Value);
-				$("#InfoDevice"+cmd_device_format).val(Value);
+				$("#InfoDevice_"+cmd_device_format).html(Value);
+				$("#InfoDevice_"+cmd_device_format).val(Value);
 			}
 		});
 		resizeMaison();
@@ -250,6 +250,50 @@ function GetLog()
 		ErrorLoading('GetAllLog');
 	});
 }
+
+function RemoveLog()
+{	
+	bootbox.confirm({
+    	message: "Êtes vous sûr de vouloir supprimer tout les logs?",
+	    buttons: {
+	        confirm: {
+	            label: 'Yes',
+	            className: 'btn-success'
+	        },
+	        cancel: {
+	            label: 'No',
+	            className: 'btn-danger'
+	        }
+	    },
+
+		callback: function (result){
+    		if (result)
+    		{
+				var request = $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: 'Core/class/GetAjaxResult.php',							
+					data: {
+						Act: 'RemoveLog',
+						Property: '',
+						Lieux:'',
+						Id:'',
+						Mode:''
+					}
+				});
+
+				request.done(function (data) {
+					$("#table-content-log").DataTable().clear().draw();
+					info(data.msg);
+				});
+
+				request.fail(function (jqXHR, textStatus, errorThrown) {
+					ErrorLoading('DeleteLog');
+				});
+    		}
+        }
+	});
+}
 ////////// LOAD PAGE ////////////////
 
 
@@ -293,7 +337,7 @@ function LoadLieux()
 		"order": [[ 1, "asc" ]],
 		"columnDefs": [
 		{"className": "dt-center", "targets": "_all"},
-		{ "visible": false, "targets": [0,2] },		
+		{ "visible": false, "targets": [0,] },		
 		{ "type": "alt-string", "targets": [3] }
 		],
 		"searching": false,
@@ -304,7 +348,7 @@ function LoadLieux()
 		"columns": [
 		{data: "Id"},
 		{data: "Nom"},
-		{data: "Position"},
+		//{data: "Position"},
 		{
 			data: "Visible",
 			render : function(data)
@@ -315,7 +359,7 @@ function LoadLieux()
 		{
 			data: null, sortable: false, render: function(data, type, full) 
 			{
-				return '<button class="btn btn-primary btn-md"> Edit <i class="fa fa-pencil" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fa fa-trash" aria-hidden="true"></i></button>';
+				return '<button class="btn btn-primary btn-md"> Edit <i class="fas fa-pencil-alt" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fas fa-trash" aria-hidden="true"></i></button>';
 			}
 		}
 		]
@@ -406,21 +450,20 @@ function LoadUser()
 		"order": [[ 1, "asc" ]],
 		"columnDefs": [
 		{"className": "dt-center", "targets": "_all"},
-		{ "visible": false, "targets": [0,1] }
+		{ "visible": false, "targets": [0] }
 		],
 		"searching": false,
 		"pagingType": "numbers",
 		"iDisplayLength": 13,
-		"lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+		"lengthMenu": [[15, 100, -1], [15, 50, "All"]],
 		"bLengthChange": false,		
 		"columns": [
 		{data: "Id"},
-		{data: "UserHash"},
 		{data: "UserName"},
 		{data: "LastLog"},
 		{data: null, sortable: false, render: function(data, type, full) 
 			{
-				return '<button class="btn btn-primary btn-md"> Edit <i class="fa fa-pencil" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fa fa-trash" aria-hidden="true"></i></button>';
+				return '<button class="btn btn-primary btn-md"> Edit <i class="fas fa-pencil-alt" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fas fa-trash" aria-hidden="true"></i></button>';
 			}
 		}
 		]
@@ -502,8 +545,14 @@ function LoadModuleType()
 
 	request.done(function (data) {
 		$("#list-module-type option").siblings("[value!='']").remove();
-		$.each(data, function (index, item) {
-			$("#list-module-type").append(new Option(item.ModuleName, item.Id));
+		$.each(data, function (index, item) {			
+			$('<option/>', {
+				text: item.ModuleName,
+				value: item.Id,
+				data: {					
+					moduleType: item.ModuleType
+				}
+			}).appendTo($("#list-module-type"));
 		})
 	})
 
@@ -976,12 +1025,22 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
 		}
 		else
 		{
+			DataDevice = JSON.parse('{"' + decodeURI(Device).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+
 			info(data.msg);
-			if(data.refresh == true)
+			if (DataDevice.deviceId == "" && data.deviceId != "")
 			{
-				return true;
+				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
+				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				EditDevice(datas);
+			}
+
+			if(data.refresh == true)
+			{		
+				//$("#modal-manage-device").modal('hide');
 				LoadMaison();
 				LoadEquipement();
+   				$('#modal-manage-device').modal('hide');
 			}
 			else
 			{
@@ -999,7 +1058,7 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
 function DeleteDevice(data, RowSelected)
 {
 	bootbox.confirm({
-    	message: "Êtes vous sûr de vouloir supprimer: "+ data.DeviceNom +"?",
+    	message: `Êtes vous sûr de vouloir supprimer: ${data.DeviceNom}?`,
 	    buttons: {
 	        confirm: {
 	            label: 'Yes',
@@ -1052,6 +1111,7 @@ function SaveLieux(data)
 
 	request.done(function (data) {		
 		info(data.msg);
+		LoadLieux();
 		LoadMaison();
 	});
 
@@ -1063,7 +1123,7 @@ function SaveLieux(data)
 function DeleteLieux(data, RowSelected)
 {
 	bootbox.confirm({
-    	message: "Êtes vous sûr de vouloir supprimer: "+ data.Nom +"?",
+    	message: `Êtes vous sûr de vouloir supprimer: ${data.Nom}?`,
 	    buttons: {
 	        confirm: {
 	            label: 'Yes',
@@ -1090,6 +1150,7 @@ function DeleteLieux(data, RowSelected)
 				request.done(function (data) {
 					$("#table-content-equipement").DataTable().row(RowSelected).remove().draw();
 					info(data.msg);
+					LoadLieux();
 					LoadMaison();
 				});
 
@@ -1103,51 +1164,57 @@ function DeleteLieux(data, RowSelected)
 
 function LoadEquipement()
 {
-	if ($.fn.DataTable.isDataTable("#table-content-equipement"))
-	{
-		$("#tbody-content-equipement").html("");
-		$("#table-content-equipement").dataTable().fnDestroy();
-	}
+	LoadLieux();
 
-	var equipementTable = $("#table-content-equipement").dataTable({
-        "order": [[ 1, "asc" ]],
-        "responsive": true,
-		"columnDefs": [
-		{"className": "dt-center", "targets": "_all"},
-		{"className": "dt-body-right", "targets": [4]},
-		{ "visible": false, "targets": [4,5,6,7,8,9,10,11] }
-    	//{ "width": "5%", "targets": 8 }
-    	],
-    	"searching": true,
-    	"pagingType": "numbers",
-    	"iDisplayLength": 13,
-    	"lengthMenu": [[15, 50, -1], [15, 50, "All"]],
-    	"bLengthChange": false,
-    	"columns": [
-    	{data: "DeviceNom"},
-    	{data: "NamePiece"},
-    	{
-    		data: "DeviceVisible",
-    		render : function(data)
-    		{				
-    			return data != '1' ? '<img class="EquipementVisible" src="Core/pic/notview.png" alt="noview">' : '<img class="EquipementVisible" src="Core/pic/view.png" alt="view">';
-    		}
-    	},
-    	{data: null, sortable: false, render: function(data) 
-    		{
-    			return '<button class="btn btn-primary btn-md"> Edit <i class="fa fa-pencil" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fa fa-trash" aria-hidden="true"></i></button>';
-    		}
-    	},
-    	{data: "DeviceId"},
-    	{data: "LieuxId"},
-    	{data: "ModuleId"},
-    	{data: "ModuleName"},
-    	{data: "WidgetId"},
-    	{data: "CarteId"},
-    	{data: "RAZ"},
-    	{data: "Configuration"}
-    	]
-    });
+	if (!$.fn.DataTable.isDataTable("#table-content-equipement"))
+	{
+		var equipementTable = $("#table-content-equipement").dataTable({
+			"order": [[ 1, "asc" ]],
+			"responsive": true,
+			"columnDefs": [
+			{"className": "dt-center", "targets": "_all"},
+			{"className": "dt-body-right", "targets": [4]},
+			{ "visible": false, "targets": [4,5,6,7,8,9,10,11] }
+			//{ "width": "5%", "targets": 8 }
+			],
+			"searching": true,
+			"pagingType": "numbers",
+			"iDisplayLength": 13,
+			"lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+			"bLengthChange": false,
+			"columns": [
+			{data: "DeviceNom"},
+			{data: "NamePiece"},
+			{
+				data: "DeviceVisible",
+				render : function(data)
+				{				
+					return data != '1' ? '<img class="EquipementVisible" src="Core/pic/notview.png" alt="noview">' : '<img class="EquipementVisible" src="Core/pic/view.png" alt="view">';
+				}
+			},
+			{data: null, sortable: false, render: function(data) 
+				{
+					return '<button class="btn btn-primary btn-md"> Edit <i class="fas fa-pencil-alt" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fas fa-trash" aria-hidden="true"></i></button>';
+				}
+			},
+			{data: "DeviceId"},
+			{data: "LieuxId"},
+			{data: "ModuleId"},
+			{data: "ModuleName"},
+			{data: "WidgetId"},
+			{data: "CarteId"},
+			{data: "RAZ"},
+			{data: "Configuration"}
+			]
+		});
+	}
+	else
+	{
+		//$("#tbody-content-equipement").html("");
+		//$("#table-content-equipement").dataTable().fnDestroy();
+		
+		equipementTable = $("#table-content-equipement").dataTable();
+	}
 
 	var request = $.ajax({
 		type: 'POST',

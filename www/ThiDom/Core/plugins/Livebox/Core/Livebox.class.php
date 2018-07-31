@@ -56,47 +56,67 @@ class Livebox extends Device
 
 	public function Install()
 	{ 
-		$domogeekCmd = new LiveboxCmd();
-		$domogeekCmd->set_Name('Up');
-		$domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
-		$domogeekCmd->set_request('data', 'Up');
-		$domogeekCmd->set_unite('Mb');
-		$domogeekCmd->set_raz('');
-		$domogeekCmd->set_visible(1);
-		$domogeekCmd->set_type('Info');
-		$domogeekCmd->save();
+		$liveboxCmd = new LiveboxCmd;
+		$liveboxCmd->set_Name('Up');
+		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
+		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
+		$liveboxCmd->set_request('data', 'act=loadData');
+		$liveboxCmd->set_unite('Mb');
+		$liveboxCmd->set_raz('');
+		$liveboxCmd->set_visible(1);
+		$liveboxCmd->set_type('Info');
+		$liveboxCmd->save();
 
-		$domogeekCmd = new LiveboxCmd();
-		$domogeekCmd->set_Name('Down');
-		$domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
-		$domogeekCmd->set_request('data', 'Down');
-		$domogeekCmd->set_unite('Mb');
-		$domogeekCmd->set_raz('');
-		$domogeekCmd->set_visible(1);
-		$domogeekCmd->set_type('Info');
-		$domogeekCmd->save();
+		$liveboxCmd = new LiveboxCmd();
+		$liveboxCmd->set_Name('Down');
+		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
+		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
+		$liveboxCmd->set_request('data', 'act=loadData');
+		$liveboxCmd->set_unite('Mb');
+		$liveboxCmd->set_raz('');
+		$liveboxCmd->set_visible(1);
+		$liveboxCmd->set_type('Info');
+		$liveboxCmd->save();
 
-		$domogeekCmd = new LiveboxCmd();
-		$domogeekCmd->set_Name('Last Change');
-		$domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
-		$domogeekCmd->set_request('data', 'LastChange');
-		$domogeekCmd->set_unite('');
-		$domogeekCmd->set_raz('');
-		$domogeekCmd->set_visible(1);
-		$domogeekCmd->set_type('Info');
-		$domogeekCmd->save();
+		$liveboxCmd = new LiveboxCmd();
+		$liveboxCmd->set_Name('Last Change');
+		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
+		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
+		$liveboxCmd->set_request('data', 'act=loadData');
+		$liveboxCmd->set_unite('');
+		$liveboxCmd->set_raz('');
+		$liveboxCmd->set_visible(1);
+		$liveboxCmd->set_type('Info');
+		$liveboxCmd->save();
 
 
-		$domogeekCmd = new LiveboxCmd();
-		$domogeekCmd->set_Name('Update Livebox');
-		$domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
-		$domogeekCmd->set_request('data', 'Update');
-		$domogeekCmd->set_unite('');
-		$domogeekCmd->set_raz('');
-		$domogeekCmd->set_visible(1);
-		$domogeekCmd->set_type('Action');
-		$domogeekCmd->save();
+		$liveboxCmd = new LiveboxCmd();
+		$liveboxCmd->set_Name('Update Livebox');
+		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
+		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
+		$liveboxCmd->set_request('data', 'act=loadData');
+		$liveboxCmd->set_unite('');
+		$liveboxCmd->set_raz('');
+		$liveboxCmd->set_visible(1);
+		$liveboxCmd->set_type('Action');
+		$liveboxCmd->save();
 
+
+		$liveboxCmd = new LiveboxCmd();
+		$liveboxCmd->set_Name('Reboot Livebox');
+		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
+		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
+		$liveboxCmd->set_request('data', 'act=rebootLivebox');
+		$liveboxCmd->set_unite('');
+		$liveboxCmd->set_raz('');
+		$liveboxCmd->set_visible(0);
+		$liveboxCmd->set_type('Action');
+		$liveboxCmd->save();
 	}
 
 

@@ -14,14 +14,14 @@
 						<input id="room-position" type="text" name="Position" style="display: none;"/>						
 						<div class="form-group">
 								<label for="room-name" class="col-lg-2 col-md-2 col-sm-3 col-xs-6 control-label">Nom de la pièce: </label>
-								<div class="col-lg-10 col-md-10 col-sm-9 col-xs-6">
+								<div class="col-lg-8 col-md-8 col-sm-10 col-xs-6">
 									<input type="text" class="form-control"  name="Name" id="room-name" placeholder="Nom de la pièce" required>
 								</div>
 						</div>
 						<div class="form-group">						
-							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+							<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 control-label">  
 								<label class="btn btn-success">
-									<input type="checkbox" name="Visible" id="room-visible" value="1">Visible
+									<input type="checkbox" name="Visible" id="room-visible" value="1"> Visible
 								</label>
 							</div>
 						</div>
@@ -31,10 +31,10 @@
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-success" id="room-save">
-					<i class="fa fa-floppy-o"></i>Save
+					<i class="far fa-save"></i> Save
 				</button>
 				<button type="button" class="btn btn-primary" data-dismiss="modal" id="room-close">
-					<i class="fa fa-times"></i>Close
+					<i class="fas fa-times"></i> Close
 				</button>
 			</div>
 		</div>

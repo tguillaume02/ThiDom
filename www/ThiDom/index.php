@@ -39,27 +39,27 @@
 				</div>
 				<div class="collapse navbar-collapse" id="header-navbar" >
 					<ul class="nav navbar-nav" role="tablist">		
-						<li class="active"><a href="#home" id="home-link"><i class="fa fa-home"></i> Maison</a></li>
-						<li><a href="#calendar" id="calendar-link"><i class="fa fa-calendar"></i> Calendrier</a></li>
-						<li class="dropdown"><a id="analyse" data-toggle="dropdown"><i class="fa fa-wrench"></i> Analyse <span class="caret"></span></a>
+						<li class="active"><a href="#home" id="home-link"><i class="fas fa-home"></i> Maison</a></li>
+						<li><a href="#calendar" id="calendar-link"><i class="fas fa-calendar-alt"></i> Calendrier</a></li>
+						<li class="dropdown"><a id="analyse" data-toggle="dropdown"><i class="fas fa-wrench"></i> Analyse <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="analyse">  	
-								<li><a href="#graph" id="graphic-link"><i class="fa fa-area-chart"></i> Graphique</a></li>
-								<li><a href="#log" id="log-link"><i class="fa fa-file-o" aria-hidden="true"></i> Log</a></li>
+								<li><a href="#graph" id="graphic-link"><i class="fas fa-chart-area"></i> Graphique</a></li>
+								<li><a href="#log" id="log-link"><i class="far fa-file" aria-hidden="true"></i> Log</a></li>
 							</ul>
 						</li>
-						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fa fa-wrench"></i> Outils <span class="caret"></span></a>
+						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="tools">  	
 								<li><a href="#manage-equipement"  id="manage-equipement-link"> Manage Equipement</a></li>
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
-								<li><a href="#scenario" id="scenario-link"><i class="fa fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
-								<li><a href="#user" id="user-link"><i class="fa fa-user" aria-hidden="true"></i> Utilisateur</a></li>
+								<li><a href="#scenario" id="scenario-link"><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
+								<li><a href="#user" id="user-link"><i class="fas fa-user" aria-hidden="true"></i> Utilisateur</a></li>
 							</ul>
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right" role="tablist">		
 						<li><a href="#"><span id="hour"><?php echo date('H:i:s');?></span></a></li>
 						<!--<li><img id="icons-weather" src="" ></li>-->
-						<li><a href="logout.php" id="disconnect">Deconnection <i class="fa fa-sign-out"></i></a></li>
+						<li><a href="logout.php" id="disconnect">Deconnection <i class="fas fa-sign-out-alt"></i></a></li>
 					</ul>
 				</div>
 			</div>
@@ -95,11 +95,13 @@
 							<tbody id="tbody-content-log">
 							</tbody>
 						</table>
+						<br>
+						<button type="button" id="remove-all-log" class="btn btn-danger pull-right absolute"><i class="fas fa-trash-o"></i> Remove all log</button>
 					</div>
 				</div>
 
 				<div id="manage-equipement" role="tabpanel" class="tab-pane ">
-					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-device"><i class="fa fa-plus"></i></button>
+					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-device"><i class="fas fa-plus"></i></button>
 					<div id="content-manage-equipement"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
 						<table id="table-content-equipement" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
@@ -125,14 +127,14 @@
 				</div>
 
 				<div id="manage-room" role="tabpanel" class="tab-pane">
-					<button id="add-room" type="button" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-room"><i class="fa fa-plus"></i></button>
+					<button id="add-room" type="button" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-room"><i class="fas fa-plus"></i></button>
 					<div id="content-manage-room"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
 						<table id="table-content-room" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
 								<tr>
 									<th class="text-center">ID</th> 
 									<th class="text-center">Nom de la pièce</th>
-									<th class="text-center">Position</th>
+									<!--<th class="text-center">Position</th>-->
 									<th class="text-center">Visible</th>
 									<th></th>
 								</tr> 
@@ -149,7 +151,7 @@
 					</div>
 					<div data-role="content"  class="col-xs-3 col-lg-3 col-md-3 col-sm-3">
 						<div class="container-fluid">
-							<button type="button" class="btn-add btn-bottom-right btn-success btn-md pull-right" id="scenario-new"><i class="fa fa-plus"></i></button>
+							<button type="button" class="btn-add btn-bottom-right btn-success btn-md pull-right" id="scenario-new"><i class="fas fa-plus"></i></button>
 						</div>
 						<div class="container-fluid">
 							<div class="row">
@@ -174,15 +176,15 @@
 									<label class="text-center">Scenario:</label>
 								</div>
 								<div class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
-									<select id="scenario-list" size="10" class="col-xs-12 col-lg-12 col-md-12 col-sm-12"></select>
+									<select id="scenario-list" size="13" class="col-xs-12 col-lg-12 col-md-12 col-sm-12"></select>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-xs-12 col-lg-6 col-md-12 col-sm-12">
-									<button type="button" class="btn btn-success btn-md col-md-12" id="scenario-save"><i class="fa fa-floppy-o"></i> Save</button>
+									<button type="button" class="btn btn-success btn-md col-md-12" id="scenario-save"><i class="far fa-save"></i> Save</button>
 								</div>
 								<div class="col-xs-12 col-lg-6 col-md-12 col-sm-12">
-									<button type="button" class="btn btn-danger btn-md col-lg-12" id="scenario-delete"><i class="fa fa-trash-o"></i> Delete</button>
+									<button type="button" class="btn btn-danger btn-md col-lg-12" id="scenario-delete"><i class="far fa-trash-alt"></i> Delete</button>
 								</div>
 							</div>
 						</div>
@@ -190,13 +192,13 @@
 				</div>
 
 				<div id="user" role="tabpanel" class="tab-pane">
-					<button type="button" id="add-user" class="btn-add btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-user"><i class="fa fa-plus"></i></button>
+					<button type="button" id="add-user" class="btn-add btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-user"><i class="fas fa-plus"></i></button>
 					<div id="content-user"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
 						<table id="table-content-user" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 
 								<tr> 
 									<th class="text-center">Id</th> 
-									<th class="text-center">Token</th> 
+									<!-- <th class="text-center">Token</th> -->
 									<th class="text-center">Nom</th> 
 									<th class="text-center">Last connection</th> 
 									<th></th> 

@@ -12,24 +12,25 @@ if (typeof (EventSource) !== "undefined")
 			Recup_Temp();
 		}
 		else */
-			Recup_Etat();
 
-			if (type.lastTypeupdate == "UpdateDeviceDetected" && type.Notification == 1) {
-
-
-
-				notif = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
-
-				if (notif != old_notification )
+			if (type.lastTypeupdate == "UpdateDeviceDetected")
+			{
+				Recup_Etat();
+				if (type.Notification == 1)
 				{
-					var options =
+					notif = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
+
+					if (notif != old_notification )
 					{
-						body: type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"),
-						icon: 'Core/pic/home.png'
-				  	}
-					new Notification(type.deviceNom+" "+type.LieuxNom, options);
-					//console.log("Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"));
-					old_notification = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
+						var options =
+						{
+							body: type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"),
+							icon: 'Core/pic/home.png'
+						}
+						new Notification(type.deviceNom+" "+type.LieuxNom, options);
+						//console.log("Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"));
+						old_notification = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
+					}
 				}
 			}
 	};

@@ -1,8 +1,8 @@
 <?php
-session_start();
 include_once ('../ListRequire.php');
 
-try{
+try
+{
 	if (empty($_POST['user']) || empty($_POST['pass_user']))
 	{
 		throw new Exception('Mot de passe ou nom d\'utilisateur incorrect',400);

@@ -7,40 +7,45 @@ class db
 	$_user = "{{usersql}}",
 	$_pwd = "{{pwdsql}}",
 	$_bdd = "{{bddsql}}",
-	$_connection;	
+	$_connection;
 
 	const FETCH_TYPE_ROW = 0;
 	const FETCH_TYPE_ALL = 1;
 
 	public function __construct()
 	{  
-		try{
-			$this->_connection = new PDO('mysql:host='.self::$_host.';dbname='.self::$_bdd,self::$_user,self::$_pwd, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8', PDO::ATTR_PERSISTENT => true));
-		}catch (Exception $e) {
+		try
+		{
+			self::$_connection = new PDO('mysql:host='.self::$_host.';dbname='.self::$_bdd.';charset=utf8', self::$_user, self::$_pwd, array(PDO::ATTR_PERSISTENT => true));
+		}
+		catch (Exception $e)
+		{
 			echo "Connection sql failed";
 		}
 	}
 
-	private function getInstance()
+	public function getInstance()
 	{
 		if(is_null(self::$_instance))
         {
 			self::$_instance = new db();
 		}
-		return self::$_instance->_connection;
+		return self::$_connection;
 	}
 	
 	private function getDataQuery($query,$param)
 	{
 		$QueryPrep =  self::getInstance()->prepare($query);
-		if(isset($param))
-		{
-			$QueryPrep -> execute($param);
+
+		if(empty($param))
+		{		
+			$QueryPrep -> execute();
 		}
 		else
 		{
-			$QueryPrep -> execute();
+			$QueryPrep -> execute($param);
 		}
+
 		//return json_encode(self::getDataQuery($QueryPrep));
 		//return self::ResultToJsonArray($QueryPrep);
 		return $QueryPrep;
@@ -54,47 +59,55 @@ class db
 	
 	public function execQuery($query, $param=[], $_fetchType = self::FETCH_TYPE_ALL, $_fetch_param = PDO::FETCH_ASSOC, $_fetch_opt = NULL)
 	{
-		$resultQuery = self::getDataQuery($query,$param);
-		
-		if ($resultQuery !=false)
+		$querylower = strtolower($query);
+		$sqlcommand = strtok($querylower, ' ');
+		$host = $_SERVER['HTTP_HOST'];
+	 	if (($sqlcommand == "select") or (strpos($querylower, "insert into connectlog") !== False) or (strpos($querylower, "update user set lastlog") !== False) or ($host == "localhost" or $host == "127.0.0.1") or (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1))  /* ((($sqlcommand == "insert") or ($sqlcommand == "delete") or ($sqlcommand == "update")) and (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1)) )*/
 		{
-				if ($_fetchType == self::FETCH_TYPE_ROW)
-				{
-					if ($_fetch_opt == NULL)
+			$resultQuery = self::getDataQuery($query,$param);
+			
+			if ($resultQuery !=false)
+			{
+					if ($_fetchType == self::FETCH_TYPE_ROW)
 					{
+						if ($_fetch_opt == NULL)
+						{
 
-						$res = $resultQuery->fetch($_fetch_param);
+							$res = $resultQuery->fetch($_fetch_param);
 
-					}
-					else if ($_fetch_param == PDO::FETCH_CLASS)
-					{
+						}
+						else if ($_fetch_param == PDO::FETCH_CLASS)
+						{
 
-						$res = $resultQuery->fetchObject($_fetch_opt);
-					}
-				}
-				else
-				{
-					if ($_fetch_opt == NULL)
-					{
-						$res = $resultQuery->fetchAll($_fetch_param);
+							$res = $resultQuery->fetchObject($_fetch_opt);
+						}
 					}
 					else
 					{
-						$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
+						if ($_fetch_opt == NULL)
+						{
+							$res = $resultQuery->fetchAll($_fetch_param);
+						}
+						else
+						{
+							$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
+						}
 					}
+			
+				$errorInfo = $resultQuery->errorInfo();
+
+				if ($errorInfo[0] != 0000)
+				{
+					throw new Exception('[MySQL] Error code : ' . $errorInfo[0] . ' (' . $errorInfo[1] . '). ' . $errorInfo[2]);
 				}
-		
-			$errorInfo = $resultQuery->errorInfo();
-
-			if ($errorInfo[0] != 0000)
-			{
-				throw new Exception('[MySQL] Error code : ' . $errorInfo[0] . ' (' . $errorInfo[1] . '). ' . $errorInfo[2]);
-			}
-		} 
-		return $res;
+				return $res;
+			} 
+		}
+		else
+		{
+			return false;
+		}
 	}
-
-
 
 	public function execQueryDebug($query,$param)
 	{
@@ -151,16 +164,16 @@ class db
 		}
 	}
 
-	public function save($object)
+	public function save($objects)
 	{
+//		$productsArray = get_object_vars($object);
+		var_dump($objects);
+		foreach($objects as $key => $value)
+		{
+			var_dump(is_object($objects));
+		}
+		//var_dump($object);
 
-
-$productsArray = get_object_vars($object);
-foreach($productsArray as $key => $attribute){
-   echo  $attribute . '-' . $key . '<br/>';  
-}
-
-		//echo var_dump($object)); 
 		//echo "INSERT INTO ".$object::table_name." SET ";
 	}
 }

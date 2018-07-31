@@ -13,8 +13,8 @@
                 <p>Are you sure?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="modal-confirmation-cancel" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-primary" id="modal-confirmation-save"  data-dismiss="modal" >Yes</button>
+                <button type="button" class="btn btn-default" id="modal-confirmation-cancel" data-dismiss="modal"> No</button>
+                <button type="button" class="btn btn-primary" id="modal-confirmation-save"  data-dismiss="modal" > Yes</button>
             </div>
         </div>
     </div>

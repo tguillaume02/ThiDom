@@ -26,6 +26,19 @@ class History
 		WHERE DeviceID=:id order by date desc  LIMIT 3 ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
+	
+	public function RemoveLog()
+	{
+		$sql = "DELETE FROM Log";		
+		$nbLogDelete = db::getNbResult($sql,[]);
+
+		if ($nbLogDelete > 0)
+		{
+			$msg = "Les Logs ont bien été supprimé";
+			$value = Array( "msg"=>$msg, "clear"=>"on");
+			return json_encode($value);
+		}
+	}
 
 	public function getId()
 	{

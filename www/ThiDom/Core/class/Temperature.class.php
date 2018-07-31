@@ -3,6 +3,12 @@ class Temperature
 {
 	const table_name = 'Temperature';
 
+	public function GetAllCmdDeviceIdWithTemp()
+	{
+		$sql = "select cmd_device_Id from Temperature group by cmd_device_Id";
+		return db::execQuery($sql,null);
+	}
+
 	public function GetAllTemperatureByLieux($Lieux_ID) 
 	{
 		$values = array(
@@ -48,6 +54,37 @@ class Temperature
                 LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
 		
 		return db::execQuery($sql,null);
+	}
+
+	public function GetTemperatureHistoryByCmdDeviceId($cmdDeviceId)
+	{
+		$values = array(
+			':cmdDeviceId' =>$cmdDeviceId
+			);
+
+		$sql = "SELECT t.*, Lieux.Nom, cmd_device.Nom as cmd_deviceName FROM (SELECT date, temp, Lieux_Id, cmd_device_Id FROM ".self::table_name." 
+                WHERE cmd_device_Id = :cmdDeviceId
+                ORDER BY Lieux_Id, cmd_device_Id, date
+                ) AS t 
+                LEFT JOIN cmd_device on cmd_device.Id = t.cmd_device_Id
+                LEFT JOIN Device on Device.Id = cmd_device.Device_Id
+                LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
+		
+		return db::execQuery($sql,$values);
+	}
+
+	public function GetAllTemperature()
+	{
+
+		$sql = "SELECT t.*, Lieux.Nom, cmd_device.Nom as cmd_deviceName FROM (
+					SELECT date, temp, Lieux_Id, cmd_device_Id FROM ".self::table_name."
+                		ORDER BY Lieux_Id, cmd_device_Id, date
+                	) AS t 
+                LEFT JOIN cmd_device on cmd_device.Id = t.cmd_device_Id
+                LEFT JOIN Device on Device.Id = cmd_device.Device_Id
+                LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
+		
+		return db::execQuery($sql);
 	}
 
 	public function GetDifferenceTemperature($DeviceId)

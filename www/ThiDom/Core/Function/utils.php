@@ -1,4 +1,5 @@
 <?php
+
 function include_files($folder,$file,$type)
 {	
 	if ($type === 'js' or $type === 'css')
@@ -120,4 +121,32 @@ function getPost($post)
   }
 }
 
+function strposa($haystack, $needle, $offset=0)
+{
+  if(!is_array($needle))
+  {
+    $needle = array($needle);
+  }
+  foreach($needle as $query)
+  {
+    if(strpos($haystack, $query, $offset) !== false)
+    {
+      return true; 
+    }
+  }
+  return false;
+}
+
+function removeAccent($string)
+{
+  /*$transliterator = Transliterator::create(
+      'NFD; [:Nonspacing Mark:] Remove; NFC;'
+  );
+
+  return $transliterator->transliterate($string);*/
+	$string = utf8_decode($string);     
+    $string = strtr($string, utf8_decode('çàáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY'); 
+    $string = strtolower($string); 
+    return utf8_encode($string); 
+}
 ?>

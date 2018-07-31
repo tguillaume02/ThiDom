@@ -10,8 +10,8 @@ class Planning
 		inner join cmd_device on cmd_device.Id  = Planning.CmdDevice_Id 
 		inner join Device on Device.Id = cmd_device.Device_Id 
 		inner join Lieux on Lieux.Id = Device.Lieux_Id 
-		inner join widget on cmd_device.Widget_Id = widget.Id 
-		where Activate = 1";
+		inner join widget on cmd_device.Widget_Id = widget.Id ";
+		/*where Activate = 1";*/
 		return db::execQuery($sql,[]);
 	}
 

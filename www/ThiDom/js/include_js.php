@@ -29,6 +29,9 @@
 <script type="text/javascript"  src="js/moment/moment.js"></script>
 
 <script src="js/scheduler/dhtmlxscheduler.js" type="text/javascript"></script>
+<script src="js/fontawesome/fontawesome.min.js" type="text/javascript"></script>
+<script src="js/fontawesome/fa-regular.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/fontawesome/fa-solid.min.js"></script>
 
 
 <script>
@@ -116,7 +119,7 @@
 	{
 		if ($('#Loading').length == 0)
 		{
-			$('body').prepend('<div id="Loading"><div class="overlay"></div><i class="fa fa-cog fa-spin"></i></div>');
+			$('body').prepend('<div id="Loading"><div class="overlay"></div><i class="fas fa-cog fa-spin"></i></div>');
 		}
         $('#Loading').show();
 	}
@@ -135,23 +138,26 @@
 		//$("#modal-manage-device #list-device").prop('disabled', true);
 		//$("#modal-manage-device #list-type").prop('disabled', true);
 
-		if (data.ModuleName == "Plugins")
-		{
-			linkConfig = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Config.php";
-			if (!data.newDevice)
+		/*if (!data.newDevice)
+		{*/
+			if (data.ModuleName == "Plugins")
 			{
-				linkCommande = "Core/plugins/Commande.php";
+				linkConfig = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Config.php";
+				if (!data.newDevice)
+				{
+					linkCommande = "Core/plugins/Commande.php";
+				}
+				else
+				{				
+					linkCommande = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Commande.php";
+				}
 			}
 			else
-			{				
-				linkCommande = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Commande.php";
+			{
+				linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Config.php";
+				linkCommande = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Commande.php";
 			}
-		}
-		else
-		{
-			linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Config.php";
-			linkCommande = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Commande.php";
-		}
+		/*}*/
 
 		$("#modal-manage-device #ConfigurationDevice").load(linkConfig , {device_id: data.DeviceId},
  			function() {
@@ -160,7 +166,7 @@
 					if (!data.newDevice)
 					{						
 						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
-						$("#modal-manage-device #list-module-type").val(data.ModuleId).trigger('change')
+						$("#modal-manage-device #list-module-type").val(data.ModuleId).trigger('change');
 						$("#modal-manage-device #list-type").val(data.WidgetId).trigger('change');
 						$("#modal-manage-device #list-device").val(data.TypeId);
 						$("#modal-manage-device #device-name").val(data.DeviceNom);
@@ -169,11 +175,17 @@
 						$("#modal-manage-device #carte-id").val(data.CarteId);
 						$("#modal-manage-device #device-id").val(data.Cmd_Device_DeviceId);
 
-						$("#modal-manage-device #device-visible").prop('checked',data.DeviceVisible);
-						$("#modal-manage-device #cmddevice-visible").prop('checked',data.DeviceVisible);
-						$("#modal-manage-device #cmddevice-historiser").prop('checked',data.History);
+						$("#modal-manage-device #device-visible").prop('checked', parseInt(data.DeviceVisible));
+						$("#modal-manage-device #device-Log").prop('checked', parseInt(data.History));
+						$("#modal-manage-device #cmddevice-visible").prop('checked', parseInt(data.DeviceVisible));
+						if (data.RAZ > 0)
+						{
+							$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
+						}
+						$("#modal-manage-device #defaulticons").hide();
+						$("#add-plugins").hide();
 
-						if (data.Configuration != null)
+						if (data.Configuration != "")
 						{
 							var obj = $.parseJSON(data.Configuration);
 							$.each(obj,function(i,el)
@@ -181,10 +193,17 @@
 								$("#modal-manage-device #"+i).val(el);
 							});
 							$("#modal-manage-device #cmddevice-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
+							if (JSON.parse(data.Configuration).icons != undefined && JSON.parse(data.Configuration).icons != "")
+							{
+								$("#modal-manage-device #defaulticons").attr("src", "Core/pic/Widget/"+JSON.parse(data.Configuration).icons);	
+								$("#modal-manage-device #CustomIcons").val(JSON.parse(data.Configuration).icons)							
+								$("#modal-manage-device #defaulticons").show();
+							}
 						}
 					}
 					else
 					{
+						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
 					/*	if (data.ModuleName == "Plugins")
 						{
 							$("#ModalEquipementConfiguration #add-plugins").show();
@@ -195,6 +214,17 @@
 					$('input:checkbox[name=Type]').bootstrapToggle();
 					$("#ModalEquipementCommande").show();
 					$("#ModalEquipementConfiguration").show();
+					$("#modal-manage-device #list-type").prop('disabled', true);
+					$("#modal-manage-device #list-device").prop('disabled', true);
+					$("#modal-manage-device #list-module-type").prop('disabled', true);
+
+					if (data.CmdDeviceId != undefined && data.ModuleName != "Plugins")
+					{
+						$("#ModalEquipementCommande").find('[cmdid]').each(function()
+						{
+							$(this).attr('cmdid',data.CmdDeviceId);
+						}); 
+					}
 				});
 			})
 
@@ -282,7 +312,7 @@
 		$("#modal-manage-room #room-id").val(data.Id);
 		$("#modal-manage-room #room-name").val(data.Nom);
 		$("#modal-manage-room #room-position").val(data.Position);
-		$("#modal-manage-room #room-visible").prop('checked',data.Visible);
+		$("#modal-manage-room #room-visible").prop('checked',parseInt(data.Visible));
 		$("#modal-manage-room").modal('toggle');
 	}
 
@@ -292,6 +322,7 @@
 		$("#modal-manage-user #user-name").val(data.UserName);
 		$("#modal-manage-user #user-hash").val(data.UserHash);
 		$("#modal-manage-user #user-password").val("***********");
+		$("#modal-manage-user #user-isAdmin").prop('checked', parseInt(data.UserIsAdmin));
 		$("#modal-manage-user").modal('toggle');
 	}
 
@@ -327,6 +358,34 @@
 		if (hash) {
 			hash && $('ul.nav a[href="' + hash + '"]').tab('show');
 		};
+
+		switch(hash)
+		{
+			case "#calendar":
+				LoadCalendar();
+				break;
+			case "#graph":
+				resizeMaison();
+				break;
+			case "#scenario":
+				LoadScenario();
+				break;
+			case "#manage-equipement":			
+				LoadEquipement();
+				break;
+			case "#manage-room":
+				LoadLieux();
+				break;
+			case "#user":
+				LoadUser();
+				break;			
+			case "#log":
+				GetLog();
+				break;
+			default:
+				break;
+		}
+
 		resizeMaison();
 	}
 
@@ -338,9 +397,15 @@
 			handle: ".Device_title",
 			update: function( event, ui )
 			{
+				devicePositionObj = [];
            		$($($(this).parent()).find(".DeviceContent")).each( function(e) {
-      				console.log({device_Id: $(this).attr('device_id'), Lieux_Id: $(this).parent().parent().parent().attr("Lieux"),  Position: e});
-              	})
+					var devicePosition = new Object();
+					devicePosition.device_Id =  $(this).attr('device_id');
+					devicePosition.Lieux_Id = $(this).parent().parent().parent().attr("Lieux");
+					devicePosition.Position = e;
+					devicePositionObj.push(devicePosition);
+              	})				  
+				console.log(JSON.stringify(devicePositionObj));
        			resizeMaison();
            	}
 		});
@@ -377,20 +442,11 @@
 		$('#manage-room-link').off();
 		$('#user-link').off();
 		$(".Enlarge").off();
+		$("#remove-all-log").off();
 		$("#scenario-save").off();
 		$('#scenario-new').off();
 		$('#scenario-delete').off();
 		$("#log-link").off();
-
-		$(".fa-history").mouseover(function(event) {
-			var device_id = $(this).attr('device_id');
-			var id = $(this).attr('id');
-			SetToolTipLog(device_id,id)
-		});
-
-		$( ".fa-history" ).mouseout(function() {
-			$(".popover").popover('destroy');
-		});
 
 		$('#scenario-list').on('change', function(){
 			var id =  $('option:selected', this).attr('value');
@@ -413,36 +469,6 @@
 			}
 		});
 		
-		$('#calendar-link').on('shown.bs.tab', function (e)
-		{
-			LoadCalendar();
-		})
-
-		$('#graphic-link').on('shown.bs.tab', function (e)
-		{
-			resizeMaison();
-		})
-
-		$('#scenario-link').on('shown.bs.tab', function (e)
-		{
-			LoadScenario();
-		});
-
-		$('#manage-equipement-link').on('shown.bs.tab', function (e)
-		{
-			LoadEquipement();
-		});
-
-		$('#manage-room-link').on('shown.bs.tab', function (e)
-		{
-			LoadLieux();
-		});
-
-		$('#user-link').on('shown.bs.tab', function (e) 
-		{
-			LoadUser();
-		});
-
 		$("#add-user").on("click", function()
 		{
 			getNewHash();
@@ -452,6 +478,10 @@
 		   $('#imagepreview').attr('src', $(this).attr('src')); // here asign the image to the modal when the user click the enlarge link
 		   $("#modalEnlargeLabel").html($(this).parents(".DeviceContent").text());
 		   $('#modalEnlarge').modal('show'); // modalEnlarge is the id attribute assigned to the bootstrap modal, then i use the show function
+		});
+
+		$("#remove-all-log").click(function() {
+			RemoveLog();
 		});
 
 		$("#scenario-save").click(function() {
@@ -469,6 +499,16 @@
 
 		$("#log-link").click(function(){
 			GetLog();
+		});		
+
+		$(".fa-history").mouseover(function(event) {
+			var device_id = $(this).attr('device_id');
+			var id = $(this).attr('id');
+			SetToolTipLog(device_id,id)
+		});
+
+		$( ".fa-history" ).mouseout(function() {
+			$(".popover").popover('destroy');
 		});
 
 		DeviceEvent();
@@ -1356,7 +1396,7 @@ function CleanScenario()
 
 // #endregion 
 
-function GenerateGraph(Lieux, data)
+function GenerateGraph(GraphId, Lieux, data)
 {
 	$(function() {
 		Highcharts.setOptions({
@@ -1364,10 +1404,10 @@ function GenerateGraph(Lieux, data)
 				useUTC:false
 			}
 		});  
-		$('#History_'+Lieux).highcharts('StockChart', {		
+		$('#History_'+GraphId).highcharts('StockChart', {		
 
 			chart: {
-				renderTo: 'History_'+Lieux,
+				renderTo: 'History_'+GraphId,
 				zoomType: false
 
 			},

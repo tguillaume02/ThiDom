@@ -13,7 +13,7 @@ class CmdDevice
 	protected $Value;
 	protected $Etat;
 	protected $Date;
-	protected $Alert_Time;
+	protected $DateRAZ;
 	protected $RAZ;
 	protected $Widget_Id;
 	protected $Visible;
@@ -95,8 +95,16 @@ class CmdDevice
 			':Device_Id' => $Device_Id
 			);
 
-		$sql = 'SELECT Id, Unite FROM cmd_device WHERE Nom=:Name and Device_Id = :Device_Id';
+		$sql = 'SELECT Id, Unite FROM '.self::table_name.' WHERE Nom=:Name and Device_Id = :Device_Id';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+	}
+
+	public function GetAllCmdDevice()
+	{		
+		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
+				FROM '.self::table_name;
+
+		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
 	public function GetValueSensorAttached($PinId, $Carte_Id)
@@ -108,14 +116,29 @@ class CmdDevice
 			);
 
 		$sql = "SELECT Value 
-					FROM cmd_device 
+					FROM ".self::table_name."
 				WHERE Id= (select sensor_attachID 
-							FROM cmd_device 
-							INNER JOIN Device on Device.Id = cmd_device.Device_ID  
+							FROM ".self::table_name."
+							INNER JOIN Device on Device.Id = ".self::table_name.".Device_ID  
 							WHERE DeviceId = :PinId and CarteId= :Carte_Id  and sensor_attachId <> -1
 							)";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}	
+
+	public function GetValueAndEtatByIdAndLieux($Id, $LieuxId)
+	{
+		$values = array(
+			':Id' => $Id,
+			':LieuxId' => $LieuxId
+		);
+
+		$sql = " SELECT cmd_device.Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom as LieuxNom, Device.Nom as DeviceNom
+					FROM Device 
+						INNER JOIN cmd_device ON cmd_device.Device_Id = Device.Id
+						LEFT JOIN Lieux ON Lieux.Id = Device.Lieux_Id
+					WHERE Lieux.Id =:LieuxId AND Device.Id = :Id";
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+	}
 
 	public function byDevice_IdWithCmd($Device_Id)
 	{
@@ -151,7 +174,7 @@ class CmdDevice
 			);	
 
 		$req = "UPDATE cmd_device INNER JOIN Device on Device.Id = cmd_device.Device_Id  SET cmd_device.Value =:Value , cmd_device.Etat =:Etat, cmd_device.Date =now() WHERE cmd_device.Device_Id = :DeviceId and cmd_device.Nom = :Name1";
-		db::execQuery($req,$values);
+		db::execQuery($req, $values);
 
 		/*if ($type == 8) // PLUGINS
 		{*/
@@ -217,6 +240,13 @@ class CmdDevice
 		//}
 	}
 
+	public function CmdDeviceNewId()
+	{		
+		$sql = "SELECT MAX(Id) as Id FROM cmd_device ";
+		
+		return db::execQuery($sql,[], db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+	}
+
 	public function set_Name($name)
 	{
 		$this->Nom = str_replace(array('&', '#', ']', '[', '%', "'"), '', $name);
@@ -264,9 +294,9 @@ class CmdDevice
 		return $this;
 	}
 
-	public function set_alertTime($alertTime)
+	public function set_dateRAZ($dateRaz)
 	{
-		$this->Alert_Time = $alertTime;
+		$this->DateRAZ = $dateRaz;
 		return $this;
 	}
 
@@ -276,17 +306,18 @@ class CmdDevice
 		return $this;
 	}
 
-	public function set_typeId($TypeId)
-	{
-		$this->Type_Id = $TypeID;
-		return $this;
-	}
-
 	public function set_visible($visible)
 	{
 		$this->Visible = $visible;
 		return $this;
 	}
+
+	public function set_WidgeId($widget_Id)
+	{
+		$this->Widget_Id = $widget_Id;
+		return $this;
+	}
+
 
 	public function set_type($type)
 	{
@@ -362,9 +393,9 @@ class CmdDevice
 		return $this->Date;
 	}
 
-	public function get_Alert_Time()
+	public function get_DateRAZ()
 	{
-		return $this->Alert_Time;
+		return $this->DateRAZ;
 	}
 
 	public function get_RAZ()
@@ -413,7 +444,31 @@ class CmdDevice
 		{
 			throw new Exception('Vous ne pouvez pas créer une commande sans la rattacher à un équipement' . print_r($this, true));
 		}
-		return db::save($this);
+
+		$column = "";
+		$val = "";
+		foreach($this as $key => $value)
+		{
+			if ($value != '')
+			{
+				$column .= $key.",";
+				$val .= "'".$value."',";
+			}
+		}
+
+		if ($column != "" && $val != "")
+		{
+			$column = rtrim($column,",");
+			$val = rtrim($val,",");
+			$dbInsert =  "INSERT INTO ".$this::table_name." (". $column ." ) VALUES ( ". $val ." )";
+			db::execQuery($dbInsert,[]);
+
+			$value = Array("cmddeviceId" => $this->CmdDeviceNewId()->get_Id());
+			return json_encode($value);
+		}
+		//echo "INSERT INTO ".$object::table_name." SET ";
+
+		//return db::save($this);
 	}
 
 	public function showCommandeListHtml($deviceId)
@@ -473,6 +528,5 @@ class CmdDevice
 			echo '<div class="row">'.$CmdDeviceList.'</div>';
 		}
 	}
-
 }
 ?>

@@ -26,7 +26,7 @@ try:
         INNER JOIN widget ON widget.id = cmd_device.widget_id
         WHERE
         Temperature_Temp.Date BETWEEN (SELECT DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) AND (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) 
-        AND widget.Type = "Text"
+		AND widget.Type = "Text"
         GROUP BY Cmd_device_ID""")
     
     cursor.execute("""INSERT INTO Temperature (date,Temp,Lieux_ID,Cmd_device_ID) 
@@ -49,5 +49,6 @@ try:
     time.sleep(1)
     sys.exit()
 except KeyboardInterrupt:
-    print "Bye"
-sys.exit()
+    print ("Bye")
+    db.close()
+    sys.exit()

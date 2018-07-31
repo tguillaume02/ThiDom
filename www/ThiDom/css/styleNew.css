@@ -22,6 +22,7 @@ html, body
 {
   /* background: url("images/img01.jpg") repeat scroll 0 0 #202020;*/    
   /*background-image: url("../Core/pic/Background/triangle-background-17.png"); */
+/*  background: url("../Core/pic/Background/triangle-background-17.png") no-repeat  center center fixed ;*/
   background: url("../Core/pic/Background/triangle-background-17.png") no-repeat  center center fixed ;
   font-family: "Segoe Print",sofiaregular,"HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   padding-top: 55px; 
@@ -78,10 +79,26 @@ html, body
   width: 100%;
   height: 100%;
   position: fixed;
-  top: 38%;
-  left: 45%;
+  /*top: 38%;
+  left: 45%;*/
   font-size: 15em;
   z-index: 99998;
+  background: rgba(39, 42, 43, 0.8);
+}
+
+.waitspin
+{
+    width: 102px;
+    height: 147px;
+    font-size: 180px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -142px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: -80px;
+    z-index: 99998;
 }
 
 ul.navbar-nav li
@@ -101,8 +118,10 @@ main div[role="tabpanel"]
 
 legend
 { 
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
+  text-indent: 10px;
+  margin-bottom: 9px !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
 }
 
 
@@ -147,7 +166,7 @@ legend
 .SubContainer
 { 
   padding: 0px;
-  margin-bottom: 15px;
+  margin-bottom: 6px;
   border-top: none;
 } 
 
@@ -231,8 +250,8 @@ legend
 .div_btn_device .img-circle
 {	
   /*border-radius: 32px;*/
-  /*width: 64px;*/
-  height: 64px;
+  /*width: 53px;*/
+  height: 53px;
   background: rgba(100, 171, 167, 0.83);/*rgba(0, 0, 0, 0.458824);*/
   text-align: center;
 }
@@ -242,21 +261,21 @@ input[type="color"]
   -webkit-appearance: none;
   padding: 0;
   border: none;
-  width: 64px;
-  height: 64px;
+  width: 53px;
+  height: 53px;
 }
 
 input[type="color"]::-webkit-color-swatch
 {
   border: none;
-  border-radius: 64px;
+  border-radius: 53px;
   padding: 0;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper
 {
   border: none;
-  border-radius: 64px;
+  border-radius: 53px;
   padding: 0;
 }
 
@@ -267,8 +286,8 @@ input[type="color"]::-webkit-color-swatch-wrapper
 	background: initial;
 	top: 0px;
 	left: 0px;*/
-	width: 64px;
-	height: 64px;
+	width: 53px;
+	height: 53px;
 	position: relative;
 }
 
@@ -312,10 +331,17 @@ input[type="color"]::-webkit-color-swatch-wrapper
 	background: linear-gradient(to right, rgb(78, 207, 195) 0%,rgb(245, 225, 12) 22%,rgb(243, 127, 7) 60%,rgb(255, 19, 0) 86%) !important;
 }
 
+.dimmerbar
+{
+	height : 1em;
+	border-radius: 30px;
+  background: linear-gradient(to right, rgb(247, 245, 231) 0%,rgb(255, 249, 188) 22%,rgb(255, 245, 97) 60%,rgb(255, 243, 0) 86%) !important
+}
+
 .circle
 {
-  font-size: 20px;
-  line-height: 61px !important;
+  font-size: 16px;
+  line-height: 46px !important;
   text-shadow: 0px 1px #464a52 !important;
   cursor: pointer; 
 }

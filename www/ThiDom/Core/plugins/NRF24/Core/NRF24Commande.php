@@ -2,7 +2,13 @@
 include_once dirname(__FILE__) .'/../../../../Core/Security.php'; 
 include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 
-$cmd_device_id = getPost("cmd_device_id");
+$cmdDeviceObject = new CmdDevice();
+$cmd_device =  $cmdDeviceObject->byId(getPost("cmd_device_id"));
+$cmd_device_id = $cmd_device->get_Id();
+$cmd_device_visible = $cmd_device->get_Visible();
+$cmd_device_history = $cmd_device->get_History();
+$cmd_device_notification = $cmd_device->get_Notification();
+$cmd_device_Type = $cmd_device->get_Type();
 ?>
 
 <div class="form-group">
@@ -22,17 +28,17 @@ $cmd_device_id = getPost("cmd_device_id");
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
   		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-5">
       		<label class="btn btn-success">
-      			<input type="checkbox" name="Visible" id="cmddevice-visible" cmdid="<?php echo $cmd_device_id ?>"  value="1">Visible
+      			<input type="checkbox" name="Visible" id="cmddevice-visible" cmdid="<?php echo $cmd_device_id ?>" <?php echo $cmd_device_visible ? "checked" : "" ?>>Visible
 			</label>	
 			<label class="btn btn-success">
-				<input type="checkbox" name="History" id="cmddevice-historiser" cmdid="<?php echo $cmd_device_id ?>" value="1">Historiser
+				<input type="checkbox" name="History" id="cmddevice-historiser" cmdid="<?php echo $cmd_device_id ?>" <?php echo $cmd_device_history ? "checked" : "" ?>>Historiser
 			</label>
 			<label class="btn btn-success">
-				<input type="checkbox" name="Notification" id="cmddevice-notification" cmdid="<?php echo $cmd_device_id ?>" value="1">Notification
+				<input type="checkbox" name="Notification" id="cmddevice-notification" cmdid="<?php echo $cmd_device_id ?>" <?php echo $cmd_device_notification ? "checked" : "" ?>>Notification
 			</label>		
       	</div>		      
 		<div class="col-lg-1 col-md-2 col-sm-2 col-xs-5">   
-			<input type="checkbox" class="toggle" cmdid="<?php echo $cmd_device_id ?>" name="Type" data-toggle="toggle" data-on="Action" data-off="Info" data-onstyle="success" data-offstyle="info">
+			<input type="checkbox" class="toggle" cmdid="<?php echo $cmd_device_id ?>" name="Type" data-toggle="toggle" data-on="Action" data-off="Info" data-onstyle="success" data-offstyle="info" <?php echo $cmd_device_Type == "Action" ? "checked" : "" ?>>
 	<!--
 			   	<label  class="radio-inline" for="cmdtype-action">Action</label>
 			    <input type="radio" name="Type" id="cmdtype-action" cmdid="<?php echo $cmd_device_id ?>" value="Action">
