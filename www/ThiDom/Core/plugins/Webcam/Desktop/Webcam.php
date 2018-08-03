@@ -13,7 +13,8 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			type: "POST",
 			url: 'Core/plugins/Webcam/Desktop/Webcam_ajax.php',            
 			data: {
-				act: "getSnap"
+				act: "getSnap",
+				Device_id: $(this).attr("deviceId")
 			},
 			cache: false,
 			async: true

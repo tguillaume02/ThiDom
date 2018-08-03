@@ -78,9 +78,12 @@ install_dependance() {
 	sudo apt-get install python-jinja2 -y
 	sudo apt-get install python-pip -y
 	sudo apt-get install python-certbot-apache -y
+	sudo apt-get install python-opencv
 	sudo pip install -U pip 
 	sudo pip install tweepy
 	sudo pip install httplib2
+	sudo pip install MySQL-python
+	sudo pip install imutils
 	sudo pip install --upgrade google-api-python-client
 	sudo pip install requests
 	install_php

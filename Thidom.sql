@@ -204,7 +204,7 @@ CREATE TABLE `Type_Device` (
   PRIMARY KEY (`Id`),
   KEY `Type` (`Type`),
   KEY `widget` (`Widget_Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -232,7 +232,7 @@ CREATE TABLE `User` (
   `Background` varchar(100) NOT NULL,
   `UserHash` varchar(32) NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -270,8 +270,35 @@ CREATE TABLE `cmd_device` (
   `Unite` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK_cmd_device_Device_Id` (`Device_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=354 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Table structure for table `Module_Type`
+--
+
+DROP TABLE IF EXISTS `Module_Type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Module_Type` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `ModuleName` varchar(45) NOT NULL,
+  `ModuleType` varchar(45) NOT NULL,
+  PRIMARY KEY (`Id`,`ModuleName`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Module_Type`
+--
+
+LOCK TABLES `Module_Type` WRITE;
+/*!40000 ALTER TABLE `Module_Type` DISABLE KEYS */;
+INSERT INTO `Module_Type` VALUES (1,'NRF24',''),(2,'Domogeek','Plugins'),(3,'Livebox','Plugins'),(4,'Webcam','Plugins'),(5,'Telegram','Plugins'),(6,'Virtuel','Virtuel');
+/*!40000 ALTER TABLE `Module_Type` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Table structure for table `widget`
@@ -284,8 +311,9 @@ CREATE TABLE `widget` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(20) NOT NULL,
   `Type` varchar(20) DEFAULT NULL,
+  `ModuleType_Id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +322,8 @@ CREATE TABLE `widget` (
 
 LOCK TABLES `widget` WRITE;
 /*!40000 ALTER TABLE `widget` DISABLE KEYS */;
-INSERT INTO `widget` VALUES (1,'Relay','Binary'),(2,'Dimmer','Slider'),(3,'RGB','Color'),(4,'Motion','Binary'),(5,'Numeric','Text'),(6,'Thermostat','Slider'),(7,'Plugins','Other'),(8,'Video','Other'),(9,'Opening Detector','Binary');
+INSERT INTO `widget` VALUES (0,'Temperature','Text',',1,'),(1,'Relay','Binary',',1,11,99,6,'),(2,'Dimmer','Slider',',1,22,11,'),(3,'RGB','Color',',1,'),(4,'Motion','Binary',',1,'),(5,'Thermostat','Slider',',1,'),(6,'Humidity','Text',',1,');
+
 /*!40000 ALTER TABLE `widget` ENABLE KEYS */;
 UNLOCK TABLES;
 
