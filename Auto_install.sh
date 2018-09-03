@@ -82,7 +82,6 @@ install_dependance() {
 	sudo pip install -U pip 
 	sudo pip install tweepy
 	sudo pip install httplib2
-	sudo pip install MySQL-python
 	sudo pip install imutils
 	sudo pip install --upgrade google-api-python-client
 	sudo pip install requests
@@ -107,7 +106,7 @@ install_dependance() {
 	sudo apt-get update -y 
 	sudo apt-get upgrade -y
 	sudo apt-get dist-upgrade -y
-	sudo rpi-update
+	sudo PRUNE_MODULES=1  rpi-update
 }
 
 install_php() {
@@ -184,6 +183,7 @@ install_dependance
 
 echo  "${VERT}**********************************************************************"
 echo "${msg_passwd_mysql}"
+echo "****************************************************************${NORMAL}"
 while true ; do
 	read MySQL_root < /dev/tty
 	echo "${msg_confirm_passwd_mysql} ${MySQL_root} ( ${msg_yesno} )"
@@ -191,8 +191,8 @@ while true ; do
 		echo -n "${msg_yesno}"
 		read ANSWER < /dev/tty
 		case $ANSWER in
-			${msg_yes})
-				mysqladmin -u root password ${MySQL_root}
+			${msg_yes})				
+				sudo mysqladmin -u root password ${MySQL_root}
 				break
 				;;
 			${msg_no})
@@ -362,6 +362,8 @@ mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 sudo cp /etc/resolvconf/resolv.conf.d/original /etc/resolvconf/resolv.conf.d/base
 
 rm -rf /tmp/ThiDom
+
+sudo pip install MySQL-python
 echo "${VERT}********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************${NORMAL}"
