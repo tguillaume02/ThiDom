@@ -139,7 +139,41 @@ install_php() {
 		sudo apt-get install php5-memcached -y
 		sudo apt-get install php5-mysql -y
 		sudo apt-get install php5-cli -y
-		sudo apt-get install php5-ssh2 -y
+		sudo apt-get install php5-ssh2 -y		
+
+		echo "${VERT}********************************************************"
+		echo "${msg_optimize_webserver_cache_opcache}"
+		echo "********************************************************${NORMAL}"
+
+		sudo pecl channel-update pecl.php.net 
+		yes '' | pecl install -fs zendopcache-7.0.3
+		#for i in fpm cli ; do
+		for file in $(find /etc/ -iname php.ini -type f); do
+			echo "zend_extension=opcache.so" >> ${file}
+			echo "opcache.memory_consumption=256"  >> ${file}
+			echo "opcache.interned_strings_buffer=8"  >> ${file}
+			echo "opcache.max_accelerated_files=4000"  >> ${file}
+			echo "opcache.revalidate_freq=1"  >> ${file}
+			echo "opcache.fast_shutdown=1"  >> ${file}
+			echo "opcache.enable_cli=1"  >> ${file}
+			echo "opcache.enable=1"  >> ${file}
+		done
+		#done
+	else
+
+		echo "${VERT}********************************************************"
+		echo "${msg_optimize_webserver_cache_opcache}"
+		echo "********************************************************${NORMAL}"
+
+		echo "zend_extension=opcache.so" >> ${file}
+		echo "opcache.memory_consumption=256"  >> ${file}
+		echo "opcache.interned_strings_buffer=8"  >> ${file}
+		echo "opcache.max_accelerated_files=4000"  >> ${file}
+		echo "opcache.revalidate_freq=1"  >> ${file}
+		echo "opcache.fast_shutdown=1"  >> ${file}
+		echo "opcache.enable_cli=1"  >> ${file}
+		echo "opcache.enable=1"  >> ${file}
+		echo "opcache.file_cache= .opcache" >>  ${file}
 	fi	
 	sudo apt-get install php-curl -y
 	sudo apt-get install php-pear build-essential -y
@@ -331,26 +365,6 @@ sudo cp /tmp/ThiDom/etc/rc.local /etc/
 sudo cp /tmp/ThiDom/etc/fail2ban/jail.local /etc/fail2ban/
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
-
-
-echo "${VERT}********************************************************"
-echo "${msg_optimize_webserver_cache_opcache}"
-echo "********************************************************${NORMAL}"
-
-sudo pecl channel-update pecl.php.net 
-yes '' | pecl install -fs zendopcache-7.0.3
-#for i in fpm cli ; do
-for file in $(find /etc/ -iname php.ini -type f); do
-	echo "zend_extension=opcache.so" >> ${file}
-	echo "opcache.memory_consumption=256"  >> ${file}
-	echo "opcache.interned_strings_buffer=8"  >> ${file}
-	echo "opcache.max_accelerated_files=4000"  >> ${file}
-	echo "opcache.revalidate_freq=1"  >> ${file}
-	echo "opcache.fast_shutdown=1"  >> ${file}
-	echo "opcache.enable_cli=1"  >> ${file}
-	echo "opcache.enable=1"  >> ${file}
-done
-#done
 
 
 echo "${VERT}********************************************************"
