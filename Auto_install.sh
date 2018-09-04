@@ -24,7 +24,7 @@ init_msg()
 	msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
 	msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
 	msg_copy_thidom_files="*             Copie des fichiers de Thidom             *"
-	msg_config_db = "*             Configuration de la base de donnée             *"
+	msg_config_db="*             Configuration de la base de donnée             *"
 	msg_unable_to_download_file="Impossible de télécharger le fichier"
 	msg_install_thidom="*                Installation de Thidom                *"
 	msg_setup_apache="*         Paramétrage de la configuration apache       *"
@@ -35,7 +35,7 @@ init_msg()
 	msg_login_info3="Votre mot de passe par défault est: "
 	msg_install_sql="*                Installation de la base de données    *"
 	msg_id_notify="Saisissez votre identifiant de notification (si vous n'en avez pas, ne rien renseigner)"
-	End ="L'installation de ThiDom est terminé, il est recommandé de redémarrer: sudo reboot"
+	End="L'installation de ThiDom est terminé, il est recommandé de redémarrer: sudo reboot"
 	restart="Votre machine va maintenant redémarrer"
 	restart1="Votre machine va redémarrer dans 1 seconde "
 	restart2="Votre machine va redémarrer dans 2 secondes "
@@ -78,7 +78,7 @@ install_dependance() {
 	sudo apt-get install python-jinja2 -y
 	sudo apt-get install python-pip -y
 	sudo apt-get install python-certbot-apache -y
-	sudo apt-get install python-opencv
+	sudo apt-get install python-opencv -y
 	sudo pip install -U pip 
 	sudo pip install tweepy
 	sudo pip install httplib2
@@ -106,7 +106,6 @@ install_dependance() {
 	sudo apt-get update -y 
 	sudo apt-get upgrade -y
 	sudo apt-get dist-upgrade -y
-	sudo PRUNE_MODULES=1  rpi-update
 }
 
 install_php() {
@@ -165,15 +164,17 @@ install_php() {
 		echo "${msg_optimize_webserver_cache_opcache}"
 		echo "********************************************************${NORMAL}"
 
-		echo "zend_extension=opcache.so" >> ${file}
-		echo "opcache.memory_consumption=256"  >> ${file}
-		echo "opcache.interned_strings_buffer=8"  >> ${file}
-		echo "opcache.max_accelerated_files=4000"  >> ${file}
-		echo "opcache.revalidate_freq=1"  >> ${file}
-		echo "opcache.fast_shutdown=1"  >> ${file}
-		echo "opcache.enable_cli=1"  >> ${file}
-		echo "opcache.enable=1"  >> ${file}
-		echo "opcache.file_cache= .opcache" >>  ${file}
+		for file in $(find /etc/ -iname php.ini -type f); do
+			echo "zend_extension=opcache.so" >> ${file}
+			echo "opcache.memory_consumption=256"  >> ${file}
+			echo "opcache.interned_strings_buffer=8"  >> ${file}
+			echo "opcache.max_accelerated_files=4000"  >> ${file}
+			echo "opcache.revalidate_freq=1"  >> ${file}
+			echo "opcache.fast_shutdown=1"  >> ${file}
+			echo "opcache.enable_cli=1"  >> ${file}
+			echo "opcache.enable=1"  >> ${file}
+			echo "opcache.file_cache= .opcache" >>  ${file}
+		done
 	fi	
 	sudo apt-get install php-curl -y
 	sudo apt-get install php-pear build-essential -y
@@ -220,13 +221,13 @@ echo "${msg_passwd_mysql}"
 echo "****************************************************************${NORMAL}"
 while true ; do
 	read MySQL_root < /dev/tty
-	echo "${msg_confirm_passwd_mysql} ${MySQL_root} ( ${msg_yesno} )"
+	echo "${msg_confirm_passwd_mysql} ${MySQL_root}"
 	while true ; do
 		echo -n "${msg_yesno}"
 		read ANSWER < /dev/tty
 		case $ANSWER in
 			${msg_yes})				
-				sudo mysqladmin -u root password ${MySQL_root}
+				sudo mysqladmin -uroot password ${MySQL_root}
 				break
 				;;
 			${msg_no})
@@ -239,8 +240,9 @@ done
 if [ "${ANSWER}" = "${msg_yes}" ] ; then
         # Test access immediately
         # to ensure that the provided password is valide
-        echo "show databases;" | mysql -uroot -p"${MySQL_root}"
-        if [ $? -eq 0 ] ; then
+        echo "show databases;" | sudo mysql -uroot -p"${MySQL_root}"
+        if [ $? -eq 0 ] ; then		
+			echo "DROP USER 'root'@'localhost'; CREATE USER 'root'@'localhost' IDENTIFIED BY '${MySQL_root}'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" | sudo mysql -uroot -p"${MySQL_root}"
             # good password
             break
         else
@@ -310,11 +312,12 @@ echo "${msg_config_db}"
 echo "********************************************************${NORMAL}"
 
 bdd_password=$(cat /dev/urandom | tr -cd 'a-f0-9' | head -c 15)
-echo "DROP USER 'thidom'@'localhost'" | mysql -uroot -p"${MySQL_root}"
-echo "CREATE USER 'thidom'@'localhost' IDENTIFIED BY '${bdd_password}';" | mysql -uroot -p"${MySQL_root}"
-echo "DROP DATABASE IF EXISTS thidom;" | mysql -uroot -p"${MySQL_root}"
-echo "CREATE DATABASE thidom;" | mysql -uroot -p"${MySQL_root}"
-echo "GRANT ALL PRIVILEGES ON thidom.* TO 'thidom'@'localhost';" | mysql -uroot -p"${MySQL_root}"
+echo "DROP USER 'thidom'@'localhost';" | sudo mysql -uroot -p"${MySQL_root}"
+echo "CREATE USER 'thidom'@'localhost' IDENTIFIED BY '${bdd_password}';" | sudo mysql -uroot -p"${MySQL_root}"
+echo "DROP DATABASE IF EXISTS thidom;" | sudo mysql -uroot -p"${MySQL_root}"
+echo "CREATE DATABASE thidom;" | sudo mysql -uroot -p"${MySQL_root}"
+echo "GRANT ALL PRIVILEGES ON thidom.* TO 'thidom'@'localhost';" | sudo mysql -uroot -p"${MySQL_root}"
+echo "FLUSH PRIVILEGES;" | sudo mysql -uroot -p"${MySQL_root}"
 
 
 echo "${VERT}********************************************************"
@@ -371,13 +374,13 @@ echo "${VERT}********************************************************"
 echo "${msg_install_sql}"
 echo "********************************************************${NORMAL}"
 
-mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
+sudo mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 
 sudo cp /etc/resolvconf/resolv.conf.d/original /etc/resolvconf/resolv.conf.d/base
 
 rm -rf /tmp/ThiDom
 
-sudo pip install MySQL-python
+#sudo pip install MySQL-python
 echo "${VERT}********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************${NORMAL}"
@@ -439,6 +442,9 @@ update-rc.d DefaultFirewall defaults
 #echo "${restart}"
 
 #sudo reboot
+
+
+sudo PRUNE_MODULES=1  rpi-update
 
 echo "${End}"
 
