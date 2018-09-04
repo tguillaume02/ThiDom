@@ -146,8 +146,8 @@ class db
 	public function ResultToJsonArray($data)
 	{
 		$JSON = array();
-		if ($data)
-		{
+		/*if ($data)
+		{*/
 			/*foreach($data as $donnees=> $value)
 			{	
 				foreach ($value as $id => $val) {
@@ -161,7 +161,7 @@ class db
 				echo json_encode($JSON);
 			}*/
 			echo json_encode($data);
-		}
+		//}
 	}
 
 	public function save($objects)

@@ -19,14 +19,15 @@ class Webcam
 		{
 			$this->user = Device::byId($this->Device_id)->get_Configuration("user","null");
 			$this->pass = Device::byId($this->Device_id)->get_Configuration("pwd","null");
-			$this->url = Device::byId($this->Device_id)->get_Configuration("url","null");
+			$this->host = Device::byId($this->Device_id)->get_Configuration("url","null");
 			$this->urlMoveRight = Device::byId($this->Device_id)->get_Configuration("urlMoveRight","null");
 			$this->urlMoveLeft = Device::byId($this->Device_id)->get_Configuration("urlMoveLeft","null");
 			$this->urlMoveStop = Device::byId($this->Device_id)->get_Configuration("urlMoveStop","null");
 		}
 	}
 
-	public function getSnapshot($_takesnapshot = false) {
+	public function getSnapshot($_takesnapshot = false)
+	{
 		/*$inprogress = cache::bykey('camera' . $this->getId() . 'inprogress');
 		$info = $inprogress->getValue(array('state' => 0, 'datetime' => strtotime('now')));
 		if ($info['state'] == 1 && (strtotime('now') - 2) <= $info['datetime']) {
@@ -38,7 +39,7 @@ class Webcam
 		cache::set('camera' . $this->getId() . 'inprogress', array('state' => 1, 'datetime' => strtotime('now')));
 		*/
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->url /*"http://192.168.1.111:80/videostream.cgi"*/);
+		curl_setopt($ch, CURLOPT_URL, $this->host /*"http://192.168.1.111:80/videostream.cgi"*/);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 2);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -47,7 +48,7 @@ class Webcam
 		if ($this->user != '')
 		{
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":"$this->pwd;
+			$userpwd = $this->user.":".$this->pwd;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',
@@ -81,7 +82,7 @@ class Webcam
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		//if ($this->getConfiguration('username') != '') {
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":"$this->pwd;
+			$userpwd = $this->user.":".$this->pwd;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',
@@ -101,7 +102,7 @@ class Webcam
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		//if ($this->getConfiguration('username') != '') {
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":"$this->pwd;
+			$userpwd = $this->user.":".$this->pwd;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',

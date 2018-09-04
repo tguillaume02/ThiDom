@@ -36,6 +36,7 @@ class Telegram extends Device
    {       
        if ($this->BotToken != null && $this->ChannelId != null)
        {
+            $msg = str_replace("<br>", "", $msg);
             $data = [
                 'chat_id' => $this->ChannelId,
                 'text' => $msg,

@@ -3,7 +3,7 @@ require_once dirname(__FILE__)  .'/../../../Security.php';
 require_once dirname(__FILE__) .'/../../../ListRequire.php';
 
 $TheremostatMin = Device::byId($Device_id)->get_Configuration("ThermostatMin", "10");
-$TheremostatMax = Device::byId($Device_id)->get_Configuration("ThermostatMax", "30");
+$TheremostatMax = Device::byId($Device_id)->get_Configuration("ThermostatMax", "25");
 
 $Pictures_device = '<div id="InfoDevice_'/*.$NomWithoutSpace.'_'*/.$LieuxWithoutSpace.'_'.$Cmd_device_Id.'" class="img-circle img_btn_device rounded-circle circle" value="'.$CmdDeviceValue.'" >'.$CmdDeviceValue.'</div>';
 

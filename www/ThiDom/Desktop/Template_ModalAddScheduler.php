@@ -54,7 +54,7 @@
 									<!-- FOR SLIDER  -->
 									<td class="Slider Thermostat Dimmer widgetType">
 										<div class="div_btn_device Corner" style="background-color: transparent; user-select: none; cursor: default;">
-											<input class="img-circle img_btn_device circle" id="planning-info-slider" name="commande" readonly value="15">
+											<div id="planning-info-slider" class="img-circle img_btn_device circle" name="commande" readonly value="15">
 										</div>
 									</td>
 									<td class="Slider Thermostat Dimmer widgetType" style="width: 80%;padding: 15px;">

@@ -321,7 +321,7 @@ function LoadMaison()
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadMaison');
 	});
 }
 
@@ -392,7 +392,7 @@ function LoadLieux()
 	})
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadLieux');
 	});
 
 
@@ -492,7 +492,7 @@ function LoadUser()
 	})
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadUser');
 	});
 
 	$('#table-content-user tbody').unbind('click').on( 'click', '.btn-primary', function ()
@@ -557,7 +557,7 @@ function LoadModuleType()
 	})
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadModuleType');
 	});	
 }
 
@@ -597,7 +597,7 @@ function LoadTypeWidget()
 	})
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadTypeWidget');
 		$("#modal-manage-device #list-type").prop('disabled', true);
 	});	
 }
@@ -731,7 +731,7 @@ function LoadCalendar()
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
-		ErrorLoading();
+		ErrorLoading('LoadCalendar');
 	});
 
 
@@ -1032,6 +1032,7 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
 			{
 				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
 				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				data.refresh = false;
 				EditDevice(datas);
 			}
 
