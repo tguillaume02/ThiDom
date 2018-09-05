@@ -82,7 +82,10 @@ if ($act == "SaveDevice")
 		{
 			$ModelType = $ModuleObject->byId($ModuleId)->get_ModuleName();
 			$object = new $ModelType;
-			$object->Install();		
+			if (method_exists($object, 'Install'))
+			{
+				$object->Install();		
+			}
 			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
 		}
 		else

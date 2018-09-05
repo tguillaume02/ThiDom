@@ -48,12 +48,12 @@ class Webcam
 		if ($this->user != '')
 		{
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":".$this->pwd;
+			$userpwd = $this->user.":".$this->pass;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',
 				'Authorization: Basic ' . base64_encode($userpwd),
-				'Cookie:  user='.$this->user.'; password='.$this->pwd.'; usr='.$this->user.'; pwd='.$this->pwd
+				'Cookie:  user='.$this->user.'; password='.$this->pass.'; usr='.$this->user.'; pwd='.$this->pass
 			);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		}
@@ -82,12 +82,12 @@ class Webcam
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		//if ($this->getConfiguration('username') != '') {
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":".$this->pwd;
+			$userpwd = $this->user.":".$this->pass;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',
 				'Authorization: Basic ' . base64_encode($userpwd),
-				'Cookie:  user='.$this->user.'; password='.$this->pwd.'; usr='.$this->user.'; pwd='.$this->pwd
+				'Cookie:  user='.$this->user.'; password='.$this->pwpassd.'; usr='.$this->user.'; pwd='.$this->pass
 			);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		//}
@@ -102,12 +102,12 @@ class Webcam
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		//if ($this->getConfiguration('username') != '') {
 			//$userpwd = $this->getConfiguration('username') . ':' . $this->getConfiguration('password');
-			$userpwd = $this->user.":".$this->pwd;
+			$userpwd = $this->user.":".$this->pass;
 			curl_setopt($ch, CURLOPT_USERPWD, $userpwd);
 			$headers = array(
 				'Content-Type:application/json',
 				'Authorization: Basic ' . base64_encode($userpwd),
-				'Cookie:  user='.$this->user.'; password='.$this->pwd.'; usr='.$this->user.'; pwd='.$this->pwd
+				'Cookie:  user='.$this->user.'; password='.$this->pwpassd.'; usr='.$this->user.'; pwd='.$this->pass
 			);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		//}

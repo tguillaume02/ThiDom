@@ -8,6 +8,7 @@ class db
 	$_pwd = "{{pwdsql}}",
 	$_bdd = "{{bddsql}}",
 	$_connection;
+	
 
 	const FETCH_TYPE_ROW = 0;
 	const FETCH_TYPE_ALL = 1;
@@ -65,34 +66,32 @@ class db
 	 	if (($sqlcommand == "select") or (strpos($querylower, "insert into connectlog") !== False) or (strpos($querylower, "update user set lastlog") !== False) or ($host == "localhost" or $host == "127.0.0.1") or (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1))  /* ((($sqlcommand == "insert") or ($sqlcommand == "delete") or ($sqlcommand == "update")) and (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1)) )*/
 		{
 			$resultQuery = self::getDataQuery($query,$param);
-			
 			if ($resultQuery !=false)
 			{
-					if ($_fetchType == self::FETCH_TYPE_ROW)
+				if ($_fetchType == self::FETCH_TYPE_ROW)
+				{
+					if ($_fetch_opt == NULL)
 					{
-						if ($_fetch_opt == NULL)
-						{
 
-							$res = $resultQuery->fetch($_fetch_param);
+						$res = $resultQuery->fetch($_fetch_param);
 
-						}
-						else if ($_fetch_param == PDO::FETCH_CLASS)
-						{
-
-							$res = $resultQuery->fetchObject($_fetch_opt);
-						}
+					}
+					else if ($_fetch_param == PDO::FETCH_CLASS)
+					{
+						$res = $resultQuery->fetchObject($_fetch_opt);
+					}
+				}
+				else
+				{
+					if ($_fetch_opt == NULL)
+					{
+						$res = $resultQuery->fetchAll($_fetch_param);
 					}
 					else
 					{
-						if ($_fetch_opt == NULL)
-						{
-							$res = $resultQuery->fetchAll($_fetch_param);
-						}
-						else
-						{
-							$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
-						}
+						$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
 					}
+				}
 			
 				$errorInfo = $resultQuery->errorInfo();
 
@@ -100,12 +99,12 @@ class db
 				{
 					throw new Exception('[MySQL] Error code : ' . $errorInfo[0] . ' (' . $errorInfo[1] . '). ' . $errorInfo[2]);
 				}
-				return $res;
+				return $res ?? null;
 			} 
 		}
 		else
 		{
-			return false;
+			return null;//false;
 		}
 	}
 

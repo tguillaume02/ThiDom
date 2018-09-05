@@ -4,11 +4,13 @@ include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 
 $cmdDeviceObject = new CmdDevice();
 $cmd_device =  $cmdDeviceObject->byId(getPost("cmd_device_id"));
-$cmd_device_id = $cmd_device->get_Id();
+$cmd_device = $cmd_device == false ? $cmdDeviceObject : $cmd_device;
+$cmd_device_id =  $cmd_device->get_Id();
 $cmd_device_visible = $cmd_device->get_Visible();
 $cmd_device_history = $cmd_device->get_History();
 $cmd_device_notification = $cmd_device->get_Notification();
 $cmd_device_Type = $cmd_device->get_Type();
+	
 ?>
 
 <div class="form-group">

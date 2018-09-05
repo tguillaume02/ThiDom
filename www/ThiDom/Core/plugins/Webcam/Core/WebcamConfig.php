@@ -13,12 +13,12 @@ include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 					<input type="url" class="form-control" id="url" name="url" placeholder="url/IP de la webcam:" required />
 				</div>
 			</div>
-
+<!--
 			
 			<div class="form-group">
 				<label for="url" class="col-lg-1 col-md-5 col-sm-6 col-xs-6 control-label">URL deplacement droite :</label>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-					<input type="url" class="form-control" id="urlMoveRight" name="url" placeholder="url deplacement droit:" required />
+					<input type="url" class="form-control" id="urlMoveRight" name="url" placeholder="url deplacement droit:"  />
 				</div>
 			</div>
 
@@ -26,7 +26,7 @@ include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 			<div class="form-group">
 				<label for="url" class="col-lg-1 col-md-5 col-sm-6 col-xs-6 control-label">URL deplacement gauche :</label>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-					<input type="url" class="form-control" id="urlMoveLeft" name="url" placeholder="url deplacement gauche:" required />
+					<input type="url" class="form-control" id="urlMoveLeft" name="url" placeholder="url deplacement gauche:"  />
 				</div>
 			</div>
 
@@ -34,10 +34,10 @@ include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 			<div class="form-group">
 				<label for="url" class="col-lg-1 col-md-5 col-sm-6 col-xs-6 control-label">URL deplacement stop :</label>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-					<input type="url" class="form-control" id="urlMoveStop" name="url" placeholder="url deplacement stop:" required />
+					<input type="url" class="form-control" id="urlMoveStop" name="url" placeholder="url deplacement stop:"  />
 				</div>
 			</div>
-
+-->
 			<!--<div class="form-group">
 				<label for="device-visible" class="col-lg-1 col-md-5 col-sm-6 col-xs-6 control-label">Visible :</label>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">

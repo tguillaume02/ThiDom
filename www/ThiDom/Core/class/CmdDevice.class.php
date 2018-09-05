@@ -21,7 +21,7 @@ class CmdDevice
 	protected $Unite;
 	protected $History;
 	protected $Notification;
-
+	
 	public static function byId($Id)
 	{
 		$values = array(
@@ -444,7 +444,7 @@ class CmdDevice
 		{
 			throw new Exception('Vous ne pouvez pas créer une commande sans la rattacher à un équipement' . print_r($this, true));
 		}
-
+		
 		$column = "";
 		$val = "";
 		foreach($this as $key => $value)
