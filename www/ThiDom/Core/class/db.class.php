@@ -104,7 +104,7 @@ class db
 		}
 		else
 		{
-			return null;//false;
+			return 0;//false;
 		}
 	}
 

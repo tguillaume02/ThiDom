@@ -82,9 +82,20 @@ if ($act == "SaveDevice")
 		{
 			$ModelType = $ModuleObject->byId($ModuleId)->get_ModuleName();
 			$object = new $ModelType;
-			if (method_exists($object, 'Install'))
+			if (method_exists($object, 'Install') && empty($CmdDevice))
 			{
-				$object->Install();		
+					$object->Install();		
+			}
+			elseif (!empty($CmdDevice))
+			{
+				$CmdDevice = json_decode($CmdDevice);
+				foreach($CmdDevice as $v)
+				{
+					$CmdId = $v->id;
+					$Colonne = $v->cmdname;
+					$Value = $v->value;
+					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+				}
 			}
 			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
 		}
@@ -107,7 +118,7 @@ if ($act == "SaveDevice")
 				$cmdDeviceObject->set_device_Id($Id);
 				$cmdDeviceObject->set_WidgeId($TypeId);
 				$cmdDeviceObject->set_type('Action');
-				$resultCmdDevice = $cmdDeviceObject->save();
+				$resultCmdDevice = $cmdDeviceObject->save(); 
 				
 				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
 				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);

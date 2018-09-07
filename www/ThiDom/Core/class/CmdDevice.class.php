@@ -95,7 +95,7 @@ class CmdDevice
 			':Device_Id' => $Device_Id
 			);
 
-		$sql = 'SELECT Id, Unite FROM '.self::table_name.' WHERE Nom=:Name and Device_Id = :Device_Id';
+		$sql = 'SELECT Id, Unite, RAZ FROM '.self::table_name.' WHERE Nom=:Name and Device_Id = :Device_Id';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
 
