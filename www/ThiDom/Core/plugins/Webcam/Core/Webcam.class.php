@@ -2,7 +2,7 @@
 require_once dirname(__FILE__)  .'/../../../Security.php'; 
 require_once dirname(__FILE__) .'/../../../ListRequire.php';
 
-class Webcam
+class Webcam extends Device
 {
 	// Variable Configuration   
 	public $Name_Script = "Webcam";
@@ -40,7 +40,7 @@ class Webcam
 		*/
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->host /*"http://192.168.1.111:80/videostream.cgi"*/);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 2);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -65,7 +65,7 @@ class Webcam
 		}
 		else
 		{
-			return $data;
+			return imageToBase64($data);
 		}
 		/*cache::set('camera' . $this->getId() . 'cache', $data);
 		cache::set('camera' . $this->getId() . 'inprogress', array('state' => 0, 'datetime' => ''));*/
@@ -114,6 +114,45 @@ class Webcam
 		curl_exec($ch);
 		curl_close($ch);
 	}
+
+	public function imageToBase64($image)
+	{
+		$imageData = base64_encode($image);
+		$mime_types = array(
+		'jpg' => 'image/jpg',
+		'jpeg' => 'image/jpeg',
+		'png' => 'image/png'
+		);
+		$ext = pathinfo($image, PATHINFO_EXTENSION);
+		
+		if (array_key_exists($ext, $mime_types)) {
+			$a = $mime_types[$ext];
+		}
+		return 'data: '.$a.';base64,'.$imageData;
+	}
+
+
+	
+	public function Install()
+	{ 
+		$WebcamCmd = new WebcamCmd;
+		$WebcamCmd->set_Name('Refresh Snapshot');
+		$WebcamCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$WebcamCmd->set_request('url', 'plugins/Webcam/Desktop/Webcam.php');
+		$WebcamCmd->set_request('url_ajax', 'plugins/Webcam/Desktop/Webcam_ajax.php');
+		$WebcamCmd->set_request('data', 'act=getSnap');
+		$WebcamCmd->set_raz('');
+		$WebcamCmd->set_visible(1);
+		$WebcamCmd->set_type('Info');
+		$WebcamCmd->save();
+	}
+
+
+}
+
+
+class WebcamCmd extends CmdDevice
+{ 
 }
 
 ?>

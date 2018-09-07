@@ -11,13 +11,14 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 </div>
 
 <script>
+	function getSnap($device_id)
+	{
 		var request = $.ajax({
-			dataType: "json",
 			type: "POST",
 			url: 'Core/plugins/Webcam/Desktop/Webcam_ajax.php',            
 			data: {
 				act: "getSnap",
-				Device_id: <?php  echo $Device_id?>
+				Device_id: $device_id
 			},
 			cache: false,
 			async: true
@@ -32,4 +33,22 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		request.fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("Webcam error : " + textStatus);
 		});
+	}
+
+	console.log(<?php 
+	 ?>);
+
+	 <?php 
+	 	$res = CmdDevice::getCmdId("Refresh Snapshot", $Device_id);
+		 if ($res != false)
+		 {
+			 $refresh = $res->get_RAZ() * 1000;
+			 echo "setInterval(function(){
+				getSnap($Device_id)
+			},$refresh);";
+		}
+	 ?>
+
+
+
 </script>
