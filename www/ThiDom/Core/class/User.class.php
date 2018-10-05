@@ -196,6 +196,7 @@ class User
 				$UserName = stripslashes($User);
 				$password = stripslashes($Password);
 				$ResultUser = self::CheckUser($UserName,$password);
+
 				if ($ResultUser)
 				{
 					foreach($ResultUser as $donnees)
@@ -206,7 +207,7 @@ class User
 						$_SESSION['userIsAdmin'] = $donnees["UserIsAdmin"];
 						if ($remember == "true")
 						{							
-							$key = sha1($donnees["UserName"].$donnees["UserPass"].$_SERVER["REMOTE_ADDR"]);
+							$key = sha1($donnees["UserName"].$donnees["UserPass"]);
 							setcookie('auth', $donnees["Id"]. '-----'.$key, time() + 3600 * 24 * 7, '/','',true,true);
 						}
 					}
@@ -254,7 +255,7 @@ class User
 
 			foreach($ResultUser as $donnees)
 			{
-				$key = sha1($donnees["UserName"].$donnees["UserPass"].$_SERVER["REMOTE_ADDR"]);
+				$key = sha1($donnees["UserName"].$donnees["UserPass"]);
 
 				if ($key == $auth[1])
 				{
@@ -291,52 +292,51 @@ class User
 		return $this->UserIsAdmin;
 	}
 
+	public function isLoggedLocal()
+	{
+		$_SESSION['userIsAdmin'] = 1;
+		return true;
+
+	}
+
 	public function isLogged($hash="")
 	{
-		if ($hash == "local")
+		if (isset($_COOKIE['auth']) || !empty($hash))
 		{
-			$_SESSION['userIsAdmin'] = 1;
-			return true;
-		}
-		else
-		{
-			if (isset($_COOKIE['auth']) || !empty($hash))
+			if(self::hashAuthentification($hash))
 			{
-				if(self::hashAuthentification($hash))
-				{
-					//
-					//$_SESSION['user'] = $user;
-				}
-				else
-				{
-					return self::logout();
-					//header('Location: /login.php');
-				}
-			}
-			elseif (isset($_SESSION['userName']) && isset($_SESSION['userPass']))
-			{
-
-				$ResultUser = self::CheckUser($_SESSION['userName'],$_SESSION['userPass']);
-				if ($ResultUser)
-				{
-					foreach($ResultUser as $donnees)
-					{
-						$_SESSION['userName'] = $donnees["UserName"];
-						$_SESSION['userPass'] = $donnees["UserPass"];
-						$_SESSION['userId'] = $donnees["Id"];
-						$_SESSION['userIsAdmin'] = $donnees["UserIsAdmin"];
-					}
-					return true;
-				}
-				else
-				{
-					return self::logout();
-				}
+				//
+				//$_SESSION['user'] = $user;
 			}
 			else
 			{
-				return self::logout();	
+				return self::logout();
+				//header('Location: /login.php');
 			}
+		}
+		elseif (isset($_SESSION['userName']) && isset($_SESSION['userPass']))
+		{
+
+			$ResultUser = self::CheckUser($_SESSION['userName'],$_SESSION['userPass']);
+			if ($ResultUser)
+			{
+				foreach($ResultUser as $donnees)
+				{
+					$_SESSION['userName'] = $donnees["UserName"];
+					$_SESSION['userPass'] = $donnees["UserPass"];
+					$_SESSION['userId'] = $donnees["Id"];
+					$_SESSION['userIsAdmin'] = $donnees["UserIsAdmin"];
+				}
+				return true;
+			}
+			else
+			{
+				return self::logout();
+			}
+		}
+		else
+		{
+			return self::logout();	
 		}
 	}
 

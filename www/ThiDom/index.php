@@ -49,6 +49,7 @@
 						</li>
 						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="tools">  	
+								<li><a href="#manage-plugins" id="manage-plugins-link"> Plugins </a></li>
 								<li><a href="#manage-equipement"  id="manage-equipement-link"> Manage Equipement</a></li>
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
 								<li><a href="#scenario" id="scenario-link"><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
@@ -97,6 +98,23 @@
 						</table>
 						<br>
 						<button type="button" id="remove-all-log" class="btn btn-danger pull-right absolute"><i class="fas fa-trash-o"></i> Remove all log</button>
+					</div>
+				</div>
+
+				<div id="manage-plugins" role="tabpanel" class="tab-pane ">
+					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-plugins"><i class="fas fa-plus"></i></button>
+					<div id="content-manage-plugins"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
+						<table id="table-content-plugins" class="table table-striped dataTable dt-responsive nowrap display text-center">
+							<thead> 
+								<tr>
+									<th class="text-center">Id</th> 
+									<th class="text-center">Name</th> 
+									<th class="text-center"></th>
+								</tr> 
+							</thead>
+							<tbody id="tbody-content-plugins">
+							</tbody>
+						</table>
 					</div>
 				</div>
 
@@ -288,6 +306,7 @@
 		require_once('./Desktop/Template_ModalAddScheduler.php');
 		require_once('./Desktop/Template_ModalEquipement.php'); 
 		require_once('./Desktop/Template_ModalConfirmation.php');
+		require_once('./Desktop/Template_ModalPlugins.php');
 		require_once('./Desktop/Template_ModalRoom.php');
 		require_once('./Desktop/Template_ModalEnlarge.php');
 	?>

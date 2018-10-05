@@ -4,6 +4,20 @@ require_once dirname(__FILE__) .'/../ListRequire.php';
 ?>
 <script>
 
+function callPlugins(plugins, device_id,role,type,value)
+{
+	value = value+"";
+	$.ajax({
+		type: 'POST',
+		url: 'Core/ajax/'+plugins+'.php',
+		data: 'Device_Id=' + device_id +'&Role='+role+'&Type='+type+'&Value='+value,
+		cache: false
+	})
+	.done( function (msg) 
+	{
+	})
+}
+
 function action_domo(device_id,role,type,value)
 {
 	value = value+"";
@@ -322,6 +336,77 @@ function LoadMaison()
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
 		ErrorLoading('LoadMaison');
+	});
+}
+
+
+function LoadPlugins()
+{
+	if ($.fn.DataTable.isDataTable("#table-content-plugins"))
+	{
+		$("#tbody-content-plugins").html("");
+		$("#table-content-plugins").dataTable().fnDestroy();
+	}
+	var pluginsTable = $("#table-content-plugins").dataTable(
+	{
+		"order": [[ 1, "asc" ]],
+		"columnDefs": [
+		{"className": "dt-center", "targets": "_all"},
+		{ "visible": false, "targets": [0] },		
+		{ "type": "alt-string", "targets": [1] }
+		],
+		"searching": false,
+		"pagingType": "numbers",
+		"iDisplayLength": 13,
+		"lengthMenu": [[15, 50, -1], [15, 50, "All"]],
+		"bLengthChange": false,
+		"columns": [
+		{data: "Id"},
+		{data: "ModuleName"},
+		{
+			data: null, sortable: false, render: function(data, type, full) 
+			{
+				return '<button class="btn btn-primary btn-md"> Edit <i class="fas fa-pencil-alt" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fas fa-trash" aria-hidden="true"></i></button>';
+			}
+		}
+		]
+	});
+
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'GetModuleType',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+
+	request.done(function (data) {
+		$("#list-plugins option").siblings("[value!='']").remove();		
+		pluginsTable.fnClearTable();
+		if (data.length != 0)
+		{
+			pluginsTable.fnAddData(data);
+			pluginsTable.fnDraw();
+		}
+		$.each(data, function (index, item) {
+			$("#list-plugins").append(new Option(item.ModuleName, item.Id));
+		})
+	})
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+		ErrorLoading('LoadPlugins');
+	});
+
+
+	$('#table-content-plugins tbody').unbind('click').on( 'click', '.btn-primary', function ()
+	{
+		PluginsData = $('#table-content-plugins').DataTable().row( $(this).parent().parent() ).data();		
+		EditPlugins(PluginsData);
 	});
 }
 

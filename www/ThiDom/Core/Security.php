@@ -21,6 +21,6 @@ if ($host != "localhost" and $host != "127.0.0.1" and $host != "192.168.1.25")
 }
 else
 {	
-	$userObject->isLogged("local");
+	$userObject->isLoggedLocal();
 }
 ?>

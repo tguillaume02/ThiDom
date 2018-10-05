@@ -270,8 +270,8 @@ if ($act == "GetNewHash")
 }
 
 if ($act == "GetModuleType") 
-{	
-	$dbObject->ResultToJsonArray($deviceObject->GetModuleType());
+{
+	$dbObject->ResultToJsonArray($ModuleObject->GetModuleType());	
 }
 
 if ($act == "GetTypeWidget") 

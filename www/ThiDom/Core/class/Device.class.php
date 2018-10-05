@@ -315,12 +315,6 @@ class Device
 		return db::execQuery($sql,$values);
 	}
 
-	public function GetModuleType()
-	{
-		$sql = 'SELECT Id, ModuleName, ModuleType FROM Module_Type order by ModuleName';
-		return db::execQuery($sql, []);	
-	}
-
 	public function GetTypeWidget()
 	{
 		$whereConditions = "";

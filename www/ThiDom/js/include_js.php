@@ -95,7 +95,7 @@
 			var device_id = $(this).attr('device_id');
 			var device_role = $(this).attr('data-role');
 			var device_type = $(this).attr('data-type');
-			if ($(this).filter("[data-role='Color']"))
+			if ($(this).attr("data-role") == "Color")
 			{
 				var value = $(this).children().val()
 			}
@@ -142,7 +142,7 @@
 		{*/
 			if (data.ModuleName == "Plugins")
 			{
-				linkConfig = "Core/plugins/"+data.Type+"/Core/"+data.Type+"Config.php";
+				linkConfig = "Core/plugins/"+data.Type+"/Core/"+data.Type+"ConfigDevice.php";
 				if (!data.newDevice)
 				{
 					linkCommande = "Core/plugins/Commande.php";
@@ -154,14 +154,14 @@
 			}
 			else
 			{
-				linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Config.php";
+				linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"ConfigDevice.php";
 				linkCommande = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Commande.php";
 			}
 		/*}*/
 
 		$("#modal-manage-device #ConfigurationDevice").load(linkConfig , {device_id: data.DeviceId},
  			function() {
- 				$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function()
+ 				$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function(response, status, xhr)
  				{
 					if (!data.newDevice)
 					{						
@@ -211,8 +211,12 @@
 						*/
 					}
 
+					if (status != "error")
+					{
+						$("#ModalEquipementCommande").show();
+					}
+
 					$('input:checkbox[name=Type]').bootstrapToggle();
-					$("#ModalEquipementCommande").show();
 					$("#ModalEquipementConfiguration").show();
 					$("#modal-manage-device #list-type").prop('disabled', true);
 					$("#modal-manage-device #list-device").prop('disabled', true);
@@ -326,6 +330,28 @@
 		$("#modal-manage-user").modal('toggle');
 	}
 
+	
+	function EditPlugins(data = "")
+	{
+		$("#ModalPluginsConfiguration #ConfigurationPlugins").html('')
+
+		linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"ConfigPlugins.php";
+
+		$("#modal-manage-plugins #ConfigurationPlugins").load(linkConfig , {plugins_id: data.Id},
+ 			function() {});
+		if ($("#modal-manage-plugins").data('bs.modal'))
+		{
+			if (!$("#modal-manage-plugins").data('bs.modal').isShown)
+			{
+				$("#modal-manage-plugins").modal('toggle');
+			}
+		}
+		else
+		{
+			$("#modal-manage-plugins").modal('toggle');
+		}
+	}
+
 	function strToRGB(str){
 		var hash = 0;
 		for (var i = 0; i < str.length; i++) {
@@ -376,6 +402,9 @@
 			case "#manage-room":
 				LoadLieux();
 				break;
+			case "#manage-plugins":
+				LoadPlugins();
+				break;				
 			case "#user":
 				LoadUser();
 				break;			
@@ -438,6 +467,7 @@
 		$('#scenario-list').off();
 		$('#calendar-link').off();
 		$('#scenario-link').off();
+		$('#manage-plugins-link').off();
 		$('#manage-equipement-link').off();
 		$('#manage-room-link').off();
 		$('#user-link').off();
@@ -476,7 +506,7 @@
 
 		$(".Enlarge").on("click", function() {
 		   $('#imagepreview').attr('src', $(this).attr('src')); // here asign the image to the modal when the user click the enlarge link
-		   $("#modalEnlargeLabel").html($(this).parents(".DeviceContent").text());
+		   $("#modalEnlargeLabel").html($(this).parents(".DeviceContent").children(".Device_title").text());
 		   $('#modalEnlarge').modal('show'); // modalEnlarge is the id attribute assigned to the bootstrap modal, then i use the show function
 		});
 

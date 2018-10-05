@@ -78,11 +78,12 @@ class Temperature
 
 		$sql = "SELECT t.*, Lieux.Nom, cmd_device.Nom as cmd_deviceName FROM (
 					SELECT date, temp, Lieux_Id, cmd_device_Id FROM ".self::table_name."
+						WHERE year(date) = ".date("Y")." 
                 		ORDER BY Lieux_Id, cmd_device_Id, date
                 	) AS t 
                 LEFT JOIN cmd_device on cmd_device.Id = t.cmd_device_Id
                 LEFT JOIN Device on Device.Id = cmd_device.Device_Id
-                LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
+                LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id ";
 		
 		return db::execQuery($sql);
 	}

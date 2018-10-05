@@ -19,25 +19,19 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			data: {
 				act: "getSnap",
 				Device_id: $device_id
-			},
+			}/*,
 			cache: false,
-			async: true
+			async: true*/
 		});
 
 		request.done(function (data) {
-			console.log(data);
 			$("#Status<?php  echo $Device_id?>").attr('src',data);
-			console.log("ok");
 		});
 
 		request.fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("Webcam error : " + textStatus);
 		});
-	}
-
-	console.log(<?php 
-	 ?>);
-
+	} 
 	 <?php 
 	 	$res = CmdDevice::getCmdId("Refresh Snapshot", $Device_id);
 		 if ($res != false)
@@ -48,7 +42,4 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 			},$refresh);";
 		}
 	 ?>
-
-
-
 </script>

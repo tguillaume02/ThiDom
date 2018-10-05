@@ -149,4 +149,79 @@ function removeAccent($string)
     $string = strtolower($string); 
     return utf8_encode($string); 
 }
+
+function ls($folder = "", $pattern = "*", $recursivly = false, $options = array('files', 'folders')) {
+	if ($folder) {
+		$current_folder = realpath('.');
+		if (in_array('quiet', $options)) {
+			// If quiet is on, we will suppress the 'no such folder' error
+			if (!file_exists($folder)) {
+				return array();
+			}
+		}
+		if (!is_dir($folder) || !chdir($folder)) {
+			return array();
+		}
+	}
+	$get_files = in_array('files', $options);
+	$get_folders = in_array('folders', $options);
+	$both = array();
+	$folders = array();
+	// Get the all files and folders in the given directory.
+	
+  if($get_files) 
+  {
+    $both = glob($pattern, GLOB_BRACE + GLOB_MARK);
+  }
+	if ($recursivly || $get_folders) {
+		$folders = glob("*", GLOB_ONLYDIR + GLOB_MARK);
+	}
+	//If a pattern is specified, make sure even the folders match that pattern.
+	$matching_folders = array();
+	if ($pattern !== '*') {
+		$matching_folders = glob($pattern, GLOB_ONLYDIR + GLOB_MARK);
+	}
+	//Get just the files by removing the folders from the list of all files.
+	$all = array_values(array_diff($both, $folders));
+	if ($recursivly || $get_folders) {
+		foreach ($folders as $this_folder) {
+			if ($get_folders) {
+				//If a pattern is specified, make sure even the folders match that pattern.
+				if ($pattern !== '*') {
+					if (in_array($this_folder, $matching_folders)) {
+						array_push($all, $this_folder);
+					}
+				} else {
+					array_push($all, $this_folder);
+				}
+			}
+			if ($recursivly) {
+				// Continue calling this function for all the folders
+				$deep_items = ls($pattern, $this_folder, $recursivly, $options); # :RECURSION:
+				foreach ($deep_items as $item) {
+					array_push($all, $this_folder . $item);
+				}
+			}
+		}
+	}
+	if ($folder && is_dir($current_folder)) {
+		chdir($current_folder);
+	}
+	if (in_array('datetime_asc', $options)) {
+		global $current_dir;
+		$current_dir = $folder;
+		usort($all, function ($a, $b) {
+			return filemtime($GLOBALS['current_dir'] . '/' . $a) < filemtime($GLOBALS['current_dir'] . '/' . $b);
+		});
+	}
+	if (in_array('datetime_desc', $options)) {
+		global $current_dir;
+		$current_dir = $folder;
+		usort($all, function ($a, $b) {
+			return filemtime($GLOBALS['current_dir'] . '/' . $a) > filemtime($GLOBALS['current_dir'] . '/' . $b);
+		});
+	}
+	return $all;
+}
+
 ?>

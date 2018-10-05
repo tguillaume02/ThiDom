@@ -21,7 +21,26 @@ class CmdDevice
 	protected $Unite;
 	protected $History;
 	protected $Notification;
-	
+
+/*	public function __construct() {
+		$this->Id = "";
+		$this->Nom = "";
+		$this->Device_Id = "";
+		$this->DeviceId = "";
+		$this->Sensor_attachId = "";
+		$this->Value = "";
+		$this->Etat = "";
+		$this->Date = "";
+		$this->DateRAZ = "";
+		$this->RAZ = "";
+		$this->Widget_Id = "";
+		$this->Visible = 0;
+		$this->Type = "";
+		$this->Unite = "";
+		$this->History = 0;
+		$this->Notification = 0;
+	}*/
+
 	public static function byId($Id)
 	{
 		$values = array(

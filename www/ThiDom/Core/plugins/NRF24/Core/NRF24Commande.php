@@ -2,6 +2,12 @@
 include_once dirname(__FILE__) .'/../../../../Core/Security.php'; 
 include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 
+$cmd_device_id = '';
+$cmd_device_visible = 1;
+$cmd_device_history = 0;
+$cmd_device_notification = 0;
+$cmd_device_Type = "Action";
+
 $cmdDeviceObject = new CmdDevice();
 $cmd_device =  $cmdDeviceObject->byId(getPost("cmd_device_id"));
 $cmd_device = $cmd_device == false ? $cmdDeviceObject : $cmd_device;

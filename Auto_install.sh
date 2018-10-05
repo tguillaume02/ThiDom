@@ -83,6 +83,7 @@ install_dependance() {
 	sudo pip install tweepy
 	sudo pip install httplib2
 	sudo pip install imutils
+	sudo pip install pyudev
 	sudo pip install --upgrade google-api-python-client
 	sudo pip install requests
 	install_php
@@ -409,11 +410,11 @@ echo ""
 	#  - idProduct
 	#  - iSerial (éventuellement)
 	# On configure  donc  le fichier /etc/udev/rules.d/99-usb-serial.rules -
-	sudo echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="ttyUSB1"' >>  /etc/udev/rules.d/99-usb-serial.rules
+	#sudo echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="ttyUSB1"' >>  /etc/udev/rules.d/99-usb-serial.rules
 
-	sudo udevadm control --reload
+	#sudo udevadm control --reload
 
-	sudo chmod 777 /dev/ttyUSB1
+	#sudo chmod 777 /dev/ttyUSB1
 
 
 ###### MYSQL #######
