@@ -24,7 +24,7 @@ init_msg()
 	msg_bad_passwd_mysql="Le mot de passe MySQL fourni est invalide !"
 	msg_setup_dirs_and_privs="* Création des répertoires et mise en place des droits *"
 	msg_copy_thidom_files="*             Copie des fichiers de Thidom             *"
-	msg_config_db="*             Configuration de la base de donnée             *"
+	msg_config_db="*             Configuration de la base de donnée       *"
 	msg_unable_to_download_file="Impossible de télécharger le fichier"
 	msg_install_thidom="*                Installation de Thidom                *"
 	msg_setup_apache="*         Paramétrage de la configuration apache       *"
@@ -361,7 +361,9 @@ sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/
 sudo a2enmod ssl
 sudo a2ensite default-ssl
 sudo a2enmod rewrite
-sudo service apache2 reload
+sudo systemctl restart apache2
+sudo systemctl reload apache2
+sudo systemctl restart apache2
 
 sudo mkdir /etc/fw
 sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/
