@@ -8,25 +8,38 @@ class User
 	private $UserIsAdmin;
 	const table_name = 'User';
 
-	public function CheckUser($Login, $pwd)
+	public function CheckUser($Login, $pwd, $bySession="")
 	{
 		$values = array(
-			':Login' => $Login,
-			':pwd' => $pwd,
+			':Login' => $Login//,
+			//':pwd' => $pwd,
 			);
 		$sql = 'SELECT Id, UserName, UserPass, UserIsAdmin
 		FROM '.self::table_name.'
-		WHERE UserName=:Login AND UserPass=:pwd';
+		WHERE UserName=:Login';// AND UserPass=:pwd';
 		$result =  db::execQuery($sql, $values);
-		$nb_row = db::getNbResult($sql, $values);
-
-		if ($nb_row == 1 )
-		{ 
-			return $result;
+		//$nb_row = db::getNbResult($sql, $values);
+		if( !$result )
+		{		
+			return False;
 		}
 		else
 		{
-			return False;
+			if ($bySession == 1)
+			{
+				if ($pwd == $result[0]["UserPass"])
+				{
+					return $result;
+				}
+			}
+			else
+			{
+				$validPassword = password_verify($pwd, $result[0]["UserPass"]);
+				if($validPassword)
+				{
+					return $result;
+				}
+			}
 		}
 	}
 
@@ -93,7 +106,7 @@ class User
 	{
 		if ($Password != "***********")
 		{
-			$Password = hash('sha256', $Password);
+			$Password = password_hash($Password, PASSWORD_DEFAULT);
 		}		
 		else
 		{
@@ -192,17 +205,17 @@ class User
 			if (!empty($user) && !empty($pass_user))
 			{	
 				$User=$user;
-				$Password=hash('sha256',$pass_user);
+				//$Password=hash('sha256',$pass_user);
 				$UserName = stripslashes($User);
-				$password = stripslashes($Password);
-				$ResultUser = self::CheckUser($UserName,$password);
+				$pass_user = stripslashes($pass_user);
+				$ResultUser = self::CheckUser($UserName,$pass_user);
 
 				if ($ResultUser)
 				{
 					foreach($ResultUser as $donnees)
 					{
 						$_SESSION['userName'] = $UserName;
-						$_SESSION['userPass'] = $Password;
+						$_SESSION['userPass'] = $donnees["UserPass"];
 						$_SESSION['userId'] = $donnees["Id"];
 						$_SESSION['userIsAdmin'] = $donnees["UserIsAdmin"];
 						if ($remember == "true")
@@ -316,8 +329,7 @@ class User
 		}
 		elseif (isset($_SESSION['userName']) && isset($_SESSION['userPass']))
 		{
-
-			$ResultUser = self::CheckUser($_SESSION['userName'],$_SESSION['userPass']);
+			$ResultUser = self::CheckUser($_SESSION['userName'],$_SESSION['userPass'],1);
 			if ($ResultUser)
 			{
 				foreach($ResultUser as $donnees)

@@ -117,6 +117,21 @@ Blockly.Blocks.controls_ifelseif = {
  
 */
 
+
+Blockly.Blocks.controlsCalling = {
+  init: function() {
+    this.setColour(210);
+    this.setNextStatement(true);
+    this.appendDummyInput()
+      .appendField("Interaction Calling")
+      .appendField(new Blockly.FieldTextInput(''), 'TEXT');
+    this.appendStatementInput('DO0')
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
+    this.setOutput(true, 'String');
+    this.setInputsInline(true);  
+  }
+}; 
+
 Blockly.Blocks.logic_states = {
     init: function() {
         var a = [
@@ -272,6 +287,8 @@ Blockly.Blocks.send_notification = {
     .appendField("Send notification with subject:");
     this.appendValueInput('notificationTextBody')
     .appendField("and message:");
+    this.appendValueInput('notificationTo')
+    .appendField("to:");
     this.setInputsInline(true);
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
   }

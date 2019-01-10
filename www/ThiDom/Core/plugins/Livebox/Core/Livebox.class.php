@@ -14,7 +14,7 @@ class Livebox extends Device
 
 	public function __construct()
 	{
-		$this->Device_id = filter_input(INPUT_POST, 'Device_id');
+		$this->Device_id = getParameter('Device_id');
 		if (!empty($this->Device_id))
 		{
 			$this->user = Device::byId($this->Device_id)->get_Configuration("user","null");

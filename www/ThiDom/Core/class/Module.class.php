@@ -51,6 +51,47 @@ class Module
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
 	
+	public function SaveModule(int $Id, string $Name, string $Type, string $Configuration = "")
+	{	
+		if ($Id == "")
+		{
+			$values = array(
+				':Name' => $Name,
+				':Type' => $Type,
+				':Configuration' => $Configuration
+				);
+
+			$sql = "INSERT INTO Module_Type (ModuleName, ModuleType, ModuleConfiguration) VALUES (:Name, :Type, :Configuration)";
+			db::execQuery($sql,$values);
+
+			$msg = "Le Module ".$Name." a bien été ajouté";
+			$value = Array( "msg"=>$msg, "clear"=>"on", "moduleId" => $this->ModuleNewId()->get_Id(), "refresh"=>false);
+			return json_encode($value);
+		}
+		else
+		{
+			$values = array(
+				':Id' => $Id,
+				':Name' => $Name,
+				':Type' => $Type,
+				':Configuration' => $Configuration
+				);
+
+			$sql = "UPDATE Module_Type SET ModuleName =:Name, ModuleType =:Type, ModuleConfiguration =:Configuration WHERE Id =:Id";
+			db::execQuery($sql,$values);
+
+			$msg = "Le Module ".$Name." a bien été mis à jour";
+			$value = Array( "msg"=>$msg, "clear"=>"on", "moduleId" => $Id, "refresh"=>true);
+			return json_encode($value);
+		}
+	}
+
+	public function ModuleNewId()
+	{		
+		$sql = "SELECT MAX(Id) as Id FROM Module_Type";
+		return db::execQuery($sql, [], db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+	}
+
 	public function List_usb($_name="")
 	{
 		foreach (ls('/dev/', 'ttyUSB*') as $usb)
@@ -110,10 +151,15 @@ class Module
 
 	public function saveUsbController($moduleId, $moduleCom)
 	{
-
 		shell_exec("sudo chmod 666 ".$moduleCom);
 	}
 
+	/* ******** GETTER ******* */
+
+	public function get_Id()
+	{
+		return $this->Id;
+	}
 	
 	public function get_ModuleName()
 	{

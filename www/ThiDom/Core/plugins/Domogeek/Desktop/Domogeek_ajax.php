@@ -22,11 +22,12 @@ $EjpToday = "";
 $EjpTomorrow = "";
 $Season = "";
 $departement = "";
+$insee = ""; 
 $city = "";
 $holidayZone = "";
 $EJPZone = "";
-$Device_id = getPost("Device_id");
-$act = getpost('act');
+$Device_id = getParameter("Device_id");
+$act = getParameter('act');
 
 
 class color
@@ -107,6 +108,7 @@ if($Device_id)
 
 /*  ##############   GET SUNRISE / SUNSET ######## */
 
+	echo $act;
 if ($departement != "" and ($act == "Sunrise" or $act == "Sunset" or $act == ""))
 {
 	$SunSatus = file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement);
@@ -161,6 +163,7 @@ if ($city != "" and ($act == "Vigilancecolor" or $act == "Vigilancerisk" or $act
 	{
 		$WeatherVigilance = new DOMDocument();
 		$WeatherVigilance->load($urlvigilance);
+		
 
 		foreach($WeatherVigilance->getElementsByTagName("datavigilance") as $item)
 		{
@@ -374,6 +377,5 @@ switch ($act) {
 $JSON = array();
 array_push($JSON,$row_array);
 echo  json_encode($JSON);
-
 
 ?>

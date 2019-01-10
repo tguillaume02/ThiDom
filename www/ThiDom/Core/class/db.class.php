@@ -36,20 +36,30 @@ class db
 	
 	private function getDataQuery($query,$param)
 	{
-		$QueryPrep =  self::getInstance()->prepare($query);
+		$querylower = strtolower($query);
+		$sqlcommand = strtok($querylower, ' ');
+		$host = $_SERVER['HTTP_HOST'];
+		if (($sqlcommand == "select") or (strpos($querylower, "insert into connectlog") !== False) or (strpos($querylower, "update user set lastlog") !== False) or ($host == "localhost" or $host == "127.0.0.1") or (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1))  /* ((($sqlcommand == "insert") or ($sqlcommand == "delete") or ($sqlcommand == "update")) and (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1)) )*/
+		{
+			$QueryPrep =  self::getInstance()->prepare($query);
 
-		if(empty($param))
-		{		
-			$QueryPrep -> execute();
+			if(empty($param))
+			{		
+				$QueryPrep -> execute();
+			}
+			else
+			{
+				$QueryPrep -> execute($param);
+			}
+
+			//return json_encode(self::getDataQuery($QueryPrep));
+			//return self::ResultToJsonArray($QueryPrep);
+			return $QueryPrep;
 		}
 		else
 		{
-			$QueryPrep -> execute($param);
+			return false;
 		}
-
-		//return json_encode(self::getDataQuery($QueryPrep));
-		//return self::ResultToJsonArray($QueryPrep);
-		return $QueryPrep;
 	}
 
 	public function QuoteValue($value)
@@ -60,55 +70,45 @@ class db
 	
 	public function execQuery($query, $param=[], $_fetchType = self::FETCH_TYPE_ALL, $_fetch_param = PDO::FETCH_ASSOC, $_fetch_opt = NULL)
 	{
-		$querylower = strtolower($query);
-		$sqlcommand = strtok($querylower, ' ');
-		$host = $_SERVER['HTTP_HOST'];
-	 	if (($sqlcommand == "select") or (strpos($querylower, "insert into connectlog") !== False) or (strpos($querylower, "update user set lastlog") !== False) or ($host == "localhost" or $host == "127.0.0.1") or (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1))  /* ((($sqlcommand == "insert") or ($sqlcommand == "delete") or ($sqlcommand == "update")) and (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1)) )*/
+		$resultQuery = self::getDataQuery($query,$param);
+		if ($resultQuery !=false)
 		{
-			$resultQuery = self::getDataQuery($query,$param);
-			if ($resultQuery !=false)
+			if ($_fetchType == self::FETCH_TYPE_ROW)
 			{
-				if ($_fetchType == self::FETCH_TYPE_ROW)
+				if ($_fetch_opt == NULL)
 				{
-					if ($_fetch_opt == NULL)
-					{
 
-						$res = $resultQuery->fetch($_fetch_param);
+					$res = $resultQuery->fetch($_fetch_param);
 
-					}
-					else if ($_fetch_param == PDO::FETCH_CLASS)
-					{
-						$res = $resultQuery->fetchObject($_fetch_opt);
-					}
+				}
+				else if ($_fetch_param == PDO::FETCH_CLASS)
+				{
+					$res = $resultQuery->fetchObject($_fetch_opt);
+				}
+			}
+			else
+			{
+				if ($_fetch_opt == NULL)
+				{
+					$res = $resultQuery->fetchAll($_fetch_param);
 				}
 				else
 				{
-					if ($_fetch_opt == NULL)
-					{
-						$res = $resultQuery->fetchAll($_fetch_param);
-					}
-					else
-					{
-						$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
-					}
+					$res = $resultQuery->fetchAll($_fetch_param, $_fetch_opt);
 				}
-			
-				$errorInfo = $resultQuery->errorInfo();
+			}
+		
+			$errorInfo = $resultQuery->errorInfo();
 
-				if ($errorInfo[0] != 0000)
-				{
-					throw new Exception('[MySQL] Error code : ' . $errorInfo[0] . ' (' . $errorInfo[1] . '). ' . $errorInfo[2]);
-				}
-				return $res ?? null;
-			} 
-		}
-		else
-		{
-			return 0;//false;
+			if ($errorInfo[0] != 0000)
+			{
+				throw new Exception('[MySQL] Error code : ' . $errorInfo[0] . ' (' . $errorInfo[1] . '). ' . $errorInfo[2]);
+			}
+			return $res ?? null;
 		}
 	}
 
-	public function execQueryDebug($query,$param)
+	public function debugSQL($query,$param)
 	{
 		self::getDataQuery($query,$param)->debugDumpParams();
 		//return json_encode(self::getDataQuery($QueryPrep));
@@ -116,8 +116,12 @@ class db
 	}
 	
 	public function getNbResult($query,$param)
-	{		
-		return self::getDataQuery($query,$param)->rowCount();
+	{
+		$result = self::getDataQuery($query,$param);
+		if ($result !=false)
+		{			
+			return $result->rowCount();
+		}		
 	}
 
 	public function getColumnName($table_name)

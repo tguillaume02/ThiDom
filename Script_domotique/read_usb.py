@@ -7,7 +7,9 @@ import datetime
 import time
 import json
 import msql
+import pyudev
 from SendNotification import SendNotification
+
 #import ptvsd
 #ptvsd.enable_attach(secret = 'my_secret')
 
@@ -20,8 +22,17 @@ DbConnect = msql.DbConnect
 
 SendNotification("Demarrage read usb", "-1")
 
-ser = serial.Serial(port='/dev/ttyUSB1', baudrate=115200)
-
+def find_usb_port(vendor, model):
+    context = pyudev.Context()
+    for device in context.list_devices(subsystem='tty'):
+        if 'ID_VENDOR' not in device:
+            continue
+        if device['ID_VENDOR_ID'] != vendor:
+            continue
+        if device['ID_MODEL_ID'] != model:
+            continue        
+        return str(device.device_node)
+    return None
 
 def ReadArduino():
     global Alert_LastTime
@@ -108,7 +119,7 @@ def ReadArduino():
                             widget_Id = row[3]
                             bHistory = row[5]
                             Notification = row[6]
-                            bLog = row[7]
+                            bLog = 0 if row[7] is None else row[7]
                            # try:
                            #     Configuration = json.loads(row[4])
                            # except ValueError, e:
@@ -178,10 +189,12 @@ def NewDevice(SlaveCarteId, pinID, value, module_type, widget_type="-99"):
 
 def getModuleType(port):
     try:
-        cursor.execute(" SELECT Module_Type.Id FROM Configuration INNER JOIN Module_Type on Configuration.Plugin = Module_Type.ModuleName WHERE Configuration.Value= %s and Configuration.Conf='port'", (port))
+        cursor.execute(""" SELECT Module_Type.Id, Module_Type.ModuleConfiguration 
+                        FROM Module_Type """)
         if cursor.rowcount > 0:
             for row in cursor.fetchall():
-                return row[0]
+                if json.loads(row[1])['com'] == port:
+                    return row[0]
     except:
         setError("getModuleType")
         pass
@@ -212,6 +225,10 @@ def setError(situ, value=(sys.exc_info()[0])):
 
 
 try:
+    device = find_usb_port("2341", "0043")
+    while device is None:
+	    device = find_usb_port("2341", "0043")
+    ser = serial.Serial(port=device, baudrate=115200)
     ReadArduino()
 except KeyboardInterrupt:
     print("Bye")

@@ -4,6 +4,7 @@ class NRF24 extends Device
 {
     public function action($device_id,$device_role,$device_type,$value)
     {
+		$host = $_SERVER['HTTP_HOST'];
         if (($_SESSION['userIsAdmin']) == 1 or ($host == "localhost" and $host == "127.0.0.1" and $host == "192.168.1.25"))
         {
             $val_info = "";

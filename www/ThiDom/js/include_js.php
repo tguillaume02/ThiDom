@@ -12,6 +12,7 @@
 <script type="text/javascript" src="js/DataTable/V1.10.16/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript" src="js/DataTable/dataTables.responsive.min.js"></script>
 <script type="text/javascript" src="js/DataTable/responsive.bootstrap.min.js"></script>
+
 <script type="text/javascript" src="js/Highstock/js/highstock.js"></script>
 <script type="text/javascript" src="js/Highstock/js/themes/gray.js"></script>
 
@@ -44,12 +45,10 @@
 		showTabFromHash();
 		//resizeWhenChangeTab();
 		$(window).on('hashchange', showTabFromHash);
-		//DragAndDrop();
 		LoadMaison();
 		init_component();
 		getAutorisationNotification();
 		resizeMaison();
-
 	});
 
 	setInterval(function () {
@@ -172,20 +171,21 @@
 						$("#modal-manage-device #device-name").val(data.DeviceNom);
 						$("#modal-manage-device #list-room").val(data.LieuxId);
 
-						$("#modal-manage-device #carte-id").val(data.CarteId);
-						$("#modal-manage-device #device-id").val(data.Cmd_Device_DeviceId);
+						/*$("#modal-manage-device #carte-id").val(data.CarteId);*/
+						/*$("#modal-manage-device #device-id").val(data.Cmd_Device_DeviceId);*/
 
 						$("#modal-manage-device #device-visible").prop('checked', parseInt(data.DeviceVisible));
 						$("#modal-manage-device #device-Log").prop('checked', parseInt(data.History));
-						$("#modal-manage-device #cmddevice-visible").prop('checked', parseInt(data.DeviceVisible));
-						if (data.RAZ > 0)
+						/*$("#modal-manage-device #cmddevice-visible").prop('checked', parseInt(data.DeviceVisible));*/
+						/*$("#modal-manage-device #cmddevice-unit").val(data.Unite);*/
+						/*if (data.RAZ > 0)
 						{
 							$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
-						}
+						}*/
 						$("#modal-manage-device #defaulticons").hide();
 						$("#add-plugins").hide();
 
-						if (data.Configuration != "")
+						if (!$.isEmptyObject(data.Configuration))
 						{
 							var obj = $.parseJSON(data.Configuration);
 							$.each(obj,function(i,el)
@@ -337,12 +337,16 @@
 
 		linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"ConfigPlugins.php";
 
-		$("#modal-manage-plugins #ConfigurationPlugins").load(linkConfig , {plugins_id: data.Id},
- 			function() {});
+		$("#modal-manage-plugins #ConfigurationPlugins").load(linkConfig , {data: data},
+			 function() {});
+				
+		$("#modal-manage-plugins #plugins-pluginsid").val(data.Id);
+		$("#modal-manage-plugins #plugins-pluginsName").val(data.ModuleName);
+		$("#modal-manage-plugins #plugins-pluginsType").val(data.ModuleType);
 		if ($("#modal-manage-plugins").data('bs.modal'))
 		{
 			if (!$("#modal-manage-plugins").data('bs.modal').isShown)
-			{
+			{	
 				$("#modal-manage-plugins").modal('toggle');
 			}
 		}
@@ -420,24 +424,37 @@
 
 	function DragAndDrop()
 	{
-		$( ".ContentLieux" ).sortable({
-			//connectWith: $(this),
-			connectWith: $(".ContentLieux"),
-			handle: ".Device_title",
-			update: function( event, ui )
-			{
-				devicePositionObj = [];
-           		$($($(this).parent()).find(".DeviceContent")).each( function(e) {
-					var devicePosition = new Object();
-					devicePosition.device_Id =  $(this).attr('device_id');
-					devicePosition.Lieux_Id = $(this).parent().parent().parent().attr("Lieux");
-					devicePosition.Position = e;
-					devicePositionObj.push(devicePosition);
-              	})				  
-				console.log(JSON.stringify(devicePositionObj));
-       			resizeMaison();
-           	}
-		});
+		if ($("#pencilEdit").attr("edit"))
+		{
+			$(".ContentLieux").sortable({
+				//connectWith: $(this),
+				connectWith: $(".ContentLieux"),
+				handle: ".Device_title",
+				update: function( event, ui )
+				{
+					devicePositionObj = [];
+					deviceOrder="";
+					$($($(this).parent()).find(".DeviceContent")).each( function(e) {
+						var devicePosition = new Object();
+						//deviceOrder += $(this).attr('device_id')+",";						
+						devicePositionObj.push($(this).attr('device_id'));	
+						//devicePosition.device_Id =  $(this).attr('device_id');
+						devicePositionLieux_Id = $(this).parent().parent().parent().attr("Lieux");
+						//devicePosition.Position = e;
+						//devicePositionObj.push(devicePosition);
+					});
+					ReorderDevice(JSON.stringify(devicePositionObj), devicePositionLieux_Id);
+					//ReorderDevice(deviceOrder.slice(0,-1));
+					//console.log(JSON.stringify(devicePositionObj));
+					resizeMaison();
+				}
+			});
+			$(".ContentLieux").sortable( "enable" );
+		}
+		else
+		{
+			$(".ContentLieux").sortable( "disable" );
+		}
 	}
 
 	function init_component()
@@ -919,12 +936,13 @@
 		onresize();
 	}
 
-	function parseXml(xml) {
+	function parseXml(xml)
+	{
 		if ($(xml).children().length > 2) {
 			return "err:Please make sure there is only a single block structure";
 		}
 		var firstBlockType = $(xml).find("block").first().attr("type");
-		if (firstBlockType.indexOf("controls_if") == -1) {
+		if (firstBlockType.indexOf("controls_if") == -1 && firstBlockType.indexOf("controlsCalling") == -1 ) {
 			return "err:Please start with a control block";
 		}
 		var elseIfCount = 0;
@@ -950,7 +968,8 @@
 		return json;
 	}
 
-	function opSymbol(operand) {
+	function opSymbol(operand)
+	{
 		switch(operand)
 		{
 			case 'EQ':
@@ -1013,6 +1032,12 @@
 			{
 				return parseStateAttr (value,locOperand);
 			}
+		}
+
+		function ParseControlCalling(thisBlock)
+		{
+			var locOperand = opSymbol("ControlCalling = "+$($(thisBlock).children("field:first")).text());	
+			return locOperand;		
 		}
 
 		function parseLogicCompare(thisBlock)
@@ -1109,7 +1134,11 @@
 		function parseValueBlock(thisBlock,locOperand,Sequence)
 		{
 			var firstBlock = $(thisBlock).children("block:first");
-			if (firstBlock.attr("type")=="logic_compare") {
+			if (firstBlock.attr("type")=="controlsCalling") {
+				var conditionstring = ParseControlCalling(firstBlock);
+				return conditionstring;
+			}
+			else if (firstBlock.attr("type")=="logic_compare") {
 				var conditionstring = parseLogicCompare(firstBlock);
 				return conditionstring;
 			}
@@ -1153,6 +1182,16 @@
 		}
 
 		var ifBlock = $($(xml).find("value[name='IF"+pairId+"']")[0]).children('block:first');
+		if (ifBlock.length == 0)
+		{
+			ifBlock = $($(xml).find("block")[0]);
+		}
+
+		if (ifBlock.attr("type") == "controlsCalling")
+		{
+      		var compareString = ParseControlCalling(ifBlock);
+      		boolString += compareString;
+		}
 
 		if (ifBlock.attr("type")=="logic_compare")
 		{
@@ -1259,6 +1298,7 @@
       		{
       			var subjectBlock = $(this).find("value[name='notificationTextSubject']")[0];
       			var bodyBlock = $(this).find("value[name='notificationTextBody']")[0];
+      			var notificationTo = $(this).find("value[name='notificationTo']")[0];
       			var notificationBlock = $(this).children("field[name='notificationPriority']")[0];
       			var soundBlock = $(this).children("field[name='notificationSound']")[0];
       			var sTitleText = $(subjectBlock).find("field[name='TEXT']")[0];
@@ -1273,7 +1313,7 @@
       					if ($(LTN_Value).attr("name") == "TEXT")
       					{
       						var bTitleText = $(LTN_Value);   
-      						bTT += $(bTitleText).text().replace(/\,/g, ' ');
+      						bTT += $(bTitleText).text().length > 0 ? $(bTitleText).text().replace(/\,/g, ' ')+"$": "";  
       					}
       					else
       					{			
@@ -1288,16 +1328,20 @@
       			else
       			{
       				var bTitleText = $(bodyBlock).find("field[name='TEXT']")[0];	
-      				var bTT = $(bTitleText).text().replace(/\,/g, ' ');        		
+      				var bTT = $(bTitleText).text().length > 0 ? $(bTitleText).text().replace(/\,/g, ' ')+"$": "";        		
       			}
 
-      			var sTT = $(sTitleText).text().replace(/\,/g, ' ');
-      			var pTT=$(notificationBlock).text();
-      			var aTT=$(soundBlock).text();
+				if (notificationTo)
+				{
+					notificationTo = $($(notificationTo).find("field")[0]).text();
+				}
+      			var sTT = $(sTitleText).text().length > 0 ? $(sTitleText).text().replace(/\,/g, ' ')+"$" : "";
+      			var pTT = $(notificationBlock).text().length > 0 ?  $(notificationBlock).text()+"$" : "";
+      			var aTT =$(soundBlock).text().length > 0 ? $(soundBlock).text()+"$" : "";
 		    	// message separator here cannot be # like in scripts, changed to $..
 		    	// also removed commas as we need to separate commandArray later.
 
-		    	var setString = ' DeviceId="SendNotification"&&DeviceValue="'+sTT+'$'+bTT+'$'+pTT+'$'+aTT+'"';
+		    	var setString = ' DeviceId="SendNotification"&&DeviceValue="'+sTT+bTT+pTT+aTT+'"&&To="'+notificationTo+'"';
 		    	setArray.push(setString);		      	
 		    }
 		    else if ($(this).attr('type') == 'send_email')
@@ -1347,12 +1391,13 @@
 		    	setArray.push(setString);
 		    }		    
 		});
-	var conditionArray = [];
-	conditionArray.push(boolString);
-	return [conditionArray,setArray];
-}
+		var conditionArray = [];
+		conditionArray.push(boolString);
+		return [conditionArray,setArray];
+	}
 
-function SaveScenario() {
+function SaveScenario()
+{
 	var xml = Blockly.Xml.workspaceToDom( Blockly.mainWorkspace );
 	var ScenarioName = $("#scenario-name").val();
 	var ScenarioId =  $("#scenario-id").val();
@@ -1426,20 +1471,42 @@ function CleanScenario()
 
 // #endregion 
 
-function GenerateGraph(GraphId, Lieux, data)
+function GenerateGraph(GraphId, Lieux, unite, data)
 {
 	$(function() {
+		
+		// Create a timer
+		var start = + new Date();
 		Highcharts.setOptions({
 			global : {
 				useUTC:false
 			}
 		});  
-		$('#History_'+GraphId).highcharts('StockChart', {		
-
+		//$('#History_'+GraphId).highcharts('StockChart', {	
+    	Highcharts.stockChart('History_'+GraphId, {	
 			chart: {
+				type: 'spline',
 				renderTo: 'History_'+GraphId,
+				events: {
+					load: function(chart) {						
+						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
+						{						
+							$("#Min"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMin.toFixed(2))
+							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2)) 
+						};
+						/*this.setTitle(null, {
+							text: 'Built chart at '+ (new Date() - start) +'ms'
+						});*/
+					},
+					redraw: function (event) {						
+						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
+						{
+							$("#Min"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMin.toFixed(2))
+							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2))  
+						};
+					},					
+				},
 				zoomType: false
-
 			},
 			rangeSelector: {
 				buttons : [{
@@ -1495,37 +1562,54 @@ function GenerateGraph(GraphId, Lieux, data)
 				text: Lieux
 			},
 			xAxis: {
-				min: new Date().getTime()- 48 * 3600 * 1000,
-				max: new Date().getTime() +1  * 3600 *1000,
-				ordinal: false,
+				type: 'datetime',
+				dateTimeLabelFormats: 
+				{ // don't display the dummy year
+					month: '%b',
+                  	year	: '%b'
+				},
+				/*min: new Date().getTime()- 48 * 3600 * 1000,
+				max: new Date().getTime() +1  * 3600 *1000,*/				
+				min: Date.UTC(1988, new Date().getMonth()-1, 0),
+				max: Date.UTC(1988, new Date().getMonth()+1, 31),
+				ordinal: false/*,
 				plotLines: [{
 					value: 0,
 					width: 2,
 					color: 'silver'
-				}]
+				}]*/
 			},
 			yAxis: {
 				title: {
-					text: 'Temperature (°C )'
+					text: unite /*'Temperature (°C )'*/
 				}
 			},
-			/*plotOptions: {
-				series: {
-					compare: 'percent'
-				}
-			},*/
-
-
-			series: data,
-			pointInterval: 60*10,
 			tooltip: {
 				pointFormat: '<span style=\"color:{series.color}\">{series.name}</span>: <b>{point.y}</b><br/>',
-				crosshairs: true,
+				//crosshairs: true,
 				shared: true,
+            	split: false,
 				valueDecimals: 1,
-				valueSuffix: ' °C'
-			}
+				valueSuffix: unite
+			},
+			series: data
+			//pointInterval: 60*10,
 		});
 	})
 }
+
+$("#pencilEdit").click(function()
+{
+	if ($("#pencilEdit").attr("edit"))
+	{
+		$("#pencilEdit").removeAttr('edit');		
+		$("#pencilEdit path").css("fill","currentcolor");
+	}
+	else
+	{
+		$("#pencilEdit").attr('edit', 'enabled');
+		$("#pencilEdit path").css("fill","lightseagreen");
+	}	
+	DragAndDrop();
+})
 </script>

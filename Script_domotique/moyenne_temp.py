@@ -6,15 +6,18 @@ import sys
 import time
 import msql
 
-try:
-    db = MySQLdb.connect(msql.host, msql.usr, msql.pwd, msql.db)
-    time.sleep(20)
-    cursor = db.cursor()
+cursor = msql.cursor
+db = msql.DbConnect
 
-except db.Error, e:
-    print "Error %d: %s" % (e.args[0], e.args[1])
-    sys.exit(1)
-
+def insertData(year, data, lieux_id, cmd_device_id, reason):        
+    cursor.execute(" SELECT data FROM HistoryData WHERE Lieux_Id = %s and Year = %s and Cmd_device_Id = %s" , (lieux_id, year, cmd_device_id))    
+    if cursor.rowcount > 0:
+        for row in cursor.fetchall():
+            datas = row[0]
+            dataNew = datas + data
+        cursor.execute(""" UPDATE HistoryData set Data = %s where Lieux_Id = %s and  Year = %s and Cmd_device_Id = %s """ , (dataNew, lieux_id, year, cmd_device_id))    
+    else:
+        cursor.execute(""" INSERT INTO HistoryData ( Year, Data, Lieux_id, Cmd_device_Id) VALUES (%s, %s, %s, %s)""",  (year, data, lieux_id, cmd_device_id))    
 
 # while True:
 try:
@@ -38,7 +41,49 @@ try:
         Temperature_Temp.Date BETWEEN (SELECT DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) AND (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) 
         AND widget.Type != "Text"
         """)
+
+    cursor.execute("SELECT * FROM Temperature WHERE Temperature.Date BETWEEN (SELECT DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL 15 MINUTE - INTERVAL 1 SECOND) AND (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) ORDER BY Cmd_device_id, Lieux_Id, Date  ")
     
+    oldyear = -99
+    oldCmdDevice = -99
+    oldLieux = -99
+    data =""
+    count = 0
+    for row in cursor.fetchall():        
+        if oldyear == -99 and oldCmdDevice == -99 and oldLieux == -99:
+            oldyear = row[1].year
+            oldCmdDevice = row[4]
+            oldLieux = row[3]
+
+        if row[3] != oldLieux:
+            insertData(oldyear, data, oldLieux, oldCmdDevice,"Lieux")
+            data = ""
+            count = 0
+            oldyear = row[1].year
+            oldCmdDevice = row[4]   
+            oldLieux = row[3]
+        if row[4] != oldCmdDevice:
+            insertData(oldyear, data, oldLieux, oldCmdDevice,"cmd")
+            data = ""
+            count = 0
+            oldyear = row[1].year
+            oldCmdDevice = row[4]
+            oldLieux = row[3]
+        if row[1].year != oldyear:
+            insertData(oldyear, data, oldLieux, oldCmdDevice,"year")
+            data = ""
+            count = 0
+            oldyear = row[1].year
+            oldCmdDevice = row[4]
+            oldLieux = row[3]
+
+        date = row[1]
+        temp = row[2]
+        count += 1
+        date = date.replace(year=1988);
+        data += "[" +str(int(time.mktime(date.timetuple())*1000)) +","+ str(temp) +"],"
+    insertData(oldyear, data, oldLieux, oldCmdDevice,"end")
+
     cursor.execute("DELETE FROM Temperature_Temp WHERE Date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL  20 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00'))")
     db.commit()
     mon_fichier = open("/home/pi/text.txt", "w")

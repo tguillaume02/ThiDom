@@ -14,11 +14,12 @@ print("####### Thermostat - Start #######" + time.strftime('%A %d. %B %Y  %H:%M'
 # #############  TRY CONNECT SQL ##################
 cursor = msql.cursor
 DbConnect = msql.DbConnect
-
-def SendDataToUsb(data):
-    if 'ser' not in locals() or not ser.is_open:
-        ser = serial.Serial(port='/dev/ttyUSB1', baudrate=115200)
-    ser.write(data)
+    
+def SendDataToUsb(moduleName, moduleConfirmation, data):    
+    # if 'ser' not in locals() or not ser.is_open:
+    if moduleConfirmation != None:
+        ser = serial.Serial(port=moduleConfirmation["com"], baudrate=moduleConfirmation["baudrate"])
+        ser.write(data)
 
 timeout = 0
 while True:
@@ -26,11 +27,12 @@ while True:
         time.sleep(0.2)
         if time.time() > timeout or time.strftime('%S', time.localtime()) == '00':
             #sql = "select Etat_IO.DeviceID, Etat_IO.Value as Thermo, temp.Value, Etat_IO.Etat as status from Etat_IO inner join Etat_IO as temp on temp.ID = Etat_IO.sensor_attachID where Etat_IO.sensor_attachID <> 0 and Etat_IO.Type = 'Chauffage'"
-            sql = """SELECT cmd_device.DeviceId, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request
+            sql = """SELECT cmd_device.DeviceId, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request, Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration
                         FROM cmd_device
                             inner join Device ON Device.Id = cmd_device.Device_Id
                             inner join cmd_device AS temp ON temp.Id = cmd_device.sensor_attachId
                             inner join widget on widget.Id = cmd_device.Widget_Id
+                            inner join Module_Type on Module_Type.ID = Device.Module_Id
                         WHERE cmd_device.sensor_attachId <> 0  and widget.Name='Thermostat' ;"""
 #           print sql
             cursor.execute(sql)
@@ -41,6 +43,9 @@ while True:
                 TempValue = row[2]
                 status = row[3]
                 Request = row[4]
+                ModuleName = row[5]
+                ModuleType = row[6]
+                ModuleConfiguration = row[7]
 #               print New_Status
 #               print row[4]
 #               print Nom
@@ -55,16 +60,23 @@ while True:
                 except:
                     mode = ""
                     pass
+                
+                
+                if ModuleType == "Communication":  
+                    try:                                          
+                        Configuration = json.loads(ModuleConfiguration)      
+                    except:
+                        Configuration = None
 
                 if mode != "manu":
                     if TempValue < Thermo and int(status) == 0:
                         val = DeviceID+"@"+str(Thermo)+":1\n"
                         # print val
-                        SendDataToUsb(val)
+                        SendDataToUsb(ModuleName, Configuration, val)
                     elif TempValue >= Thermo and int(status) == 1:
                         val = DeviceID+"@"+str(Thermo)+":0\n"
                         # print val
-                        SendDataToUsb(val)
+                        SendDataToUsb(ModuleName, Configuration, val)
             DbConnect.commit()
             time.sleep(1)
             # db.autocommit(True)

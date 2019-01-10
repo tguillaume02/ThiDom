@@ -91,7 +91,7 @@ function setJsonAttr($_attr, $_key, $_value = null) {
     if ($_attr != '' && is_json($_attr)) {
       $attr = json_decode($_attr, true);
       unset($attr[$_key]);
-      $_attr = json_encode($attr, JSON_UNESCAPED_UNICODE);
+    $_attr = json_encode($attr/*, JSON_UNESCAPED_UNICODE*/);
     }
   } else {
     if ($_attr == '' || !is_json($_attr)) {
@@ -104,16 +104,24 @@ function setJsonAttr($_attr, $_key, $_value = null) {
     } else {
       $attr[$_key] = $_value;
     }
-    $_attr = json_encode($attr, JSON_UNESCAPED_UNICODE);
+  $_attr = json_encode($attr/*, JSON_UNESCAPED_UNICODE*/);
   }
   return $_attr;
 }
 
-function getPost($post)
+function getParameter($parameter)
 {
-  if(isset($_POST[$post]))
+  if(filter_input(INPUT_POST, $parameter))
   {
-    return $_POST[$post];
+    return filter_input(INPUT_POST, $parameter);
+  }
+  elseif(filter_input(INPUT_GET, $parameter))
+  {
+    return filter_input(INPUT_GET, $parameter);
+  }
+  elseif ((filter_input(INPUT_GET, $parameter) == 0 || filter_input(INPUT_POST, $parameter) == 0) && (filter_input(INPUT_GET, $parameter) != "" || filter_input(INPUT_POST, $parameter) != ""))
+  {
+	return "0";	
   }
   else
   {

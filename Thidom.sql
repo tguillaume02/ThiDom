@@ -13,21 +13,6 @@ USE `thidom`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Configuration`
---
-
-DROP TABLE IF EXISTS `Configuration`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Configuration` (
-  `Plugin` varchar(45) NOT NULL,
-  `Conf` varchar(45) NOT NULL,
-  `Value` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`Plugin`,`Conf`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `ConnectLog`
 --
 
@@ -44,7 +29,7 @@ CREATE TABLE `ConnectLog` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---  
+--
 -- Table structure for table `Device`
 --
 
@@ -65,6 +50,26 @@ CREATE TABLE `Device` (
   KEY `FK_Device` (`Lieux_Id`),
   CONSTRAINT `FK_Device` FOREIGN KEY (`Lieux_Id`) REFERENCES `Lieux` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `HistoryData`
+--
+
+DROP TABLE IF EXISTS `HistoryData`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `HistoryData` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Year` year(4) DEFAULT NULL,
+  `Data` longtext,
+  `Lieux_Id` int(11) DEFAULT NULL,
+  `Cmd_device_Id` int(5) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`),
+  KEY `Lieux_Id` (`Lieux_Id`),
+  KEY `cmd_device_Id` (`Cmd_device_Id`),
+  KEY `date` (`Year`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,19 +121,11 @@ CREATE TABLE `Module_Type` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `ModuleName` varchar(45) NOT NULL,
   `ModuleType` varchar(45) NOT NULL,
+  `ModuleConfiguration` varchar(150) DEFAULT NULL,
+  `ApiKey` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Id`,`ModuleName`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Module_Type`
---
-
-LOCK TABLES `Module_Type` WRITE;
-/*!40000 ALTER TABLE `Module_Type` DISABLE KEYS */;
-INSERT INTO `Module_Type` VALUES (1,'NRF24',''),(2,'Domogeek','Plugins'),(3,'Livebox','Plugins'),(4,'Webcam','Plugins'),(5,'Telegram','Plugins'),(6,'Virtuel','Virtuel');
-/*!40000 ALTER TABLE `Module_Type` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Planning`
@@ -166,6 +163,7 @@ CREATE TABLE `Scenario` (
   `NextTimeEvents` datetime DEFAULT NULL,
   `NextActionEvents` int(11) DEFAULT NULL,
   `IsExecuted` int(11) DEFAULT '0',
+  `ToExecute` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`Id`),
   KEY `XmlID` (`XmlId`),
   CONSTRAINT `FK_Scenario_Xml_Scenario_XmlId` FOREIGN KEY (`XmlId`) REFERENCES `Scenario_Xml` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -269,22 +267,22 @@ CREATE TABLE `cmd_device` (
   `DeviceId` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `sensor_attachId` int(11) NOT NULL DEFAULT '-1',
   `Request` varchar(500) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `Value` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `Value` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `Etat` varchar(4) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `Date` datetime NOT NULL,
+  `Date` datetime DEFAULT '0000-00-00 00:00:00',
   `DateRAZ` datetime DEFAULT NULL,
   `RAZ` int(11) DEFAULT NULL,
   `Visible` tinyint(1) DEFAULT NULL,
   `Widget_Id` int(11) DEFAULT NULL,
-  `Type` varchar(10) CHARACTER SET utf8 DEFAULT NULL,
+  `Type` varchar(10) CHARACTER SET utf8 NOT NULL,
   `Unite` varchar(5) CHARACTER SET utf8 DEFAULT NULL,
   `History` tinyint(4) DEFAULT '0',
   `Notification` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`Id`),
   KEY `FK_cmd_device_Device_Id` (`Device_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;																																				
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
-										  
+
 --
 -- Table structure for table `widget`
 --
@@ -300,18 +298,6 @@ CREATE TABLE `widget` (
   PRIMARY KEY (`Id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `widget`
---
-
-LOCK TABLES `widget` WRITE;
-/*!40000 ALTER TABLE `widget` DISABLE KEYS */;
-INSERT INTO `widget` VALUES (0,'Temperature','Text',',1,'),(1,'Relay','Binary',',1,11,99,6,'),(2,'Dimmer','Slider',',1,22,11,'),(3,'RGB','Color',',1,'),(4,'Motion','Binary',',1,'),(5,'Thermostat','Slider',',1,'),(6,'Humidity','Text',',1,');
-
-/*!40000 ALTER TABLE `widget` ENABLE KEYS */;
-UNLOCK TABLES;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -322,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-09-04 14:34:56
+-- Dump completed on 2019-01-10  8:33:52

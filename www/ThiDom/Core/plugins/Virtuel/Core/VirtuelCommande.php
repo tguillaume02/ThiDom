@@ -3,7 +3,7 @@ include_once dirname(__FILE__) .'/../../../../Core/Security.php';
 include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 
 $cmdDeviceObject = new CmdDevice();
-$cmd_device =  $cmdDeviceObject->byId(getPost("cmd_device_id"));
+$cmd_device =  $cmdDeviceObject->byId(getParameter("cmd_device_id"));
 $cmd_device_id = $cmd_device->get_Id();
 $cmd_device_visible = $cmd_device->get_Visible();
 $cmd_device_history = $cmd_device->get_History();

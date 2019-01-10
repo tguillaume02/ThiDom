@@ -6,7 +6,7 @@ class Device
 
 	protected $Id;
 	protected $Nom;
-	protected $CarteId = '';
+	protected $CarteId = 0;
 	protected $Configuration;
 	protected $LieuxId = null;
 	protected $ModuleId = null;
@@ -392,7 +392,7 @@ class Device
 
 	public function get_carteId()
 	{
-		return $this->carteId;
+		return $this->CarteId;
 	}
 
 	public function get_Configuration($key = "",$default = "")

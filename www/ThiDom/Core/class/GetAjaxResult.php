@@ -164,6 +164,23 @@ if ($act == "DeleteDevice")
 	$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $ModelType));
 }*/
 
+if ($act == "SavePlugins")
+{
+	$id = -1;
+	$name = "";
+	$type = "";
+	$configuration = "";
+	$id = getPost("Id");
+	$name = getPost("Name");
+	$type = getPost("Type");
+	$configuration = getPost("Configuration");
+
+	if ($id != -1 && $configuration != "")
+	{
+		echo $ModuleObject->SaveModule($id, $name, $type, $configuration);
+	}
+}
+
 if ($act == "SaveLieux")
 {
 	$Img = "";

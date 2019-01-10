@@ -86,6 +86,7 @@ install_dependance() {
 	sudo pip install pyudev
 	sudo pip install --upgrade google-api-python-client
 	sudo pip install requests
+	sudo pip instal unidecode
 	install_php
 	sudo apt-get install ca-certificates -y
 	sudo apt-get install ntpdate -y

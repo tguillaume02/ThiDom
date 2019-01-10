@@ -78,7 +78,6 @@ class Temperature
 
 		$sql = "SELECT t.*, Lieux.Nom, cmd_device.Nom as cmd_deviceName FROM (
 					SELECT date, temp, Lieux_Id, cmd_device_Id FROM ".self::table_name."
-						WHERE year(date) = ".date("Y")." 
                 		ORDER BY Lieux_Id, cmd_device_Id, date
                 	) AS t 
                 LEFT JOIN cmd_device on cmd_device.Id = t.cmd_device_Id
@@ -96,6 +95,16 @@ class Temperature
 
 		$sql = " SELECT Temperature.temp FROM ".self::table_name." WHERE cmd_device_ID = :DeviceId ORDER BY date DESC LIMIT 1";
 		return db::execQuery($sql,$values);
+	}
+
+	public function GetTemperatureTest()
+	{
+		$sql = "SELECT Temperature_Test.date, Temperature_Test.temp, Temperature_Test.Lieux_Id, Temperature_Test.cmd_device_Id, Lieux.Nom as LieuxNom, cmd_device.Nom as cmd_deviceName, cmd_device.unite as cmd_deviceUnite FROM Temperature_Test
+				LEFT JOIN cmd_device on cmd_device.Id = Temperature_Test.cmd_device_Id
+				LEFT JOIN Device on Device.Id = cmd_device.Device_Id
+				LEFT JOIN Lieux on Lieux.Id = Temperature_Test.Lieux_Id
+				order by Temperature_Test.Lieux_Id, Temperature_Test.cmd_device_Id, Temperature_Test.date;";
+		return db::execQuery($sql);
 	}
 
 }

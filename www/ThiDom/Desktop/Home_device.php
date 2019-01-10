@@ -36,7 +36,7 @@ function LoadTemplate()
 		$data .= '<div class="">
 					<table class="table table-borderless text-center WidgetContent">
 						<tr>
-							<td><div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" Device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'</div>
+							<td><div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'</div>
 							</td>
 							<td class="WidgetStatus-left">
 								<table>
@@ -71,13 +71,13 @@ function LoadTemplate()
 					<table class="table table-borderless text-center WidgetContent">
 					<tr>
 						<td>
-							<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" Device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
+							<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" DeviceId ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
 							</div>
 						</td>
 						<td class="WidgetStatus-left">
 							<table style="width:100%">
 								<tr>
-									<td class="WidgetStatus-left"><input class="'.$class.'" value="'.$CmdDeviceValue.'" type="range" step="0.5" min="'.$min.'" max="'.$max.'" Cmd_device_Id="'.$Cmd_device_Id.'" Device_id ="'.$Device_id.'" name="Range_'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'"  id="Range_'.$cmd_device_format.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" oninput="$(InfoDevice_'.$cmd_device_format.').html(this.value);$(InfoDevice_'.$cmd_device_format.').attr(\'value\',this.value)"/>
+									<td class="WidgetStatus-left"><input class="'.$class.'" value="'.$CmdDeviceValue.'" type="range" step="0.5" min="'.$min.'" max="'.$max.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" name="Range_'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'"  id="Range_'.$cmd_device_format.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" oninput="$(InfoDevice_'.$cmd_device_format.').html(this.value);$(InfoDevice_'.$cmd_device_format.').attr(\'value\',this.value)"/>
 									</td>
 								</tr>
 							</table>
@@ -93,7 +93,7 @@ function LoadTemplate()
 					<table class="table table-borderless text-center WidgetContent">
 						<tr>
 							<td>
-								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" Device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
+								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
 								</div>
 							</td>
 							<td class="WidgetStatus-left">
@@ -123,7 +123,7 @@ function LoadTemplate()
 					<table class="table table-borderless text-center WidgetContent">
 						<tr>						
 							<td>
-								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" Device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
+								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
 								</div>
 							</td>
 							<td class="WidgetStatus-left">
@@ -211,7 +211,7 @@ function LoadTemplate()
 
 				$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 
-				$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' Device_id='".$Device_id."' WidgetId=".$WidgetName." >";
+				$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
 
 				$data .= "<div class='widget DeviceDetail Corner'>";
 				$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
@@ -220,7 +220,7 @@ function LoadTemplate()
 
 				if ($History == 1 )
 				{
-					$data .= "<i id='LastLog_".$cmd_device_format."' Device_id='".$Device_id."' title='Last log' class='fas fa-history fa-fw pull-right visible-sm-*'></i>";	
+					$data .= "<i id='LastLog_".$cmd_device_format."' device_id='".$Device_id."' title='Last log' class='fas fa-history fa-fw pull-right visible-sm-*'></i>";	
 				}	
 
 				if($Cmd_type == "Action")

@@ -5,17 +5,19 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 require_once ('../Core/Webcam.class.php');
 
 
-$act = filter_input(INPUT_POST, 'act');
+$act = getParameter('act');
 
-if ($act == "getSnap")
+if ($act)
 {
     $Webcam = new Webcam();
-    print $Webcam->getSnapshot();
-}
-
-if ($act == "action")
-{
-    $Webcam = new Webcam();
-    $Webcam->action("right");
+    switch ($act)
+    {
+        case "getSnap":
+            print $Webcam->getSnapshot();
+            break;
+        case "action":
+            $Webcam->action("right");
+            break;
+    }
 }
 ?>

@@ -518,6 +518,12 @@ class CmdDevice
 									<label class="col-sm-5 col-xs-6 col-md-12 col-lg-5" style="padding: 0;">Remise à Zero / màj : </label>
 									<div class="col-sm-5 col-xs-5 col-md-5 col-lg-5" style="padding: 0;">
 										<input type="time" class="form-control" id="raz-value" step="1" name="RAZ" placeholder="Remise à zero apres: HH:MM:SS" cmdid ="'.$Cmd->get_Id().'" value="'.gmdate("H:i:s", $Cmd->get_RAZ()).'">
+									</div>																		
+									<div class="form-group">
+										<label for="unite-value" class="col-sm-5 col-xs-6 col-md-12 col-lg-5" style="padding: 0;">Unité : </label>
+										<div class="col-sm-5 col-xs-5 col-md-5 col-lg-5" style="padding: 0;">
+											<input class="form-control" id="cmddevice-unit" name="unite" cmdid ="'.$Cmd->get_Id().'" value="'.$Cmd->get_Unite().'" placeholder="°c, °f, MW, Mb , %, ...">
+										</div>
 									</div>
 								</div>
 							</div>

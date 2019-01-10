@@ -410,6 +410,31 @@ function LoadPlugins()
 	});
 }
 
+function SavePlugins(id, name, type, configuration)
+{	
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',		
+		data: {
+			Act: "SavePlugins",
+			Id: id,
+			Name: name,
+			Type: type,
+			Configuration: configuration
+		}
+	});
+
+	request.done(function (data) {		
+		info(data.msg);
+		LoadPlugins();
+	});
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+		ErrorLoading('SavePlugins');
+	});
+}
+
 function LoadLieux()
 {
 	if ($.fn.DataTable.isDataTable("#table-content-room"))

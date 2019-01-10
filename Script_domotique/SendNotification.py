@@ -7,29 +7,60 @@ import urllib
 import unicodedata
 import ssl
 import msql
+import sys
+import json
+import unidecode
+# import Scenario
+# import ptvsd
+# ptvsd.enable_attach(secret="my_secret")
 
-def SendNotification(value, id_notif="now"):
-    cursor = msql.cursor
-    sql = """select Device.Id from Device
-                INNER JOIN Module_Type on ModuleName = "Telegram" and Device.Module_Id = Module_Type.Id
-                WHERE Configuration != ''
-            LIMIT 1"""
+global oldDate
+global oldMessage
+# global channelId
+
+oldDate = datetime.datetime.now().strftime("%s")
+oldMessage = ""
+# channelId = ""
+
+# #############  TRY CONNECT SQL ##################
+cursor = msql.cursor
+DbConnect = msql.DbConnect
+
+def SendNotification(value, id_notif="now", to=""):
+    global channelId
+    value = unicodedata.normalize('NFKD', unicode(value, 'ISO-8859-1')).encode('ASCII', 'ignore')
+    if to != "":
+        sql = """SELECT cmd_device.Id FROM cmd_device
+                INNER JOIN Device ON Device.Id = cmd_device.Device_Id
+                INNER JOIN Module_Type ON ModuleName = "Telegram" AND Device.Module_Id = Module_Type.Id
+                where cmd_device.Id = """+to
+    else:
+        sql = """SELECT cmd_device.Id from Device
+                    INNER JOIN Module_Type ON ModuleName = "Telegram" AND Device.Module_Id = Module_Type.Id
+                    INNER JOIN cmd_device ON Device.Id = cmd_device.Device_Id
+                    WHERE Configuration != ''
+                    LIMIT 1"""
     cursor.execute(sql)
     if cursor.rowcount:
-        for row in cursor.fetchall():            
+        for row in cursor.fetchall():        
             url = "https://localhost/ThiDom/Core/plugins/Telegram/Desktop/Telegram_ajax.php"
             data = {}
             data['act'] = "sendMessage"
-            data['Device_id'] = row[0]
-            data['msg'] = value
-            url_values = urllib.urlencode(data)        
+            data['cmdDeviceId'] = row[0]
+            data['msg'] = value.replace("\xb0", "°")
+            # try:
+                # data['channelId'] =  Scenario.channelId
+            # except:
+                # data['channelId'] = ""
+            url_values = urllib.urlencode(data)
             context = ssl._create_unverified_context()
             req = urllib2.Request(url, url_values)
             try:
                 urllib2.urlopen(req, context=context)
+                channelId  = ""
             except urllib2.URLError as e:
                 #print "######  SendNotification Telegram Error value:"+value+"/url = "+url+" /data = "+url_values+" /"
-                print e.reason
+                print (e.reason)
     elif msql.idnotify != "":        
         url = "http://notify8702.freeheberg.org/"
         data = {}
@@ -45,10 +76,55 @@ def SendNotification(value, id_notif="now"):
         try:
             urllib2.urlopen(full_url)
         except:
-            print "######  SendNotification Error value:"+value
+            print ("######  SendNotification Error value:"+value)
+
+#def ReceivedNotification():
+#    global oldDate
+#    global oldMessage
+#    global channelId
+#    try:
+#        sql = """ SELECT Configuration FROM thidom.Device
+#                INNER JOIN Module_Type ON  ModuleName="Telegram" and Device.Module_Id = Module_Type.Id"""
+#        cursor.execute(sql)
+#        if cursor.rowcount:
+#            for row in cursor.fetchall():       
+#                jsonBot = json.loads(row[0])
+#                botToken  = jsonBot["BotToken"]
+            
+#            url = "https://api.telegram.org/bot"+botToken+"/getUpdates"            
+#            req = urllib2.Request(url)
+#            try:
+#                data = urllib2.urlopen(req)
+#                data = json.load(data)
+#                # data["result"][0]["channel_post"]["chat"]["id"]
+#                lastData =  data["result"][len(data["result"])-1]
+#                channelId  = ""
+#                if "message" in lastData:                        
+#                    channelId = data["result"][len(data["result"])-1]["message"]["chat"]["id"]
+#                    msgText = data["result"][len(data["result"])-1]["message"]["text"]
+#                    msgDate = data["result"][len(data["result"])-1]["message"]["date"]
+#                else:
+#                    msgDate =  data["result"][len(data["result"])-1]["channel_post"]["date"]
+#                    msgText = data["result"][len(data["result"])-1]["channel_post"]["text"]
+#                if  msgDate > oldDate or msgText != oldMessage:
+#                    oldDate = msgDate
+#                    oldMessage = msgText
+#                    Scenario.channelId = channelId
+#                    Scenario.main(msgText)
+#            except:
+#                pass
+#                # print ("######  SendNotification Telegram Error ReceivedNotification MainScenario")
+#    except:
+#        print ("######  SendNotification Telegram Error  ReceivedNotification")
 
 
-
+#if __name__ == "__main__":
+#    while True:
+#        try:
+#            ReceivedNotification()
+#        except KeyboardInterrupt:
+#            print ("Bye")
+#            sys.exit()
 
  #   sql = """select Device.Id from Device
  #           inner join Module_Type on ModuleName = "Telegram" and Device.Module_Id = Module_Type.Id

@@ -35,6 +35,6 @@ MAILTO=""
 */5 * * * *  /home/Thidom/Script\ crontab/Check_wifi.sh
 0,15,30,45 * * * * /home/Thidom/Script\ crontab/moyennes_temp.sh
 0 0,12 * * * /home/Thidom/Script\ crontab/backup_bdd.sh
-
+19 21 * * * /home/pi/certbot-auto renew --force-renew
 0 */1 * * * sudo ntpdate pool.ntp.org
 

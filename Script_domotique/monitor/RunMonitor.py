@@ -18,7 +18,8 @@ date = time.strftime('%y-%m-%d %H:%M:%S', time.localtime())
 new_up = open("/home/pi/Script_domotique/monitor/last_up.txt", "r")
 old_date = new_up.read()
 new_up.close()
-
+if(old_date == ""):
+        old_date = "1000-01-01 00:00:00"
 old_date =  datetime.strptime(old_date, "%y-%m-%d %H:%M:%S")
 date = datetime.strptime(date, "%y-%m-%d %H:%M:%S")
 

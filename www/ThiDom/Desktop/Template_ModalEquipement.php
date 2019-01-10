@@ -11,7 +11,7 @@
 				<div class="modal-body">
 					<fieldset id="ModalEquipementGeneral">
 						<legend> Général</legend>
-						<input id="device-deviceid" type="text" name="deviceId"  class="form-control" style="display: none;"/>
+						<input id="device-deviceid" type="text" name="DeviceId"  class="form-control" style="display: none;"/>
 						<div class="col-lg-8 col-md-6 col-sm-6 col-xs-6">
 							<div class="form-group">
 								<label for="list-room" class="col-lg-2 col-md-5 col-sm-5 col-xs-5 control-label">Emplacement :</label>
@@ -210,18 +210,20 @@
 				{
 					id = $( this ).attr("cmdid");
 					cmdName = $(this).attr("name");
+					cmdRequest = $(this).attr("request");
 					if ($( this ).attr("type") == "checkbox")
 					{
 						value = ($(this).is(":checked")? 1:0);
 					}
 					else
 					{
-						value = $(this).val();
+						value = $(this).val() != "" ? $(this).val() : null;
 					}
 
 					listcmd.push({
 			            'id' : id,
 			            'cmdname': cmdName,
+			            'cmdRequest' : cmdRequest,
 			            'value' : value
 		            });
 				});
@@ -230,11 +232,13 @@
 				{
 					id = $( this ).attr("cmdid");
 					cmdName = $(this).attr("name");
+					cmdRequest = $(this).attr("request");
 					value = $(this).is(':checked') ? $(this).attr('data-on') : $(this).attr('data-off');
 
 					listcmd.push({
 			            'id' : id,
 			            'cmdname': cmdName,
+			            'cmdRequest' : cmdRequest,
 			            'value' : value
 		            });
 				});
@@ -243,11 +247,13 @@
 				{
 					id = $( this ).attr("cmdid");
 					cmdName = $(this).attr("name");
+					cmdRequest = $(this).attr("request");
 					value = $(this).val();
 
 					listcmd.push({
 			            'id' : id,
 			            'cmdname': cmdName,
+			            'cmdRequest' : cmdRequest,
 			            'value' : value
 		            });
 				});
