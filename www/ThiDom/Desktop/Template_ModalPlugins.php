@@ -8,6 +8,19 @@
 				<h4 class="modal-title text-center">Manage plugins <span id="plugins-name"></span></h4>
 			</div>
 
+			<form class="white_text form_plugins form-horizontal" id="new-plugins">				
+				<div class="modal-body">
+					<fieldset id="ModalNewPlugins">
+						<legend> Liste des plugins</legend>
+						<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">  
+							<select id="list-new-plugins" name="newplugins" class="form-control" required>
+								<option value="">Plugins:</option>
+							</select>
+						</div>
+					</fieldset>
+				</div>
+			</form>
+
 			<form class="white_text form_plugins form-horizontal" id="form-plugins">
 				<div class="modal-body">
 					<fieldset id="ModalPluginsConfiguration">
@@ -34,25 +47,47 @@
 
 <script>
 	$("#modal-manage-plugins").on('show.bs.modal', function (e) {
-        
+		if (e.relatedTarget)
+		{
+		$("#new-plugins").show();
+		$("#form-plugins").hide();			
+		listPlugins();
+		}
+		else
+		{			
+			$("#new-plugins").hide();
+			$("#form-plugins").show();	
+		}
 	})
     
 	$("#plugins-save").click(function(event)
 	{
-		PluginsId = $("#form-plugins #plugins-pluginsid").val();
-		PluginsName = $("#form-plugins #plugins-pluginsName").val();
-		PluginsType = $("#form-plugins #plugins-pluginsType").val();
-
-		bFormValidate = $('form#form-plugins')[0].reportValidity();
-		if (bFormValidate)
+		if ($('form#form-plugins').is(":visible"))
 		{
-			var PluginsConfiguration = new Array();
-			var disabled = $("#form-plugins #ModalPluginsConfiguration").find(':input:disabled').removeAttr('disabled');			
+			PluginsId = $("#form-plugins #plugins-pluginsid").val();
+			PluginsName = $("#form-plugins #plugins-pluginsName").val();
+			PluginsType = $("#form-plugins #plugins-pluginsType").val();
 
-			PluginsConfiguration = JSON.stringify($("#form-plugins #ModalPluginsConfiguration").find("input, select, textarea").not("#plugins-pluginsid, #plugins-pluginsName, #plugins-pluginsType").serializeObject())
+			bFormValidate = $('form#form-plugins')[0].reportValidity();
+			if (bFormValidate)
+			{
+				var PluginsConfiguration = new Array();
+				var disabled = $("#form-plugins #ModalPluginsConfiguration").find(':input:disabled').removeAttr('disabled');			
 
-			disabled.attr('disabled','disabled');
-			SavePlugins(PluginsId, PluginsName, PluginsType, PluginsConfiguration);
+				PluginsConfiguration = JSON.stringify($("#form-plugins #ModalPluginsConfiguration").find("input, select, textarea").not("#plugins-pluginsid, #plugins-pluginsName, #plugins-pluginsType").serializeObject())
+
+				disabled.attr('disabled','disabled');
+				$("#ConfigurationPlugins").children().remove();
+				SavePlugins(PluginsId, PluginsName, PluginsType, PluginsConfiguration);
+			}
+		}
+		else if ($('form#new-plugins').is(":visible"))
+		{
+			bFormValidate = $('form#new-plugins')[0].reportValidity();
+			if (bFormValidate)
+			{
+				
+			}
 		}
 	});
 

@@ -102,7 +102,7 @@
 				</div>
 
 				<div id="manage-plugins" role="tabpanel" class="tab-pane ">
-					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-plugins"><i class="fas fa-plus"></i></button>
+					<button type="button" id="add-plugins" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-plugins"><i class="fas fa-plus"></i></button>
 					<div id="content-manage-plugins"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
 						<table id="table-content-plugins" class="table table-striped dataTable dt-responsive nowrap display text-center">
 							<thead> 

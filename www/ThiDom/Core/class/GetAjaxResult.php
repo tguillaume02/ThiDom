@@ -58,30 +58,31 @@ if ($act == "SaveDevice")
 	$CmdDeviceId = "";
 	$ModuleType = "";
 
-	$Id = getPost('deviceId'); 
-	$LieuxId = getPost('LieuxId'); // Id de la piece
-	$ModuleId = getPost('ModuleId'); 
-	$DeviceName = getPost('DeviceName'); // Nom du device
-	$DeviceVisible = getPost('DeviceVisible'); // Device Visible ou pas	
-	$CmdDevice = getPost('CmdDevice'); // Liste des actions des differentes commandes
-	$DeviceHistoriser = getPost('DeviceHistoriser');
-	$Configuration = getPost('DeviceConfiguration');
-	$CarteID = getPost('CarteId'); // Numero de la carte
-	$ModuleType = getPost("ModuleType");
-	$TypeId = getPost("TypeId");
+	$Id = getParameter('DeviceId'); 
+	$LieuxId = getParameter('LieuxId'); // Id de la piece
+	$ModuleId = getParameter('ModuleId'); 
+	$DeviceName = getParameter('DeviceName'); // Nom du device
+	$DeviceVisible = getParameter('DeviceVisible'); // Device Visible ou pas	
+	$CmdDevice = getParameter('CmdDevice'); // Liste des actions des differentes commandes
+	$DeviceHistoriser = getParameter('DeviceHistoriser');
+	$CmdDeviceId = getParameter('CmdDeviceid');	
+	$Configuration = getParameter('DeviceConfiguration');
+	$CarteID = getParameter('CarteId'); // Numero de la carte
+	$ModuleType = getParameter("ModuleType");
+	$TypeId = getParameter("TypeId");
 
 	//$DeviceID = $_POST['CarteDeviceId']; // Id de la broche de la carte
 	//$RAZDevice = $_POST['RAZ']; // Remise à zero apres X temps
 	//$CmdDeviceId = $_POST['CmdDeviceid']; // Id de la commande correspondante
 
-	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $Configuration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId, $SensorAttach/*, $CmdDeviceId*/))
+	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $Configuration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId, $SensorAttach))
 	{
-		//return  $CmdDevice;
-		$Id = json_decode($result)->{'deviceId'};
+		$Id = json_decode($result)->{'deviceId'};		
+		$ModuleName = $ModuleObject->byId($ModuleId)->get_ModuleName();
+		$object = new $ModuleName;
+
 		if ($ModuleType == "Plugins")
 		{
-			$ModelType = $ModuleObject->byId($ModuleId)->get_ModuleName();
-			$object = new $ModelType;
 			if (method_exists($object, 'Install') && empty($CmdDevice))
 			{
 					$object->Install();		
@@ -91,11 +92,26 @@ if ($act == "SaveDevice")
 				$CmdDevice = json_decode($CmdDevice);
 				foreach($CmdDevice as $v)
 				{
-					$CmdId = $v->id;
-					$Colonne = $v->cmdname;
-					$Value = $v->value;
-					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
-				}
+					if (!property_exists($v, "cmdRequest"))
+					{
+						$v->cmdRequest = "0";
+					}
+
+					if ($v->cmdRequest == "1")
+					{					
+						$CmdId = $v->id;
+						$Colonne = $v->cmdname;
+						$Value = $v->value;	
+						$cmdDeviceObject->Update_Request($CmdId, $Colonne, $Value);
+					}
+					else
+					{
+						$CmdId = $v->id;
+						$Colonne = $v->cmdname;
+						$Value = $v->value;
+						$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+					}
+				}			
 			}
 			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
 		}
@@ -112,7 +128,7 @@ if ($act == "SaveDevice")
 					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
 				}
 			}
-			else
+			elseif (empty($CmdDeviceId))
 			{
 				$cmdDeviceObject->set_Name($DeviceName);
 				$cmdDeviceObject->set_device_Id($Id);
@@ -124,7 +140,12 @@ if ($act == "SaveDevice")
 				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
 				$result =  json_encode($newresult);
 			}
-		}		
+		}
+		
+		if (method_exists($object, 'postSave'))
+		{
+			$object->postSave();		
+		}	
 	}
 
 	if ($CmdDevice)
@@ -142,22 +163,27 @@ if ($act == "SaveDevice")
 
 if ($act == "DeleteDevice")
 {	
-	$deviceId = getPost('DeviceId');
+	$deviceId = getParameter('DeviceId');
 	echo $deviceObject->DeleteDevice($deviceId);
+}
+
+if ($act == "ReorderDevice")
+{
+	echo $deviceObject->ReorderDevice(json_decode(getParameter('deviceList')), getParameter("lieux"));
 }
 
 /*if ($act == "AddPlugins")
 {
-	$Id = getPost('deviceId');
-	$LieuxId = getPost('LieuxId'); // Id de la piece
-	$TypeId = getPost('ModelTypeId'); // Type de widget
-	$ModuleId = getPost('ModuleTypeId'); 
-	$DeviceName = getPost('DeviceName'); // Nom du device
-	$DeviceVisible = getPost('DeviceVisible'); // Device Visible ou pas	
-	$CmdDevice = getPost('CmdDevice'); // Liste des actions des differentes commandes
-	$DeviceHistoriser = getPost('DeviceHistoriser');
-	$Configuration = getPost('DeviceConfiguration');
-	$CarteID = getPost('CarteId'); // Numero de la carte
+	$Id = getParameter('deviceId');
+	$LieuxId = getParameter('LieuxId'); // Id de la piece
+	$TypeId = getParameter('ModelTypeId'); // Type de widget
+	$ModuleId = getParameter('ModuleTypeId'); 
+	$DeviceName = getParameter('DeviceName'); // Nom du device
+	$DeviceVisible = getParameter('DeviceVisible'); // Device Visible ou pas	
+	$CmdDevice = getParameter('CmdDevice'); // Liste des actions des differentes commandes
+	$DeviceHistoriser = getParameter('DeviceHistoriser');
+	$Configuration = getParameter('DeviceConfiguration');
+	$CarteID = getParameter('CarteId'); // Numero de la carte
 	
 	$deviceObject->SaveDevice("", "", $Configuration , $DeviceName, $DeviceVisible , $TypeId,  $ModuleId , $LieuxId , "");
 	$ModelType = $deviceObject->GetTypeDevice($TypeId)->get_Type_Name();
@@ -170,10 +196,10 @@ if ($act == "SavePlugins")
 	$name = "";
 	$type = "";
 	$configuration = "";
-	$id = getPost("Id");
-	$name = getPost("Name");
-	$type = getPost("Type");
-	$configuration = getPost("Configuration");
+	$id = getParameter("Id");
+	$name = getParameter("Name");
+	$type = getParameter("Type");
+	$configuration = getParameter("Configuration");
 
 	if ($id != -1 && $configuration != "")
 	{
@@ -188,18 +214,18 @@ if ($act == "SaveLieux")
 	$Backgd = "";
 	$Visible = ""; 
 
-	$Img = getPost('Img');
-	$Name = getPost('Name');
-	$Backgd = getPost('Backgd');
-	$Position = getPost('Position');
-	$Visible = getPost('Visible');
+	$Img = getParameter('Img');
+	$Name = getParameter('Name');
+	$Backgd = getParameter('Backgd');
+	$Position = getParameter('Position');
+	$Visible = getParameter('Visible');
 
 	echo $lieuxObject->SaveLieux($id, $Name, $Visible, $Position, $Img);
 }
 
 if ($act == "DeleteLieux")
 {	
-	$Name = getPost('Nom');
+	$Name = getParameter('Nom');
 	echo $lieuxObject->DeleteLieux($id, $Name);
 }
 
@@ -209,10 +235,15 @@ if ($act == "SaveUser")
 	$Password = "";
 	$Hash = "";
 
-	$Name = getPost('Name');
-	$Password = getPost('Password');
-	$Hash = getPost('Hash');
+	$Name = getParameter('Name');
+	$Password = getParameter('Password');
+	$Hash = getParameter('Hash');
 	echo $UserObject->SaveUser($id, $Name, $Password, $Hash);
+}
+
+if ($act == "GetListOfNewPlugins")
+{	
+	echo json_encode(ls('../plugins/', '*', false,['folders']));
 }
 
 if ($act == "AllDeviceAndCmd")
@@ -252,11 +283,11 @@ if ($act == "GetListScenario")
 
 if($act == "SaveScenario")
 {
-	$UpdateScenario = getPost('UpdateScenario');
-	$Scenario_Name = getPost('Scenario_Name');
-	$Xml_Scenario = getPost('Xml_Scenario');
-	$Xml_Status = getPost('Xml_Status');
-	$logicArray = getPost('LogicArray');
+	$UpdateScenario = getParameter('UpdateScenario');
+	$Scenario_Name = getParameter('Scenario_Name');
+	$Xml_Scenario = getParameter('Xml_Scenario');
+	$Xml_Status = getParameter('Xml_Status');
+	$logicArray = getParameter('LogicArray');
 
 	echo $scenarioObject->SaveScenario($id, $Scenario_Name, $UpdateScenario, $Xml_Scenario, $Xml_Status, $logicArray);
 }
@@ -305,7 +336,7 @@ if ($act == "AddPlanning")
 	$active = "";
 	$days = "";
 
-	$cmddeviceId = getPost('cmddeviceId');
+	$cmddeviceId = getParameter('cmddeviceId');
 
 
 	if (isset($_POST['commande']) )
@@ -336,7 +367,7 @@ if ($act == "AddPlanning")
 
 if ($act == "DeletePlanning")
 {
-	$planningId = getPost('planningId');
+	$planningId = getParameter('planningId');
 	echo $planningObject->DeletePlanning($planningId);
 }
 ?>

@@ -183,7 +183,7 @@
 							$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
 						}*/
 						$("#modal-manage-device #defaulticons").hide();
-						$("#add-plugins").hide();
+						$("#add-device-general").hide();
 
 						if (!$.isEmptyObject(data.Configuration))
 						{
@@ -329,7 +329,6 @@
 		$("#modal-manage-user #user-isAdmin").prop('checked', parseInt(data.UserIsAdmin));
 		$("#modal-manage-user").modal('toggle');
 	}
-
 	
 	function EditPlugins(data = "")
 	{
@@ -337,23 +336,27 @@
 
 		linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"ConfigPlugins.php";
 
-		$("#modal-manage-plugins #ConfigurationPlugins").load(linkConfig , {data: data},
-			 function() {});
-				
-		$("#modal-manage-plugins #plugins-pluginsid").val(data.Id);
-		$("#modal-manage-plugins #plugins-pluginsName").val(data.ModuleName);
-		$("#modal-manage-plugins #plugins-pluginsType").val(data.ModuleType);
-		if ($("#modal-manage-plugins").data('bs.modal'))
-		{
-			if (!$("#modal-manage-plugins").data('bs.modal').isShown)
+		$("#modal-manage-plugins #ConfigurationPlugins").load(linkConfig ,data,
+			function( response, status, xhr )
 			{	
-				$("#modal-manage-plugins").modal('toggle');
-			}
-		}
-		else
-		{
-			$("#modal-manage-plugins").modal('toggle');
-		}
+				if (status != "error")
+				{
+					$("#modal-manage-plugins #plugins-pluginsid").val(data.Id);
+					$("#modal-manage-plugins #plugins-pluginsName").val(data.ModuleName);
+					$("#modal-manage-plugins #plugins-pluginsType").val(data.ModuleType);
+					if ($("#modal-manage-plugins").data('bs.modal'))
+					{
+						if (!$("#modal-manage-plugins").data('bs.modal').isShown)
+						{	
+							$("#modal-manage-plugins").modal('toggle');
+						}
+					}
+					else
+					{
+						$("#modal-manage-plugins").modal('toggle');
+					}
+				}	
+			});
 	}
 
 	function strToRGB(str){

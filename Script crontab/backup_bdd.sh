@@ -9,4 +9,4 @@
 
 #find /home/pi/backup_bdd_* -mtime +2 -exec rm -rf {} \;
 
-python /home/pi/Script_domotique/backup_bdd.py  >> /home/pi/Script\ crontab/debug/console.log 2>&1 &
+python /home/ThiDom/Script_domotique/backup_bdd.py  >> /home/ThiDom/Script\ crontab/debug/console.log 2>&1 &

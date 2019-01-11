@@ -42,7 +42,7 @@
 								<div class="col-lg-8 col-md-4 col-sm-4 col-xs-4">
 									<input type="text" class="form-control" id="device-name"  name="DeviceName" placeholder="Nom de l'appareil (qui apparaitras sur le site):" required>
 								</div>
-								<button id='add-plugins' class='col-lg-1 col-md-3 col-sm-3 col-xs-3 btn btn-success' type='button'><i class='fas fa-plus' aria-hidden='true'></i></button><br/>
+								<button id='add-device-general' class='col-lg-1 col-md-3 col-sm-3 col-xs-3 btn btn-success' type='button'><i class='fas fa-plus' aria-hidden='true'></i></button><br/>
 							</div>	
 							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 form-group dropdown">
 							  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Icons
@@ -122,7 +122,7 @@
 		$("#ModalEquipementConfiguration").hide();
 		$("#ModalEquipementCommande").hide();
 		$("#modal-manage-device .grouplistType").hide();
-		$("#add-plugins").show();
+		$("#add-device-general").show();
 		$("#modal-manage-device #ConfigurationDevice").html("");			
 		$("#modal-manage-device #CommandeDevice").html("");	
 		$("#modal-manage-device #list-type").prop('disabled', false);
@@ -131,7 +131,7 @@
 		//$("#ModalEquipementGeneral").attr('class','col-xs-12 col-sm-12 col-md-12 col-lg-12');		
 	})
 
-	$("#add-plugins").click(function(event) {		
+	$("#add-device-general").click(function(event) {		
 		DeviceId = $("#form-device #ModalEquipementGeneral #device-deviceid").val();
 		bFormValidate = $('form#form-device')[0].reportValidity();
 		if (bFormValidate)
@@ -144,7 +144,7 @@
 				//DeviceConfiguration = JSON.stringify($("#form-device #ModalEquipementConfiguration").find("input, select, textarea").not("#device-visible, #carte-id").serializeObject());
 				//AddPlugins(Device,DeviceConfiguration);	
 				$result = SaveDevice(Device);	
-				$("#add-plugins").hide();
+				$("#add-device-general").hide();
 			}
 			disabled.attr('disabled','disabled');
 		}

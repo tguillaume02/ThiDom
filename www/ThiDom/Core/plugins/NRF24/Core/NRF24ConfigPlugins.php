@@ -2,8 +2,7 @@
 include_once dirname(__FILE__) .'/../../../../Core/Security.php'; 
 include_once dirname(__FILE__) .'/../../../../Core/ListRequire.php';
 $ModuleName = "NRF24";
-$data =getParameter("data");
-$configuration = json_decode($data["ModuleConfiguration"], true);
+$configuration = json_decode(getParameter("ModuleConfiguration"), true);
 ?>
 
 <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6">

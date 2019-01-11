@@ -1,5 +1,5 @@
 <?php
-//require_once dirname(__FILE__)  .'/../Security.php'; 
+require_once dirname(__FILE__)  .'/../Security.php'; 
 require_once dirname(__FILE__) .'/../ListRequire.php';
 ?>
 <script>
@@ -339,6 +339,56 @@ function LoadMaison()
 	});
 }
 
+function listPlugins()
+{
+
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'GetModuleType',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+	
+	request.done(function (data) {
+		PluginsIntall = [];
+		$.map( data, function( val, i )
+		{
+			PluginsIntall.push(val.ModuleName)	
+		});
+	})
+
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'GetListOfNewPlugins',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+
+	request.done(function (data) {
+		$("#list-new-plugins option").siblings("[value!='']").remove();	
+		$.each(data, function (index, item)
+		{
+			item = item.replace('/', '');
+			if ($.inArray(item, PluginsIntall) === -1)
+			{
+				$("#list-new-plugins").append(new Option(item, index));
+			}
+		})
+	})
+
+}
 
 function LoadPlugins()
 {
@@ -1138,10 +1188,10 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
 			DataDevice = JSON.parse('{"' + decodeURI(Device).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
 
 			info(data.msg);
-			if (DataDevice.deviceId == "" && data.deviceId != "")
+			if (DataDevice.DeviceId == "" && data.DeviceId != "")
 			{
-				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
-				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.DeviceId+ " et pour les commandes "+data.cmddeviceId);
+				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.DeviceId, "CmdDeviceId": data.cmddeviceId };
 				data.refresh = false;
 				EditDevice(datas);
 			}
@@ -1206,6 +1256,20 @@ function DeleteDevice(data, RowSelected)
 				});
     		}
         }
+	});
+}
+
+function ReorderDevice(data, lieux)
+{	
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'ReorderDevice',
+			deviceList: data,
+			lieux: lieux
+		}
 	});
 }
 
@@ -1361,7 +1425,7 @@ function LoadEquipement()
 		DeviceData.DeviceVisible = parseInt(DeviceData.DeviceVisible)?0:1;	
 		$(this).attr("src",DeviceData.DeviceVisible?"Core/pic/view.png":"Core/pic/notview.png");
 		$(this).attr("alt",DeviceData.DeviceVisible?"view":"notview");
-		Device = $.param({deviceId: DeviceData.DeviceId, LieuxId: DeviceData.LieuxId, ModuleId: DeviceData.ModuleId, ModelTypeId: DeviceData.TypeId, DeviceName: DeviceData.DeviceNom, CarteDeviceId: DeviceData.Cmd_Device_DeviceId, CarteId: DeviceData.CarteId, RAZ: DeviceData.RAZ, DeviceVisible: DeviceData.DeviceVisible, CmdDeviceid: DeviceData.Cmd_device_Id })
+		Device = $.param({DeviceId: DeviceData.DeviceId, LieuxId: DeviceData.LieuxId, ModuleId: DeviceData.ModuleId, ModelTypeId: DeviceData.TypeId, DeviceName: DeviceData.DeviceNom, CarteDeviceId: DeviceData.Cmd_Device_DeviceId, CarteId: DeviceData.CarteId, RAZ: DeviceData.RAZ, DeviceVisible: DeviceData.DeviceVisible, CmdDeviceid: DeviceData.Cmd_device_Id })
 		SaveDevice(Device, DeviceData.Configuration);
 	})
 	.on( 'click', '.btn-primary', function ()
