@@ -9,7 +9,7 @@
 #else
 #	if [ $(cat /sys/class/net/wlan0/carrier) -eq 0 ] || [ $IP -ne $IP_fixe ]
 #	then
-#		sudo /etc/init.d/networking restart &&  touch /home/pi/Script\ crontab/debug/cronNode.txt && strDate=$(date) && strAct=" Relance wlan0" && echo $strDate $strAct $IP  " //  "  $IP_fixe >> /home/pi/Script\ crontab/debug/cronNode.txt
+#		sudo /etc/init.d/networking restart &&  touch /home/ThiDom/Script\ crontab/debug/cronNode.txt && strDate=$(date) && strAct=" Relance wlan0" && echo $strDate $strAct $IP  " //  "  $IP_fixe >> /home/ThiDom/Script\ crontab/debug/cronNode.txt
 # 	fi
 #fi
 

@@ -42,7 +42,7 @@ def ReadArduino():
             x = ""
             x = ser.readline()  # read one byte
             str_usb_read = x
-            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
+            mon_fichier = open("/home/ThiDom/Script crontab/debug/toto.txt", "a")
             mon_fichier.write(getDate()+" : ")
             mon_fichier.write(x)
             mon_fichier.write("\r\n")

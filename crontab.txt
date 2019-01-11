@@ -23,18 +23,19 @@ MAILTO=""
 # 
 # m h  dom mon dow   command
 ####### Lance au demarrage #########
-###@reboot /home/Thidom/Script\ crontab/run_nodejs.sh
-#@reboot /home/Thidom/Script\ crontab/run_read.sh
-#@reboot /home/Thidom/Script\ crontab/planning.sh
-#@reboot /home/Thidom/Script\ crontab/thermostat.sh
-#@reboot /home/Thidom/Script\ crontab/run_monitor.sh
+###@reboot /home/ThiDom/Script\ crontab/run_nodejs.sh
+##  /!\   MIS DANS /etc/rc.local    /!\ ##
+#@reboot /home/ThiDom/Script\ crontab/run_read.sh
+#@reboot /home/ThiDom/Script\ crontab/planning.sh
+#@reboot /home/ThiDom/Script\ crontab/thermostat.sh
+#@reboot /home/ThiDom/Script\ crontab/run_monitor.sh
 #
 #
 # Teste toutes les 10 minutes et ssi le fichier JSON n.a pas ete mis a jour depuis plus de 20 minutes, alors relance Node.js
-*/10 * * * *  /home/Thidom/Script\ crontab/check_read.sh
-*/5 * * * *  /home/Thidom/Script\ crontab/Check_wifi.sh
-0,15,30,45 * * * * /home/Thidom/Script\ crontab/moyennes_temp.sh
-0 0,12 * * * /home/Thidom/Script\ crontab/backup_bdd.sh
-19 21 * * * /home/pi/certbot-auto renew --force-renew
+*/10 * * * *  /home/ThiDom/Script\ crontab/check_read.sh
+*/5 * * * *  /home/ThiDom/Script\ crontab/Check_wifi.sh
+0,15,30,45 * * * * /home/ThiDom/Script\ crontab/moyennes_temp.sh
+0 0,12 * * * /home/ThiDom/Script\ crontab/backup_bdd.sh
+19 21 * * * /home/ThiDom/certbot-auto renew --force-renew
 0 */1 * * * sudo ntpdate pool.ntp.org
 

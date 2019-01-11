@@ -300,6 +300,8 @@ sudo mkdir /home/ThiDom
 sudo mkdir /home/ThiDom/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/ThiDom/Script\ crontab/
 sudo chmod +x /home/ThiDom/Script\ crontab/*
+sudo chmod 666 /home/ThiDom/Script\ crontab/*
+
 
 sudo mkdir /home/ThiDom/Script_domotique/
 sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/ThiDom/Script_domotique/
