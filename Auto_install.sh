@@ -296,14 +296,14 @@ echo "********************************************************${NORMAL}"
 
 sudo cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 
-sudo mkdir /home/Thidom
-sudo mkdir /home/Thidom/Script\ crontab/
-sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/Thidom/Script\ crontab/
-sudo chmod +x /home/Thidom/Script\ crontab/*
+sudo mkdir /home/ThiDom
+sudo mkdir /home/ThiDom/Script\ crontab/
+sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/ThiDom/Script\ crontab/
+sudo chmod +x /home/ThiDom/Script\ crontab/*
 
-sudo mkdir /home/Thidom/Script_domotique/
-sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/Thidom/Script_domotique/
-sudo chmod +x /home/Thidom/Script_domotique/*
+sudo mkdir /home/ThiDom/Script_domotique/
+sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/ThiDom/Script_domotique/
+sudo chmod +x /home/ThiDom/Script_domotique/*
 
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
@@ -334,16 +334,16 @@ sed -i 's/{{bddsql}}/thidom/' db.class.php
 
 # chown www-data:www-data connect.php 
 
-sed -i 's/{{pwdsql}}/'${bdd_password}'/' /home/Thidom/Script_domotique/msql.py
-sed -i 's/{{usersql}}/thidom/' /home/Thidom/Script_domotique/msql.py
-sed -i 's/{{bddsql}}/thidom/' /home/Thidom/Script_domotique/msql.py
+sed -i 's/{{pwdsql}}/'${bdd_password}'/' /home/ThiDom/Script_domotique/msql.py
+sed -i 's/{{usersql}}/thidom/' /home/ThiDom/Script_domotique/msql.py
+sed -i 's/{{bddsql}}/thidom/' /home/ThiDom/Script_domotique/msql.py
 
 echo ""
 echo "${VERT}"
 echo "${msg_id_notify}"
 read idnotify < /dev/tty
 
-sed -i 's/{{idnotify}}/'${idnotify}'/' /home/Thidom/Script_domotique/msql.py
+sed -i 's/{{idnotify}}/'${idnotify}'/' /home/ThiDom/Script_domotique/msql.py
 
 echo "${VERT}********************************************************"
 echo "${msg_setup_apache}"
@@ -448,7 +448,7 @@ update-rc.d DefaultFirewall defaults
 #sudo reboot
 
 
-sudo PRUNE_MODULES=1  rpi-update
+#sudo PRUNE_MODULES=1 rpi-update
 
 echo "${End}"
 
