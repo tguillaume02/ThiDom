@@ -18,13 +18,13 @@ function callPlugins(plugins, device_id,role,type,value)
 	})
 }
 
-function action_domo(device_id,role,type,value)
+function action_domo(device_id,cmd_device_id,role,type,value, mode)
 {
 	value = value+"";
 	$.ajax({
 		type: 'POST',
 		url: 'Core/ajax/action_domo.php',
-		data: 'Device_Id=' + device_id +'&Role='+role+'&Type='+type+'&Value='+value,
+		data: 'Device_Id=' + device_id +'&CmdDevice_Id='+cmd_device_id+'&Role='+role+'&Type='+type+'&mode='+mode+'&Value='+value,
 		cache: false
 	})
 	.done( function (msg) 
@@ -117,7 +117,7 @@ function Recup_Etat()
 			else if (Widget_Type == "Slider") // Thermostat
 			{				
 				$("#InfoDevice_"+cmd_device_format).html(Value);
-				$("#Range_"+cmd_device_format).val(Value);
+				$("#Range_"+cmd_device_format).val(this.Value);
 				$("#InfoDevice_"+cmd_device_format).attr('value',this.value);
 				$("#InfoDevice_"+cmd_device_format).removeClass('circle_on circle_off');
 				$("#InfoDevice_"+cmd_device_format).addClass('circle_'+StringEtat);
@@ -179,7 +179,8 @@ function SetToolTipLog(device_id,balise_id)
 	requestGetLastLog.done(function (data) {
 		$content = "";
 		$.each(data, function (index, item) {
-			$content += '<li style="font-weight:bold;color:grey;border-bottom:1px solid grey;">'+item.Date+'</li><li style="color:black;padding-top: 2%;padding-bottom: 2%;padding-left: 8%;">'+item.Message+'</li>';
+			//$content += '<li style="font-weight:bold;color:grey;border-bottom:1px solid grey;">'+item.Date+'</li><li style="color:black;padding-top: 2%;padding-bottom: 2%;padding-left: 8%;">'+item.Message+'</li>';
+			$content += '<li style="font-weight:bold;color:grey;border-bottom:1px solid grey;">'+item.Date+' - '+item.Message+'</li>';
 		});
 		if ($content)
 		{
@@ -311,11 +312,11 @@ function RemoveLog()
 ////////// LOAD PAGE ////////////////
 
 
-function LoadMaison()
+function LoadMaison(mode="")
 {
 	var request = $.ajax({
 		type: "POST",
-		url: 'Desktop/Home_device.php',
+		url: 'Desktop/Home_device.php?mode='+mode,
 		cache: false
 	});
 
@@ -457,6 +458,10 @@ function LoadPlugins()
 	{
 		PluginsData = $('#table-content-plugins').DataTable().row( $(this).parent().parent() ).data();		
 		EditPlugins(PluginsData);
+	}).on( 'click', '.btn-danger', function ()
+	{
+		PluginsData = $('#table-content-plugins').DataTable().row( $(this).parent().parent() ).data();		
+		DeletePlugins(PluginsData, $(this).parent().parent());
 	});
 }
 
@@ -482,6 +487,48 @@ function SavePlugins(id, name, type, configuration)
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {
 		ErrorLoading('SavePlugins');
+	});
+}
+
+function DeletePlugins(data, RowSelected)
+{
+	bootbox.confirm({
+    	message: `Êtes vous sûr de vouloir supprimer: ${data.ModuleName}?`,
+	    buttons: {
+	        confirm: {
+	            label: 'Yes',
+	            className: 'btn-success'
+	        },
+	        cancel: {
+	            label: 'No',
+	            className: 'btn-danger'
+	        }
+	    },
+
+		callback: function (result){
+    		if (result)
+    		{
+    			data.Act = "DeletePlugins";
+
+				var request = $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: 'Core/class/GetAjaxResult.php',		
+					data: data
+				});
+
+				request.done(function (data) {
+					$("#table-content-plugins").DataTable().row(RowSelected).remove().draw();
+					info(data.msg);
+					LoadLieux();
+					LoadMaison();
+				});
+
+				request.fail(function (jqXHR, textStatus, errorThrown) {
+					ErrorLoading('DeletePlugins');
+				});
+    		}
+        }
 	});
 }
 
@@ -721,7 +768,7 @@ function LoadModuleType()
 	});	
 }
 
-function LoadTypeWidget()
+/*function LoadTypeWidget()
 {
 	var request = $.ajax({
 		type: 'POST',
@@ -747,7 +794,7 @@ function LoadTypeWidget()
 				data: {					
 					module_Id: item.ModuleType_Id
 				}
-			}).appendTo($("#list-type"));
+			}).appendTo($("#list-type*"));
 
 
 			$("#modal-manage-device #list-type").prop('disabled', false);
@@ -760,7 +807,7 @@ function LoadTypeWidget()
 		ErrorLoading('LoadTypeWidget');
 		$("#modal-manage-device #list-type").prop('disabled', true);
 	});	
-}
+}*/
 
 function LoadGraph()
 {
@@ -798,6 +845,7 @@ function Recup_Planning()
 		$.each(data, function (index, item) {	
 			var planningId = item.Id;
 			var planningCmdDeviceId = item.CmdDevice_Id;
+			var planningDeviceId = item.DeviceId;
 			var planningDate = item.Date;
 			var planningDays = item.Days;
 			var planningHours = item.Hours;
@@ -845,6 +893,7 @@ function Recup_Planning()
 							"id":  item.Id+d.date()+d.month()+d.hour()+d.minute()+item.Status,
 							"planningId":planningId,
 							"planningCmdDeviceId": planningCmdDeviceId,
+							"planningDeviceId": planningDeviceId,
 							"planningRepeat": planningRepeat,
 							"planningDate": planningDate,
 							"planningDays": planningDays,
@@ -907,7 +956,7 @@ function LoadCalendar()
 
 function SaveCalendar()
 {
-	var Data = $("#form-planning").find('input[name!=days][name!=commande], input[name=commande]:not(:hidden)').serialize()+"&Act=AddPlanning";
+	var Data = $("#form-planning").find('input[name!=days][name!=commande], input[name=commande]:not(:hidden), select:not(:hidden)').serialize()+"&Act=AddPlanning";
 	var ratings = '';
 	$("#form-planning input.SchedulerDays:checked").map(function(i, n) {
 		ratings += (i ? ',' : '') + n.value;
@@ -1162,12 +1211,13 @@ function DeleteScenario(id)
 	});
 }*/
 
-function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "")
+function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "", CmdDeviceConfiguration ="")
 {
 	//Data.Act = "SaveDevice";
 	//Data = JSON.stringify(Data);
 	Device += "&CmdDevice="+CmdDevice;
 	Device += "&DeviceConfiguration="+DeviceConfiguration
+	Device += "&CmdDeviceConfiguration="+CmdDeviceConfiguration
 	Device += "&Act=SaveDevice";
 
 	var request = $.ajax({
@@ -1324,9 +1374,9 @@ function DeleteLieux(data, RowSelected)
 
 				request.done(function (data) {
 					$("#table-content-equipement").DataTable().row(RowSelected).remove().draw();
-					info(data.msg);
 					LoadLieux();
 					LoadMaison();
+					info(data.msg);
 				});
 
 				request.fail(function (jqXHR, textStatus, errorThrown) {

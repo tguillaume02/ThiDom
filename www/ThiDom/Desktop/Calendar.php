@@ -22,31 +22,62 @@
 		scheduler.init('scheduler-here', new Date(),"month");
 
 		scheduler.attachEvent("onClick", function (id, e){
-			PlanningId = scheduler.getEvent(id).planningId;
-			PlanningCmdDeviceId = scheduler.getEvent(id).planningCmdDeviceId;
-			PlanningDate = scheduler.getEvent(id).planningDate;
-			PlanningDays = scheduler.getEvent(id).planningDays;
-			PlanningDeviceWidget = scheduler.getEvent(id).planningDeviceWidget;
-			PlanningDeviceWidgetType = scheduler.getEvent(id).planningDeviceWidgetType;
-			PlanningRepeat = scheduler.getEvent(id).planningRepeat;
-			PlanningHours = scheduler.getEvent(id).planningHours;
-			PlanningName = scheduler.getEvent(id).planningName;
-			PlanningActivate = scheduler.getEvent(id).planningActivate;
-			PlanningDeviceStatus = scheduler.getEvent(id).planningDeviceStatus;
+			PlanningData = scheduler.getEvent(id);
+			PlanningId = PlanningData.planningId;
+			PlanningCmdDeviceId = PlanningData.planningCmdDeviceId;
+			PlanningDeviceId = PlanningData.planningDeviceId;
+			PlanningDate = PlanningData.planningDate;
+			PlanningDays = PlanningData.planningDays;
+			PlanningDeviceWidget = PlanningData.planningDeviceWidget;
+			PlanningDeviceWidgetType = PlanningData.planningDeviceWidgetType;
+			PlanningRepeat = PlanningData.planningRepeat;
+			PlanningHours = PlanningData.planningHours;
+			PlanningName = PlanningData.planningName;
+			PlanningActivate = PlanningData.planningActivate;
+			PlanningDeviceStatus = PlanningData.planningDeviceStatus;
 
 			$("#modal-planning-data").modal("show");
 			$("#text-button-save").html(" Update");
 			$("#planning-device-name").html(PlanningName);
 			$("#planning-cmddeviceId").val(PlanningCmdDeviceId);
+			$("#planning-deviceId").val(PlanningDeviceId);
 			$("#planning-planningId").val(PlanningId);
 			$("#planning-datetime").val(PlanningDate+" "+PlanningHours);
 			$('#modal-planning-data .widgetType').hide();		
 			$('#modal-planning-data #planning-delete').show();
-			$('#modal-planning-data .'+PlanningDeviceWidgetType+'.widgetType').show();
+			//$('#modal-planning-data .'+PlanningDeviceWidgetType+'.widgetType').show();
+
+			if (PlanningDeviceWidgetType != "")
+			{
+				widgetDesign_url = "Core/widgetDesign/"+PlanningDeviceWidgetType+"/"+PlanningDeviceWidgetType+"DesignScheduler.php";
+			}
+			else if (PlanningDeviceWidget != "")
+			{
+				widgetDesign_url = "Core/plugins/"+PlanningDeviceWidget+"/Desktop/"+PlanningDeviceWidget+"Scheduler.php";
+			}
+
+			
+			var requestGetDesign = $.ajax({
+				type: 'POST',
+				url: widgetDesign_url,
+				data: {
+					mode: 'Schedule',
+					deviceId: PlanningDeviceId,
+					deviceWidgetType: PlanningDeviceWidgetType,
+					status: PlanningDeviceStatus
+				}
+			});
+
+			requestGetDesign.done(function (data) {
+				$("#DisplayDesign").empty();
+				$("#DisplayDesign").append(data);
+				$("#DisplayDesign").show();
+			});
+
 
 			$("#modal-planning-data #active").prop( "checked", PlanningActivate);
 
-			if (PlanningDeviceWidgetType == "Binary")
+			/*if (PlanningDeviceWidgetType == "Binary")
 			{
 				$("#modal-planning-data #action-"+(PlanningDeviceStatus==1 ?"on": "off")).prop( "checked", true);
 			}
@@ -54,7 +85,7 @@
 			{
 				$("#modal-planning-data #planning-slider").val(PlanningDeviceStatus);
 				$("#modal-planning-data #planning-info-slider").val(PlanningDeviceStatus);
-			}
+			}*/
 
 			if (PlanningDays.length >=1)
 			{

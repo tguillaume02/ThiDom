@@ -15,7 +15,7 @@ class Planning
 		return db::execQuery($sql,[]);
 	}
 
-	public function AddPlanning($planningId, $deviceId, $active, $commande, $dateheure, $days)
+	public function AddPlanning($planningId, $deviceId, $active, $commande, $dateheure, $eachTime, $eachPeriod, $days)
 	{   
 		$date = $hours = "";
 

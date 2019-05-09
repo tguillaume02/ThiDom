@@ -11,14 +11,12 @@ class User
 	public function CheckUser($Login, $pwd, $bySession="")
 	{
 		$values = array(
-			':Login' => $Login//,
-			//':pwd' => $pwd,
+			':Login' => $Login
 			);
 		$sql = 'SELECT Id, UserName, UserPass, UserIsAdmin
 		FROM '.self::table_name.'
-		WHERE UserName=:Login';// AND UserPass=:pwd';
+		WHERE UserName=:Login';
 		$result =  db::execQuery($sql, $values);
-		//$nb_row = db::getNbResult($sql, $values);
 		if( !$result )
 		{		
 			return False;
@@ -204,9 +202,8 @@ class User
 		{
 			if (!empty($user) && !empty($pass_user))
 			{	
-				$User=$user;
 				//$Password=hash('sha256',$pass_user);
-				$UserName = stripslashes($User);
+				$UserName = stripslashes($user);
 				$pass_user = stripslashes($pass_user);
 				$ResultUser = self::CheckUser($UserName,$pass_user);
 
@@ -309,7 +306,6 @@ class User
 	{
 		$_SESSION['userIsAdmin'] = 1;
 		return true;
-
 	}
 
 	public function isLogged($hash="")
@@ -356,13 +352,18 @@ class User
 	{
 		if ((isset($_COOKIE['date']) && $_COOKIE['date'] <= date("YmdHis") - 10000) || empty($_COOKIE['date']))
 		{
-			$visitorIp = $_SERVER['REMOTE_ADDR'];
+			$ip = $_SERVER['REMOTE_ADDR'];
+			$city  = "";
+			$region ="";
+			$country = "";
+			$isp = "";
+			
 			$curl = curl_init(); 
 			curl_setopt_array($curl, array(
 				CURLOPT_RETURNTRANSFER  => 1,
-				CURLOPT_URL             => 'http://ip-api.com/json/'.$visitorIp,
+				CURLOPT_URL             => 'http://ip-api.com/json/'.$ip,
 				CURLOPT_HTTPHEADER      => array('Content-type: application/json'),
-				CURLOPT_TIMEOUT 		=> 30
+				CURLOPT_TIMEOUT_MS 		=> 500
 				));
 
 			$response  = json_decode(curl_exec($curl));
@@ -374,7 +375,13 @@ class User
 				$ip = $response->query;
 				$isp = $response->isp;
 				curl_close($curl);
+				self::setAccess($user, $ip, $city, $region, $country, $identificationType);
 
+				setcookie('date',date("YmdHis"), time() + 3600, '/','',true,true);	
+			}
+			else
+			{				
+				curl_close($curl);
 				self::setAccess($user, $ip, $city, $region, $country, $identificationType);
 
 				setcookie('date',date("YmdHis"), time() + 3600, '/','',true,true);	

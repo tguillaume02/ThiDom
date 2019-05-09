@@ -1,4 +1,4 @@
-<script type="text/javascript" src="js/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="js/qtip2/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/Popper/popper.min.js"></script>
@@ -92,25 +92,29 @@
 		$("#Content-desktop .div_btn_device").filter("[data-Type='Action']").bind("click", function (event, ui)
 		{
 			var device_id = $(this).attr('device_id');
+			var cmd_device_id = $(this).attr('cmd_device_id');
 			var device_role = $(this).attr('data-role');
 			var device_type = $(this).attr('data-type');
-			if ($(this).attr("data-role") == "Color")
+			var mode = $(this).attr('data-mode');
+			if ($(this).attr("data-role") == "Color" || $(this).attr("data-role") == "Slider")
 			{
-				var value = $(this).children().val()
+				var value = $(this).children().text()
 			}
 			else
 			{
 				var value = $(this).val();
 			}
-			action_domo(device_id,device_role,device_type,value);
+			action_domo(device_id,cmd_device_id,device_role,device_type,value, mode);
 		});
 
 		$("#Content-desktop .bar").filter("[data-Type='Action']").bind('change', function(){
 			var device_id = $(this).attr('device_id');
+			var cmd_device_id = $(this).attr('cmd_device_id');
 			var device_role = $(this).attr('data-role');
 			var device_type = $(this).attr('data-type');
+			var mode = $(this).attr('data-mode');
 			var value = $(this).val();
-			action_domo(device_id,device_role,device_type,value);
+			action_domo(device_id,cmd_device_id,device_role,device_type,value, mode);
 		});
 	}
 
@@ -130,10 +134,12 @@
 
 	function EditDevice(data = "")
 	{
-		$("#ModalEquipementConfiguration #ConfigurationDevice").html('')
-		$("#ModalEquipementCommande #CommandeDevice").html('')		
-		$("#ModalEquipementConfiguration").hide();
-		$("#ModalEquipementCommande").hide();		
+		$("#modal-manage-device #ConfigurationDevice").html('');
+		$("#modal-manage-device #CommandeDevice").html('');
+		$("#modal-manage-device #ModalEquipementConsignContent").html('');
+		$("#modal-manage-device #ModalEquipementConfiguration").hide();
+		$("#modal-manage-device #ModalEquipementCommande").hide();
+		linkWidgetConfig = "";	
 		//$("#modal-manage-device #list-device").prop('disabled', true);
 		//$("#modal-manage-device #list-type").prop('disabled', true);
 
@@ -156,17 +162,31 @@
 				linkConfig = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"ConfigDevice.php";
 				linkCommande = "Core/plugins/"+data.ModuleName+"/Core/"+data.ModuleName+"Commande.php";
 			}
+
+			if (data.WidgetType)
+			{				
+				linkWidgetConfig = "Core/widgetConfig/"+data.WidgetType+"/"+data.WidgetType+"Config.php";
+			}
 		/*}*/
 
+		
+		
+		/*if (file_exists($linkWidgetConfig))
+		{	
+			
+		}*/		
+
+
 		$("#modal-manage-device #ConfigurationDevice").load(linkConfig , {device_id: data.DeviceId},
- 			function() {
+ 			function() {				 
  				$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function(response, status, xhr)
  				{
 					if (!data.newDevice)
 					{						
+						//LoadTypeWidget();
 						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
 						$("#modal-manage-device #list-module-type").val(data.ModuleId).trigger('change');
-						$("#modal-manage-device #list-type").val(data.WidgetId).trigger('change');
+						//$("#modal-manage-device #list-type").val(data.WidgetId).trigger('change');
 						$("#modal-manage-device #list-device").val(data.TypeId);
 						$("#modal-manage-device #device-name").val(data.DeviceNom);
 						$("#modal-manage-device #list-room").val(data.LieuxId);
@@ -218,7 +238,7 @@
 
 					$('input:checkbox[name=Type]').bootstrapToggle();
 					$("#ModalEquipementConfiguration").show();
-					$("#modal-manage-device #list-type").prop('disabled', true);
+					//$("#modal-manage-device #list-type").prop('disabled', true);
 					$("#modal-manage-device #list-device").prop('disabled', true);
 					$("#modal-manage-device #list-module-type").prop('disabled', true);
 
@@ -229,7 +249,27 @@
 							$(this).attr('cmdid',data.CmdDeviceId);
 						}); 
 					}
+					$("#modal-manage-device #list-type").change(function(event) {
+						$typeId = $("#modal-manage-device #list-type option:selected").val();
+						$typeName = $("#modal-manage-device #list-type option:selected").html();
+						$cmdid = $("#modal-manage-device #list-type option:selected").parent().attr("cmdid");
+						loadEquipementConsignContent($typeId, $typeId, $cmdid);
+					})
 				});
+				
+			/*	if (linkWidgetConfig != "")
+				{
+					$("#modal-manage-device #ModalEquipementConsignContent").load(linkWidgetConfig, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function( response, status, xhr ) {
+						if ( status == "error" )
+						{
+							$("#ModalEquipementConsignContent").hide();
+						}
+						else
+						{
+							$("#ModalEquipementConsignContent").show();
+						}
+					});
+				}*/
 			})
 
 
@@ -359,6 +399,22 @@
 			});
 	}
 
+	function loadEquipementConsignContent(id, name, cmdId)
+	{
+		$linkWidgetConfig = "Core/widgetConfig/"+name+"/"+name+"Config.php";
+
+		$("#modal-manage-device #ModalEquipementConsignContent[cmdid='"+cmdId+"']").load(linkWidgetConfig, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function( response, status, xhr ) {
+			if ( status == "error" )
+			{
+				$("#ModalEquipementConsignContent").hide();
+			}
+			else
+			{
+				$("#ModalEquipementConsignContent").show();
+			}
+		});
+	}
+
 	function strToRGB(str){
 		var hash = 0;
 		for (var i = 0; i < str.length; i++) {
@@ -465,7 +521,7 @@
 		/*var Slider = $(".DeviceSlider");
 		Slider.slider();*/	
 		LoadModuleType();
-		LoadTypeWidget();
+		//LoadTypeWidget();
 		//LoadEquipement();
 		//LoadLieux();
 		//LoadCalendar();
@@ -551,14 +607,20 @@
 			GetLog();
 		});		
 
-		$(".fa-history").mouseover(function(event) {
-			var device_id = $(this).attr('device_id');
-			var id = $(this).attr('id');
-			SetToolTipLog(device_id,id)
+		$(".PannelSettings").on('click', '[data-fa-i2svg]', function () {
+			if ($(this).attr('data-icon') == "history")
+			{
+				var device_id = $(this).attr('device_id');
+				var id = $(this).attr('id');
+				SetToolTipLog(device_id,id)
+			}
 		});
 
-		$( ".fa-history" ).mouseout(function() {
-			$(".popover").popover('destroy');
+		$(".PannelSettings").on('mouseout', '[data-fa-i2svg]', function () {
+			if ($(this).attr('data-icon') == "history")
+			{
+				$(".popover").popover('destroy');
+			}
 		});
 
 		DeviceEvent();
@@ -1067,8 +1129,9 @@
 				var valueA = $(timeBlock).children("field[name='TEXT']")[0];			
 				var hours=parseInt($(valueA).text().substr(0,2));
 				var minutes=parseInt($(valueA).text().substr(3,2));
-				var totalminutes=(hours*60)+minutes;
-				compareString = 'timeofday '+locOperand+' '+totalminutes;
+				var seconds=parseInt($(valueA).text().substr(6,2));
+				var totalseconds=(hours*3600)+(minutes*60)+seconds;
+				compareString = 'timeofday '+locOperand+' '+totalseconds;
 			}
 			else if (timeBlock.attr("type")=="logic_sunrisesunset") {
 				var valueA = $(timeBlock).children("field[name='SunriseSunset']")[0];
@@ -1092,8 +1155,9 @@
 				var valueA = $(timeBlock).children("field[name='TEXT']")[0];			
 				var hours=parseInt($(valueA).text().substr(0,2));
 				var minutes=parseInt($(valueA).text().substr(3,2));
-				var totalminutes=(hours*60)+minutes;
-				compareString = ' (INTERVAL '+totalminutes+' minute)'+locOperand+' LastExecute';
+				var seconds=parseInt($(valueA).text().substr(6,2));
+				var totalseconds=(hours*3600)+(minutes*60)+seconds;
+				compareString = ' (INTERVAL '+totalseconds+' second)'+locOperand+' LastExecute';
 			}
 			return compareString;				
 		}
@@ -1112,8 +1176,9 @@
 				var valueA = $(timeBlock).children("field[name='TEXT']")[0];			
 				var hours=parseInt($(valueA).text().substr(0,2));
 				var minutes=parseInt($(valueA).text().substr(3,2));
-				var totalminutes=(hours*60)+minutes;
-				compareString = 'DeviceId = ' + $(fieldOfObject).text() + ' && (INTERVAL '+totalminutes+' minute)' + locOperand + 'LastDeviceUpdate' ;
+				var seconds=parseInt($(valueA).text().substr(6,2));
+				var totalseconds=(hours*3600)+(minutes*60)+seconds;
+				compareString = 'DeviceId = ' + $(fieldOfObject).text() + ' && (INTERVAL '+totalseconds+' second)' + locOperand + 'LastDeviceUpdate' ;
 			}
 			return compareString;				
 		}

@@ -3,6 +3,9 @@ class Scenario
 {
 	const table_name = 'Scenario';
 
+	protected $Id;
+	protected $status;
+
 	public function GetListScenario()
 	{
 		$sql =  " SELECT Id, Name,XML,Status FROM Scenario_Xml";
@@ -116,5 +119,42 @@ class Scenario
 		}
 //		$sql = "DELETE Scenario WHERE XmlID = :id; Delete Scenario_Xml Where Id = :id" ;
 //		return db::execQuery($sql, $values);
+	}
+
+	public function ExecIfTrigger($text)
+	{
+		$Trigger = $this->getScenarioByTriggerName($text);
+		if (is_a($Trigger, self::table_name))
+		{
+			$id = $Trigger->get_ScenarioId();
+			if ($id)
+			{
+				$this->ForceExecution($id);
+			}
+		}	
+	}
+
+	public function getScenarioByTriggerName($name)
+	{
+		$values = array(
+			':keyword' => '%ControlCalling = '.$name
+		);		
+		$sql = "SELECT * FROM Scenario WHERE conditions LIKE :keyword";
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+	}
+
+	public function ForceExecution($id)
+	{
+		$values = array(
+			':id' => $id
+		);
+		$sql = 'UPDATE Scenario set ToExecute=1 WHERE Id=:id';
+		$nbScenarioUpdate = db::getNbResult($sql,$values);
+	}
+
+	
+	public function get_ScenarioId()
+	{
+		return $this->Id;
 	}
 }

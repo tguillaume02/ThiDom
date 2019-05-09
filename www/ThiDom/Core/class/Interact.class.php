@@ -119,7 +119,8 @@ class Interact
 						break;
 					}
 				}
-				return " Je comprend que je dois set le ".self::$device. " de ".self::$lieux." à ";
+				$nb  =  (float) filter_var( str_replace(",", ".", $query), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+				return " Je comprend que je dois set le ".self::$device. " de ".self::$lieux." à " .$nb;
 			}
 		}
 	}

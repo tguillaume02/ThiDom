@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import urllib2
+import urllib3
 import urllib
 import unicodedata
 import ssl
@@ -25,10 +25,12 @@ oldMessage = ""
 # #############  TRY CONNECT SQL ##################
 cursor = msql.cursor
 DbConnect = msql.DbConnect
+urlPool = urllib3.PoolManager()
+urllib3.disable_warnings()
 
 def SendNotification(value, id_notif="now", to=""):
     global channelId
-    value = unicodedata.normalize('NFKD', unicode(value, 'ISO-8859-1')).encode('ASCII', 'ignore')
+    # value = unicodedata.normalize('NFKD', unicode(value,).encode('ASCII', 'ignore')
     if to != "":
         sql = """SELECT cmd_device.Id FROM cmd_device
                 INNER JOIN Device ON Device.Id = cmd_device.Device_Id
@@ -52,15 +54,15 @@ def SendNotification(value, id_notif="now", to=""):
                 # data['channelId'] =  Scenario.channelId
             # except:
                 # data['channelId'] = ""
-            url_values = urllib.urlencode(data)
+            url_values = urllib.parse.urlencode(data)
             context = ssl._create_unverified_context()
-            req = urllib2.Request(url, url_values)
             try:
-                urllib2.urlopen(req, context=context)
+                url = url + "?" + url_values
+                req = urlPool.request("POST",url)
                 channelId  = ""
-            except urllib2.URLError as e:
+            except urllib3.exceptions.NewConnectionError:
                 #print "######  SendNotification Telegram Error value:"+value+"/url = "+url+" /data = "+url_values+" /"
-                print (e.reason)
+                print ("######  SendNotification Error value:"+value)
     elif msql.idnotify != "":        
         url = "http://notify8702.freeheberg.org/"
         data = {}
@@ -71,10 +73,12 @@ def SendNotification(value, id_notif="now", to=""):
             now = now.strftime("%Y%m%d%H%M%S")
             id_notif = str(now)
         data['id_notif'] = id_notif
-        url_values = urllib.urlencode(data)
-        full_url = url + '?' + url_values
-        try:
-            urllib2.urlopen(full_url)
+        url_values = urllib.parse.urlencode(data)
+        
+        try:         
+            url = url + "?" + url_values
+            urlPool.request("POST",url)
+            # urllib3.urlopen(full_url)
         except:
             print ("######  SendNotification Error value:"+value)
 

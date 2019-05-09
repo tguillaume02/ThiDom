@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import serial
-import MySQLdb
 import time
 import datetime
 import requests
@@ -24,7 +23,7 @@ DbConnect = msql.DbConnect
 def SendDataToUsb(moduleName, moduleCom, moduleBaudrate, data):    
     # if 'ser' not in locals() or not ser.is_open:
     ser = serial.Serial(port=moduleCom, baudrate=moduleBaudrate)
-    ser.write(data)
+    ser.write(data.encode())
 
 
 def UpdateDateRaz(deviceId):
@@ -32,7 +31,7 @@ def UpdateDateRaz(deviceId):
     try:
         cursor.execute(" update cmd_device set DateRAZ=%s where ID =%s", (str(dateRaz), str(cmd_device_id)))
     except:
-        print time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Erreur dans la requete UpdateDateRaz dateRaz= " + str(dateRaz)+ "  cmd_device_id= "+str(cmd_device_id)
+        print (time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Erreur dans la requete UpdateDateRaz dateRaz= " + str(dateRaz)+ "  cmd_device_id= "+str(cmd_device_id))
         pass
 
 def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_attach_value, ValueAct, EtatAct, ModuleName,  ModuleConfiguration):
@@ -52,7 +51,8 @@ def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_at
             now = datetime.datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')
 #            cursor.execute("INSERT INTO Log (DeviceID, DATE, ACTION, Message) VALUES (%s, %s, %s, %s)", (Device_Id, now, val, "Planning: "+Lieux+" "+Nom+" " + str(CarteID) + " " + str(DeviceID) + " " + str(New_Status)))
-            cursor.execute("INSERT INTO Log (DeviceID, DATE, Message) VALUES (%s, %s, %s)", (Device_Id, now, "Planning: "+Lieux+" "+Nom+" " + val))
+            UpdateDateRaz(cmd_device_id)
+            cursor.execute("INSERT INTO Log (DeviceID, DATE, Message) VALUES (%s, %s, %s)", (Device_Id, now, "Planning: "+Lieux+" "+Nom+" " + val))                        
     else:
         val = str(CarteID)+"/"+str(DeviceID)+"@"+str(New_Status)+":"+str(New_Status)+"\n"
         if (ValueAct != New_Status or New_Status != EtatAct):    
@@ -60,6 +60,7 @@ def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_at
             now = datetime.datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')
 #            cursor.execute("INSERT INTO Log (DeviceID, DATE, ACTION, Message) VALUES (%s, %s, %s, %s)", (Device_Id, now, val, "Planning: "+Lieux+" "+Nom+" " + str(CarteID) + " " + str(DeviceID) + " " + str(New_Status)))
+            UpdateDateRaz(cmd_device_id)
             cursor.execute("INSERT INTO Log (DeviceID, DATE, Message) VALUES (%s, %s, %s)", (Device_Id, now, "Planning: "+Lieux+" "+Nom+" " + val))
 
 while True:
@@ -156,7 +157,19 @@ while True:
             ModuleType = row[16]
             ModuleConfiguration = row[17]
 
-            if Request != "":
+            if ModuleType == "Communication":                                            
+                Configuration = json.loads(ModuleConfiguration)
+                Action(New_Status, DeviceID, CarteID, Nom, WidgetName, Lieux, Device_Id, sensor_attach_value, Value, Etat, ModuleName, ModuleConfiguration)
+                if TypeAction == "Info":
+                    dateRaz = (datetime.datetime.now()+datetime.timedelta(seconds=1)).strftime('%Y-%m-%d %H:%M:%S')
+                    try:
+                        cursor.execute(" update cmd_device set cmd_device.Etat ='0', cmd_device.Value ='0' , DateRAZ=%s where ID =%s", (dateRaz, str(cmd_device_id)))
+                    except:
+                        print (time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Erreur dans la requete UpdateDateRaz1 dateRaz= " + dateRaz+ "  cmd_device_id= "+str(cmd_device_id))
+                        pass
+                # Minute = datetime.datetime.now().minute
+                # cursor.execute("update cmd_device set date = (select DATE_FORMAT(now(), '%Y-%m-%d %H:00:00') - INTERVAL "+str(Minute % RAZ)+" SECOND)  where ID ="+str(cmd_device_id))
+            elif Request != "":
                 #context = ssl._create_unverified_context()
                 Request = json.loads(Request)
                 url = "https://127.0.0.1/ThiDom/Core/"+Request["url_ajax"]
@@ -175,26 +188,14 @@ while True:
                     full_url = requests.post(url, data=postData, verify=False)
                     UpdateDateRaz(cmd_device_id)
                 except requests.exceptions.RequestException as e:
-                    print time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error planning Exec url :" + url + url_values + " error : " + str(e.code) + "//" + str(e.read())
+                    print (time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error planning Exec url :" + url +  " error : " + str(e))
+                    pass
             #elif RAZ != "NULL" and New_Status == 0:
-            elif ModuleType == "Communication":                                            
-                Configuration = json.loads(ModuleConfiguration)
-                Action(New_Status, DeviceID, CarteID, Nom, WidgetName, Lieux, Device_Id, sensor_attach_value, Value, Etat, ModuleName, ModuleConfiguration)
-                if TypeAction == "Info":
-                    dateRaz = (datetime.datetime.now()+datetime.timedelta(seconds=1)).strftime('%Y-%m-%d %H:%M:%S')
-                    try:
-                        cursor.execute(" update cmd_device set cmd_device.Etat ='0', cmd_device.Value ='0' , DateRAZ=%s where ID =%s", (dateRaz, str(cmd_device_id)))
-                    except:
-                        print time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Erreur dans la requete UpdateDateRaz1 dateRaz= " + dateRaz+ "  cmd_device_id= "+str(cmd_device_id)
-                else:
-                    UpdateDateRaz(cmd_device_id)
-                # Minute = datetime.datetime.now().minute
-                # cursor.execute("update cmd_device set date = (select DATE_FORMAT(now(), '%Y-%m-%d %H:00:00') - INTERVAL "+str(Minute % RAZ)+" SECOND)  where ID ="+str(cmd_device_id))
             # else:
                 # Action(New_Status, DeviceID, CarteID, Nom, WidgetName, Lieux, Device_Id, sensor_attach_value, Value, Etat)
                 # cursor.execute(" update cmd_device set cmd_device.Etat ='0', cmd_device.Value ='0' where ID ="+str(cmd_device_id))
         DbConnect.commit()
         time.sleep(0.5)
     except KeyboardInterrupt:
-        print "Bye"
+        print ("Bye")
         sys.exit()

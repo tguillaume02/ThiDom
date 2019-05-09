@@ -1,22 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import serial
-import MySQLdb
 import datetime
 import time
-import urllib2
+import urllib
+import urllib3
 import sys
 import os
 import msql
+import pyudev
 import json
 import ssl
 import re
 import unicodedata
 import SendNotification
 # from sendmail import sendmail
-# import ptvsd
-# ptvsd.enable_attach(address = ('0.0.0.0', 5678), redirect_output=False)
 
+# import ptvsd
+# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+# ptvsd.wait_for_attach()
+# ptvsd.break_into_debugger()
+
+urlPool = urllib3.PoolManager()
+urllib3.disable_warnings()
 
 # urlnotify = "http://notify8702.freeheberg.org/"
 
@@ -42,12 +48,12 @@ def SendDataToUsb(moduleName, moduleConfirmation, data):
     # if 'ser' not in locals() or not ser.is_open:
     if moduleConfirmation != None:
         ser = serial.Serial(port=moduleConfirmation["com"], baudrate=moduleConfirmation["baudrate"])
-        ser.write(data)
+        ser.write(data.encode())
 
 # ############## REPLACE STRING TO SQL DATA #########################
 def ReplaceStrToSQL(Str, row_id, ScenarioID):
 #    Str = Str.replace("timeofday", "(HOUR(now())*60+MINUTE(now())+SECOND(now())) ")\
-    Str = Str.replace("timeofday", "(HOUR(now())*60+MINUTE(now())) ")\
+    Str = Str.replace("timeofday", "(HOUR(now())*3600+MINUTE(now())*60+SECOND(now())) ")\
         .replace("timeofsun", "(select DATE_FORMAT(now(), '%H:%i')) ")\
         .replace("INTERVAL", "select now() - INTERVAL")\
         .replace("&&", "and")\
@@ -89,7 +95,7 @@ def isTimeFormat(input):
 
 def get_sec(time_str):
     h, m, s = time_str.split(':')
-    return int(h) * 3600 + int(m) * 60 #+ int(s)
+    return int(h) * 3600 + int(m) * 60 + int(s)
 
 def get_min(time_str):
     h, m, s = time_str.split(':')
@@ -133,6 +139,7 @@ def GetActionCommand(index):
     global Value
     global To
 
+    To = ""
     tbAction = ActionSplitted.split("&&")[index]
     if ((tbAction.find("DeviceId") >= 0) or (tbAction.find("Execute")) >= 0):
         ID = tbAction.replace("DeviceId", "").replace("Execute", "").replace("=", "").replace("On", '1').replace("Off", '0').replace('\"', '').replace(" ", "")
@@ -144,6 +151,10 @@ def GetActionCommand(index):
     if tbAction.find("To") >= 0:
         To = tbAction.replace("To", "").replace("=", "").replace('\"', '')
     
+def SetValue(cmdId, Etat):
+    sql_updateValue = "UPDATE cmd_device set Etat = "+Etat+", Date = Now()  WHERE ID = "+cmdId
+    cursor.execute(sql_updateValue)
+
 def main(Name = ""):
     global Conditions
     global Conditions_SQL
@@ -169,8 +180,7 @@ def main(Name = ""):
 
     sql_Liste_Scenario = "SELECT Scenario.ID as ScenarioID, XmlID,Conditions,Actions, SequenceNo,Scenario_Xml.Name, Scenario_Xml.status,Scenario.NextTimeEvents,Scenario.NextActionEvents, Scenario.IsExecuted, Scenario.ToExecute FROM Scenario  inner join Scenario_Xml on Scenario_Xml.ID = Scenario.XmlID where status = 1  and (NextActionEvents is NULL or NextActionEvents >= Now()) ORDER BY XmlID, SequenceNo"
     cursor.execute(sql_Liste_Scenario)
-    Old_XmlID = -5555
-
+    Old_XmlID = -5555    
     for row in cursor.fetchall():
         ScenarioID = str(row[0])
         XmlID = int(row[1])
@@ -206,7 +216,7 @@ def main(Name = ""):
                         result_sql_getdata_conditions_Where = cursor.fetchone()
                         Dataconditions_Where = result_sql_getdata_conditions_Where[0]
                         if isTimeFormat(Dataconditions_Where):
-                            Dataconditions_Where = str(get_min(Dataconditions_Where))
+                            Dataconditions_Where = str(get_sec(Dataconditions_Where))
                         conditions_Where = re.sub(r';getdata[[](\d+)[]]', ' '+Dataconditions_Where, conditions_Where)
                 # if Name:
                     ## NameLower = unicodedata.normalize('NFD', unicode("ControlCalling = "+Name,'utf-8')).encode('ascii', 'ignore').lower()
@@ -242,7 +252,7 @@ def main(Name = ""):
                                     #   tbtimer = Actions_Device.split("FOR")
                                     #   Actions_Device = tbtimer[0]
                                     #   bTimer = True
-                                    if ID == 'SendNotification':
+                                    if str(ID) == 'SendNotification':
                                         notif_value = Value_with_space.replace('$', '\n')  # Actions_Device.replace('$','')
                                         if "getdata" in notif_value:
                                             pattern = re.compile(r'[^*];getdata[[](\d+)')
@@ -266,7 +276,7 @@ def main(Name = ""):
                                         notif_value = notif_value.replace("&bull;","\n • ")
                                         SendNotification.SendNotification(notif_value, str(XmlID),To)
                                         BScenarioExecute = True
-                                    elif ID == 'SendEmail':
+                                    elif str(ID) == 'SendEmail':
                                         mail_value = Value_with_space.split('$')
                                         subject = ""
                                         datamail = 0
@@ -333,7 +343,7 @@ def main(Name = ""):
                                                 # #print "############################"
 
                                                 SendDataToUsb(ModuleName ,Configuration, val.replace(' ', ''))
-                                                BScenarioExecute = True
+                                            BScenarioExecute = True
 
 
                                             ############  ACTION SI SCENARIO AVEC ACTION FOR XX MINUTES ##########################
@@ -348,6 +358,9 @@ def main(Name = ""):
                                             #           val = str(CarteID) + "/" + str(DeviceID) + "@" + str(int(not Etat_Value)) + ":" + str(int(not Etat_Value)) + "\n"
                                             #           print val
                                             #           #written = ser.write(val.replace(' ',''))
+                                        elif ModuleType == "Virtuel":
+                                            SetValue(str(ID), Etat)
+                                            BScenarioExecute = True
                                         else:
                                             ConditionsId = re.sub(r'&&.*', '', re.sub(r'.*DeviceId', '', Conditions)).replace("=", "").replace(" ", "")
                                             # ConditionsId = Conditions.replace("device[","").replace("]","").split("==")[0]
@@ -356,31 +369,32 @@ def main(Name = ""):
                                             result_sql_Date_Conditions = cursor.fetchone()
                                             Last_Date_Execute_Conditions = result_sql_Date_Conditions[0]
                                             if Last_Date_Execute_Conditions > Last_Action_Date:
-                                                Request = json.loads(Request)
-                                                RequestUrl = ""
-                                                RequestData = ""
-                                                val = ""
-                                                try:
-                                                    RequestUrl = Request["url_ajax"]
-                                                except:
-                                                    print ("####### SCENARIO - Plugins - url_ajax #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
-                                                    pass
-                                                try:
-                                                    RequestData = Request["data"]
-                                                except:
-                                                    print ("####### SCENARIO - Plugins - data #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
-                                                    pass
-                                                if RequestUrl != "":
-                                                    url = "https://localhost/ThiDom/" + RequestUrl
-                                                    # url_values = urllib.urlencode(RequestData)
-                                                    url_values = RequestData
-                                                    full_url = urllib2.Request(url, url_values)
+                                                if Request:
+                                                    Request = json.loads(Request)
+                                                    RequestUrl = ""
+                                                    RequestData = ""
+                                                    val = ""
                                                     try:
-                                                        exec_cmd = urllib2.urlopen(full_url, context=context)
-                                                        sql_update_date = "UPDATE cmd_device set Date = Now() where ID =""" + str(ID) + ";"
-                                                        cursor.execute(sql_update_date)
-                                                    except urllib2.HTTPError as e:
-                                                        print ("####### SCENARIO - Exec URL #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error Scenario Exec url " + e.code + "//" + e.read())
+                                                        RequestUrl = Request["url_ajax"]
+                                                    except:
+                                                        print ("####### SCENARIO - Plugins - url_ajax #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
+                                                        pass
+                                                    try:
+                                                        RequestData = Request["data"]
+                                                    except:
+                                                        print ("####### SCENARIO - Plugins - data #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
+                                                        pass
+                                                    if RequestUrl != "":
+                                                        url = "https://localhost/ThiDom/" + RequestUrl
+                                                        # url_values = urllib.urlencode(RequestData)
+                                                        url_values = urllib.parse.urlencode(RequestData)
+                                                        url = url + "?" + url_values
+                                                        try:
+                                                            exec_cmd = urlPool.request("POST",url)
+                                                            sql_update_date = "UPDATE cmd_device set Date = Now() where ID =""" + str(ID) + ";"
+                                                            cursor.execute(sql_update_date)
+                                                        except urllib3.exceptions.NewConnectionError:
+                                                            print ("####### SCENARIO - Exec URL #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
                                                     BScenarioExecute = True
                                     if BScenarioExecute is True:
                                         now = datetime.datetime.now()
@@ -393,20 +407,24 @@ def main(Name = ""):
                                         else:
                                             cursor.execute("UPDATE Scenario set IsExecuted = 1, ToExecute = 0, LastTimeEvents=%s where ID=%s", (sNow, ScenarioID))
                                         if BLog is True:
-                                            # cursor.execute("INSERT INTO Log (DeviceId, Date, Action, Message) VALUES (%s, %s, %s, %s)", (ID, sNow, val, "Scenario: " + ScenarioName + " " + str(CarteID) + " " + str(DeviceID) + " " + str(Actions_Device)))
-                                            cursor.execute("INSERT INTO Log (DeviceId, Date, Message) VALUES (%s, %s, %s)", (ID, sNow, "Scenario: " + ScenarioName + " " +val))
-                                        if ID != 'SendNotification':
                                             try:
-                                                SendNotification("Scenario : " + ScenarioName, XmlID*9087)
+                                                # cursor.execute("INSERT INTO Log (DeviceId, Date, Action, Message) VALUES (%s, %s, %s, %s)", (ID, sNow, val, "Scenario: " + ScenarioName + " " + str(CarteID) + " " + str(DeviceID) + " " + str(Actions_Device)))
+                                                cursor.execute("INSERT INTO Log (DeviceId, Date, Message) VALUES (%s, %s, %s)", (ID, sNow, "Scenario: " + ScenarioName + " " +val))
+                                            except:
+                                                print ("####### SCENARIO - Scenario: ScenarioLog #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0]))
+                                                pass
+                                        if str(ID) != 'SendNotification':
+                                            try:
+                                                SendNotification.SendNotification("Scenario : " + ScenarioName)
                                             except:
                                                 print ("####### SCENARIO - Scenario: ScenarioName #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0]))
                                                 pass
                                     time.sleep(1)
                                     # print val
                     elif (int(IsExecuted) == 1):
-                        cursor.execute("UPDATE Scenario set IsExecuted=%s where ID=%s", (0, ScenarioID))
-                except:
-                    print ("####### SCENARIO - sql - sql_check_etat #######" + sql_check_etat)
+                        cursor.execute("UPDATE Scenario set IsExecuted=%s where ID=%s", (0, ScenarioID))                
+                except Exception as e:
+                    print ("####### SCENARIO - sql - sql_check_etat #######" + sql_check_etat + " Error => "+ e.message)
                     pass
         # ############  SI MEME SCENARIO ###############
         #elif XmlID == Old_XmlID:

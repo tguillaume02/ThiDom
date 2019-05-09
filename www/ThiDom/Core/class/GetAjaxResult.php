@@ -66,7 +66,8 @@ if ($act == "SaveDevice")
 	$CmdDevice = getParameter('CmdDevice'); // Liste des actions des differentes commandes
 	$DeviceHistoriser = getParameter('DeviceHistoriser');
 	$CmdDeviceId = getParameter('CmdDeviceid');	
-	$Configuration = getParameter('DeviceConfiguration');
+	$DeviceConfiguration = getParameter('DeviceConfiguration');
+	$CmdDeviceConfiguration = getParameter('CmdDeviceConfiguration');
 	$CarteID = getParameter('CarteId'); // Numero de la carte
 	$ModuleType = getParameter("ModuleType");
 	$TypeId = getParameter("TypeId");
@@ -75,11 +76,15 @@ if ($act == "SaveDevice")
 	//$RAZDevice = $_POST['RAZ']; // Remise à zero apres X temps
 	//$CmdDeviceId = $_POST['CmdDeviceid']; // Id de la commande correspondante
 
-	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $Configuration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId, $SensorAttach))
+	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $DeviceConfiguration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId))
 	{
 		$Id = json_decode($result)->{'deviceId'};		
 		$ModuleName = $ModuleObject->byId($ModuleId)->get_ModuleName();
-		$object = new $ModuleName;
+		
+		if (class_exists($ModuleName))
+		{
+			$object = new $ModuleName;
+		}
 
 		if ($ModuleType == "Plugins")
 		{
@@ -87,60 +92,49 @@ if ($act == "SaveDevice")
 			{
 					$object->Install();		
 			}
-			elseif (!empty($CmdDevice))
-			{
-				$CmdDevice = json_decode($CmdDevice);
-				foreach($CmdDevice as $v)
-				{
-					if (!property_exists($v, "cmdRequest"))
-					{
-						$v->cmdRequest = "0";
-					}
-
-					if ($v->cmdRequest == "1")
-					{					
-						$CmdId = $v->id;
-						$Colonne = $v->cmdname;
-						$Value = $v->value;	
-						$cmdDeviceObject->Update_Request($CmdId, $Colonne, $Value);
-					}
-					else
-					{
-						$CmdId = $v->id;
-						$Colonne = $v->cmdname;
-						$Value = $v->value;
-						$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
-					}
-				}			
-			}
-			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));		
 		}
-		else
-		{			
-			if (!empty($CmdDevice))
+			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));	
+		
+		if (!empty($CmdDevice))
+		{
+			$CmdDevice = json_decode($CmdDevice);
+			foreach($CmdDevice as $v)
 			{
-				$CmdDevice = json_decode($CmdDevice);
-				foreach($CmdDevice as $v)
+				if (!property_exists($v, "cmdRequest"))
+				{
+					$v->cmdRequest = "0";
+				}
+
+				if ($v->cmdRequest == "1")
+				{					
+					$CmdId = $v->id;
+					$Colonne = $v->cmdname;
+					$Value = $v->value;	
+					$cmdDeviceObject->Update_Request($CmdId, $Colonne, $Value);
+				}
+				else
 				{
 					$CmdId = $v->id;
 					$Colonne = $v->cmdname;
 					$Value = $v->value;
 					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
 				}
-			}
-			elseif (empty($CmdDeviceId))
-			{
-				$cmdDeviceObject->set_Name($DeviceName);
-				$cmdDeviceObject->set_device_Id($Id);
-				$cmdDeviceObject->set_WidgeId($TypeId);
-				$cmdDeviceObject->set_type('Action');
-				$resultCmdDevice = $cmdDeviceObject->save(); 
-				
-				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
-				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
-				$result =  json_encode($newresult);
-			}
+			}	
 		}
+		elseif (empty($CmdDeviceId))
+		{
+			$cmdDeviceObject->set_Name($DeviceName);
+			$cmdDeviceObject->set_device_Id($Id);
+			$cmdDeviceObject->set_WidgeId($TypeId);
+			$cmdDeviceObject->set_type('Action');
+			$resultCmdDevice = $cmdDeviceObject->save(); 
+			
+			$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
+			$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
+			$result =  json_encode($newresult);
+		}
+
+		$cmdDeviceObject->Update_CmdDeviceName();
 		
 		if (method_exists($object, 'postSave'))
 		{
@@ -192,7 +186,7 @@ if ($act == "ReorderDevice")
 
 if ($act == "SavePlugins")
 {
-	$id = -1;
+	$id = "";
 	$name = "";
 	$type = "";
 	$configuration = "";
@@ -201,10 +195,21 @@ if ($act == "SavePlugins")
 	$type = getParameter("Type");
 	$configuration = getParameter("Configuration");
 
-	if ($id != -1 && $configuration != "")
+	if ($type == "")
 	{
-		echo $ModuleObject->SaveModule($id, $name, $type, $configuration);
+		$type = file_get_contents('../plugins/'.$name.'/Core/type.txt');
 	}
+
+	//if ($id != -1 && $configuration != "")
+	//{
+		echo $ModuleObject->SaveModule($id, $name, $type, $configuration);
+	//}
+}
+
+if ($act == "DeletePlugins")
+{	
+	$Name = getParameter('ModuleName');
+	echo $ModuleObject->DeleteModule($id, $Name);
 }
 
 if ($act == "SaveLieux")
@@ -309,7 +314,18 @@ if ($act == "GetLieux")
 
 if ($act == "GetUser")
 {	
-	$dbObject->ResultToJsonArray($UserObject->getUser());
+	if (isset($_SESSION['userIsAdmin']) and $_SESSION['userIsAdmin'] == 1)
+	{
+		$dbObject->ResultToJsonArray($UserObject->getUser());
+	}
+	else
+	{
+		/*$msg = "Mode demo";
+		$value = Array( "msg"=>$msg, "clear"=>"on");
+		echo json_encode($value);*/		
+		$value = Array( "Id"=>"99", "UserHash"=>"", "UserName"=>"Mode Demo", "LastLog"=>"Mode Demo", "UserIsAdmin"=>"");
+		echo json_encode([$value]);
+	}
 }
 
 if ($act == "GetNewHash")
@@ -335,6 +351,8 @@ if ($act == "AddPlanning")
 	$planningId = "";
 	$active = "";
 	$days = "";
+	$eachTime = "";
+	$eachPeriod = "";
 
 	$cmddeviceId = getParameter('cmddeviceId');
 
@@ -355,13 +373,22 @@ if ($act == "AddPlanning")
 	if (isset($_POST['active']) )
 	{
 		$active = $_POST['active'];
+	}	
+	if (isset($_POST['eachTime']) )
+	{	
+		$eachTime = $_POST['eachTime'];
 	}
+	if (isset($_POST['eachPeriod']) )
+	{	
+		$eachPeriod = $_POST['eachPeriod'];
+	}
+
 	if (isset($_POST['days']) )
 	{	
 		$days = $_POST['days'];
 	}
 
-	echo $planningObject->AddPlanning($planningId, $cmddeviceId, $active, $commande, $dateheure, $days);
+	echo $planningObject->AddPlanning($planningId, $cmddeviceId, $active, $commande, $dateheure, $eachTime, $eachPeriod, $days);
 
 }
 

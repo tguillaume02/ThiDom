@@ -1,12 +1,15 @@
 # o!/usr/bin/python
 # -*- coding: utf-8 -*-
 import serial
-import MySQLdb
 import time
 import sys
 import msql
-# import ptvsd
-# ptvsd.enable_attach(secret="my_secret")
+import json
+
+#import ptvsd
+#ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+#ptvsd.wait_for_attach()
+#ptvsd.break_into_debugger()
 
 urlnotify = "http://notify8702.freeheberg.org/"
 print("####### Thermostat - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
@@ -19,15 +22,17 @@ def SendDataToUsb(moduleName, moduleConfirmation, data):
     # if 'ser' not in locals() or not ser.is_open:
     if moduleConfirmation != None:
         ser = serial.Serial(port=moduleConfirmation["com"], baudrate=moduleConfirmation["baudrate"])
-        ser.write(data)
+        ser.write(data.encode())
 
 timeout = 0
+hysteresis = 0
+
 while True:
     try:
         time.sleep(0.2)
         if time.time() > timeout or time.strftime('%S', time.localtime()) == '00':
             #sql = "select Etat_IO.DeviceID, Etat_IO.Value as Thermo, temp.Value, Etat_IO.Etat as status from Etat_IO inner join Etat_IO as temp on temp.ID = Etat_IO.sensor_attachID where Etat_IO.sensor_attachID <> 0 and Etat_IO.Type = 'Chauffage'"
-            sql = """SELECT cmd_device.DeviceId, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request, Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration
+            sql = """SELECT cmd_device.DeviceId,  Device.CarteId, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request, Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration, Device.Configuration
                         FROM cmd_device
                             inner join Device ON Device.Id = cmd_device.Device_Id
                             inner join cmd_device AS temp ON temp.Id = cmd_device.sensor_attachId
@@ -39,13 +44,15 @@ while True:
             timeout = time.time() + 60
             for row in cursor.fetchall():
                 DeviceID = row[0]
-                Thermo = row[1]
-                TempValue = row[2]
-                status = row[3]
-                Request = row[4]
-                ModuleName = row[5]
-                ModuleType = row[6]
-                ModuleConfiguration = row[7]
+                CarteId = row[1]
+                Thermo = float(row[2])
+                TempValue = float(row[3])
+                status = row[4]
+                Request = row[5]
+                ModuleName = row[6]
+                ModuleType = row[7]
+                ModuleConfiguration = row[8]
+                DeviceConfiguration = row[9]
 #               print New_Status
 #               print row[4]
 #               print Nom
@@ -54,6 +61,7 @@ while True:
 #               print TempValue
 #               print Thermo
 #               print status
+
                 try:
                     mode = Request["mode"]
                     pass
@@ -61,20 +69,27 @@ while True:
                     mode = ""
                     pass
                 
+                try:
+                    conf = json.loads(DeviceConfiguration)
+                    hysteresis = float(conf["Hysteresis"])
+                    pass
+                except:
+                    hysteresis = float(0)
+                    pass
                 
                 if ModuleType == "Communication":  
                     try:                                          
-                        Configuration = json.loads(ModuleConfiguration)      
+                        Configuration = json.loads(ModuleConfiguration)
                     except:
                         Configuration = None
 
                 if mode != "manu":
-                    if TempValue < Thermo and int(status) == 0:
-                        val = DeviceID+"@"+str(Thermo)+":1\n"
-                        # print val
+                    if TempValue < Thermo-hysteresis and int(status) == 0:
+                        val = CarteId+"/"+DeviceID+"@"+str(Thermo)+":1\n"
+                       # print val
                         SendDataToUsb(ModuleName, Configuration, val)
-                    elif TempValue >= Thermo and int(status) == 1:
-                        val = DeviceID+"@"+str(Thermo)+":0\n"
+                    elif TempValue >= Thermo+hysteresis and int(status) == 1:
+                        val = CarteId+"/"+DeviceID+"@"+str(Thermo)+":0\n"
                         # print val
                         SendDataToUsb(ModuleName, Configuration, val)
             DbConnect.commit()

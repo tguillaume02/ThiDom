@@ -118,7 +118,7 @@ class Device
 		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
         LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
 		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL 
-		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
+		GROUP BY Device.Id, cmd_device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T 
 		ORDER BY Id, Position, Lieux, Nom";
@@ -167,10 +167,80 @@ class Device
 		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 AND cmd_device.visible = 1
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
+        ORDER BY cmd_device.Id 
 		) as T WHERE T.LieuxId= :LieuxId
 		GROUP BY Id, Position, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+	}
+
+	public function  getAllWidgetWithDeviceVisible()
+	{
+		$sql = "SELECT 
+				widget.Id, widget.Name as Nom
+			FROM
+				widget
+					INNER JOIN
+				cmd_device ON cmd_device.Widget_Id = widget.Id
+					INNER JOIN
+				Device ON Device.Id = cmd_device.Device_Id
+			WHERE
+				Device.Visible = 1
+			GROUP BY widget.Name
+			ORDER BY widget.Name , Device.Position";
+		return db::execQuery($sql, [], db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
+	}
+
+	public function getAllDeviceAndCmdVisibleByWidget($WidgetId)			    
+	{
+		$values = array(
+			':WidgetId' => $WidgetId
+			);
+		$sql = "SELECT * FROM 
+		(
+		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
+	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
+			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning
+			,IFNULL(Device.Position,999) as DevicePosition  
+		FROM Lieux
+		LEFT JOIN Device on Device.Lieux_ID= Lieux.Id
+		LEFT JOIN cmd_device on cmd_device.Device_ID = Device.Id
+		LEFT JOIN Planning ON Planning.Cmddevice_Id = cmd_device.Id AND Planning.Activate =1 	
+		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
+        LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
+		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 AND cmd_device.visible = 1
+		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
+        WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
+        ORDER BY cmd_device.Id 
+		) as T WHERE T.WidgetId= :WidgetId
+		GROUP BY Id, Position, Lieux, Nom
+		ORDER BY  DevicePosition asc ";
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+	}
+
+	public function getAllDeviceAndCmdByCmdId($CmdDeviceId)			    
+	{
+		$values = array(
+			':CmdDeviceId' => $CmdDeviceId
+			);
+		$sql = "SELECT * FROM 
+		(
+		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.visible as DeviceVisible, Device.CarteId AS CarteId, cmd_device.Visible as cmd_visible, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
+	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
+			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning 
+		FROM Lieux
+		LEFT JOIN Device on Device.Lieux_ID= Lieux.Id
+		LEFT JOIN cmd_device on cmd_device.Device_ID = Device.Id
+		LEFT JOIN Planning ON Planning.Cmddevice_Id = cmd_device.Id AND Planning.Activate =1 	
+		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
+        LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
+		WHERE  Device.Id IS NOT NULL AND cmd_device.Id = :CmdDeviceId
+		GROUP BY Device.Id, cmd_device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
+        WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
+		) as T 
+		ORDER BY Id, Position, Lieux, Nom";
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+
 	}
 
 	public function GetDeviceWidgetVisible()
@@ -190,7 +260,7 @@ class Device
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
-	public function SaveDevice($Id, $CarteId = "", $Configuration = "", $DeviceName = "", $DeviceVisible = "", $ModuleId = "", $LieuxId = "", $SensorAttach = "")
+	public function SaveDevice($Id, $CarteId = "", $Configuration = "", $DeviceName = "", $DeviceVisible = "", $ModuleId = "", $LieuxId = "")
 	{	
 		if ($Id == "")
 		{
@@ -261,6 +331,25 @@ class Device
 			$value = Array( "msg"=>$msg, "clear"=>"on");
 			return json_encode($value);
 		}
+	}
+
+	function ReorderDevice($DeviceIdList, $lieux)
+	{
+		$values = array_merge($DeviceIdList,$DeviceIdList);
+		array_unshift($values, $lieux);
+		$DeviceIdListParam = implode(',', array_fill(0, count($DeviceIdList), '?'));
+		
+		$sql = "SET @rownum = 0;
+				UPDATE
+					Device
+				SET
+					Device.Position = @rownum := @rownum + 1 ,
+					Device.Lieux_Id = ?
+				WHERE 
+					Id IN ($DeviceIdListParam)
+				ORDER BY 
+					FIELD(id,$DeviceIdListParam);";
+		db::execQuery($sql,$values);
 	}
 
 	/*

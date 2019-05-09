@@ -25,7 +25,7 @@ CREATE TABLE `ConnectLog` (
   `Region` varchar(20) NOT NULL,
   `Country` varchar(20) NOT NULL,
   `Date` datetime NOT NULL,
-  `IndentificationType` varchar(45) DEFAULT NULL
+  `IdentificationType` varchar(45) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

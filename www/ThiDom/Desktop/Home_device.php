@@ -20,7 +20,7 @@ function LoadTemplate()
 			$WidgetType;
 	
 	$plugins_url = "../Core/plugins/".$WidgetName."/Desktop/".$WidgetName.".php";
-
+	$widgetDesign_url = "../Core/widgetDesign/".$WidgetType."/".$WidgetType."Design.php";
 	$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
 	if (file_exists($plugins_url))
@@ -28,114 +28,19 @@ function LoadTemplate()
 		ob_start();
 		include $plugins_url;
 		$data .=  ob_get_clean();
-	}	
-	elseif ($WidgetType == "Text") //Numeric
-	{			
-		$strEtat = $CmdDeviceValue . $CmdDeviceUnite;
-		$Pictures_device = '<img  id="Icons_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle " alt="icons'.$IconsWidget.'" src="Core/pic/Widget/'.$IconsWidget.'" >';
-		$data .= '<div class="">
-					<table class="table table-borderless text-center WidgetContent">
-						<tr>
-							<td><div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'</div>
-							</td>
-							<td class="WidgetStatus-left">
-								<table>
-									<tr>
-										<td class="WidgetStatus-left"><span id="InfoDevice_'.$cmd_device_format.'">'.$strEtat.'</span>
-										</td>
-									</tr>
-									<tr>
-										<td class="WidgetStatus-left"> '.$AddDate.'</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>';
-
 	}
-	elseif  ($WidgetType == "Slider") //Dimmer || Thermostat
+	elseif (file_exists($widgetDesign_url)) // Text : Numeric // Slider: Dimmer || Thermostat // Color: RGB //
 	{
-		$min = 0;
-		$max = 100;
-		$Pictures_device = '<div id="InfoDevice_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle  circle" value="'.$CmdDeviceValue.'" >'.$CmdDeviceValue.'</div>';
-		if ($WidgetName == "Dimmer")
-		{
-			$class = "dimmerbar";
-		}
-		else
-		{
-			$class = "bar";
-		}
-		$data .= '<div class="">
-					<table class="table table-borderless text-center WidgetContent">
-					<tr>
-						<td>
-							<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" DeviceId ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
-							</div>
-						</td>
-						<td class="WidgetStatus-left">
-							<table style="width:100%">
-								<tr>
-									<td class="WidgetStatus-left"><input class="'.$class.'" value="'.$CmdDeviceValue.'" type="range" step="0.5" min="'.$min.'" max="'.$max.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" name="Range_'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'"  id="Range_'.$cmd_device_format.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" oninput="$(InfoDevice_'.$cmd_device_format.').html(this.value);$(InfoDevice_'.$cmd_device_format.').attr(\'value\',this.value)"/>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</div>';
-	}
-	elseif ($WidgetType == "Color") //RGB
-	{
-		$Pictures_device = '<input id="InfoDevice_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle  circle" type="color" >';
-		$data .= '<div class="">
-					<table class="table table-borderless text-center WidgetContent">
-						<tr>
-							<td>
-								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
-								</div>
-							</td>
-							<td class="WidgetStatus-left">
-								<table>
-									<tr>
-										<td class="WidgetStatus-left">'.$AddDate.'</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-			</div>';
+		ob_start();
+		include $widgetDesign_url;
+		$data .=  ob_get_clean();
 	}
 	else
 	{
-		$strEtat = BooleanToString($CmdDeviceEtat);
-		if ($Cmd_type == "Info")
-		{
-			$icons  = $IconsWidget;
-		}
-		else
-		{
-			$icons = $IconsWidget.'_'.$strEtat;
-		}
-		$Pictures_device = '<img id="Icons_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle " alt="icons'.$IconsWidget.'" src="Core/pic/Widget/'.$icons.'">';
-		$data .= '<div class="">
-					<table class="table table-borderless text-center WidgetContent">
-						<tr>						
-							<td>
-								<div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'">'.$Pictures_device.'
-								</div>
-							</td>
-							<td class="WidgetStatus-left">
-								<table>
-									<tr>
-										<td class="WidgetStatus-left">'.$AddDate.'</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>';
+		$widgetDesign_url = "../Core/widgetDesign/Default/DefaultDesign.php";
+		ob_start();
+		include $widgetDesign_url;
+		$data .=  ob_get_clean();
 	}
 }
 ?>
@@ -149,95 +54,187 @@ function LoadTemplate()
 		</div>
 		<?php
 		$data='';
-		$LieuxWithDevice = Lieux::byVisibleWithDevice();
-		//$ListDeviceByLieux =  Device::getAllDeviceAndCmdVisible();
-
-		foreach($LieuxWithDevice as $Lieux)
+		if (getParameter("mode") == "Widget")
 		{
-			$IconsWidget="";
-			$LieuxID = $Lieux->get_Id();
-			$LieuxNom =  $Lieux->get_Name();
-			$data .="<div class='DeviceContainer Corner col-xs-12 col-lg-6 col-md-6 col-sm-6' Lieux='".$LieuxID."' >";
-			$data .="<div class='SubContainer Corner'>";
-			$data .="<legend class='Corner'>";
-			$data .=  $LieuxNom;
-			$data .="</legend>";
-
-			$data .= "<div class='ContentLieux col-xs-12 col-lg-12 col-md-12 col-sm-12' id='DivLieux_".$LieuxID."'>";/*class='col-xs-12 col-lg-12 col-md-12 col-sm-12 col-sm-12'*/
-
-			$ListDeviceByLieux = Device::getAllDeviceAndCmdVisibleByLieux($LieuxID);
-
-			foreach($ListDeviceByLieux as $donneesDevice)
+			$WidgetWithDevice = Device::getAllWidgetWithDeviceVisible();			
+			foreach($WidgetWithDevice as $Widget)
 			{
-				$IconsWidget = "";
-				$Pictures_device = "";
-				$Device_id = $donneesDevice["Id"];
-				$Nom = $donneesDevice["Nom"];	
-				$Cmd_device_Id = $donneesDevice["Cmd_device_Id"];
-				$PinId = $donneesDevice["PinId"];
-				$CarteId = $donneesDevice["CarteId"];
-				$Request = $donneesDevice["Request"];
-				$History = $donneesDevice["History"];
-				$Cmd_type = $donneesDevice["Cmd_type"];
-				$CmdDeviceValue = $donneesDevice["Value"];
-				$CmdDeviceEtat = $donneesDevice["Etat"];
-				$CmdDeviceUnite = $donneesDevice["Unite"];
-				$DevicePosition = $donneesDevice["Position"];
-				$ModuleName = $donneesDevice["ModuleName"];
-				$WidgetId =  (empty($donneesDevice["WidgetId"])) ? $donneesDevice["ModuleId"] : $donneesDevice["WidgetId"];
-				$WidgetName = (empty($donneesDevice["WidgetName"])) ? $donneesDevice["ModuleName"] : $donneesDevice["WidgetName"];
-				$WidgetType = $donneesDevice["WidgetType"];
-				$Configuration =  $donneesDevice["Configuration"];
-				$Date = $donneesDevice["Date"];
+				$IconsWidget="";
+				$WidgetID = $Widget->get_Id();
+				$WidgetNom =  $Widget->get_Name();
+				$data .="<div class='DeviceContainer Corner col-xs-12 col-lg-6 col-md-6 col-sm-6' Widget='".$WidgetID."' >";
+				$data .="<div class='SubContainer Corner'>";
+				$data .="<legend class='Corner'>";
+				$data .=  $WidgetNom;
+				$data .="</legend>";
 
-				/*if (!empty(json_decode($Configuration)->icons))
-				{*/
-					$IconsWidget = getJsonAttr($Configuration,"icons",$WidgetName);//json_decode($Configuration)->{'icons'};
-			/*}
-				else if ($IconsWidget == "")
+				$data .= "<div class='ContentLieux col-xs-12 col-lg-12 col-md-12 col-sm-12' id='DivWidget_".$WidgetID."'>";/*class='col-xs-12 col-lg-12 col-md-12 col-sm-12 col-sm-12'*/
+
+				$ListDeviceByWidget = Device::getAllDeviceAndCmdVisibleByWidget($WidgetID);
+			
+			
+				foreach($ListDeviceByWidget as $donneesDevice)
 				{
-					$IconsWidget =  $WidgetName; 
-				}*/
-				
-				$Lieux = Lieux::byId($LieuxID);
+					$IconsWidget = "";
+					$Pictures_device = "";
+					$Device_id = $donneesDevice["Id"];
+					$Nom = $donneesDevice["Nom"];	
+					$Cmd_device_Id = $donneesDevice["Cmd_device_Id"];
+					$PinId = $donneesDevice["PinId"];
+					$CarteId = $donneesDevice["CarteId"];
+					$Request = $donneesDevice["Request"];
+					$History = $donneesDevice["History"];
+					$Cmd_type = $donneesDevice["Cmd_type"];
+					$CmdDeviceValue = $donneesDevice["Value"];
+					$CmdDeviceEtat = $donneesDevice["Etat"];
+					$CmdDeviceUnite = $donneesDevice["Unite"];
+					$DevicePosition = $donneesDevice["Position"];
+					$ModuleName = $donneesDevice["ModuleName"];
+					$WidgetId =  (empty($donneesDevice["WidgetId"])) ? $donneesDevice["ModuleId"] : $donneesDevice["WidgetId"];
+					$WidgetName = (empty($donneesDevice["WidgetName"])) ? $donneesDevice["ModuleName"] : $donneesDevice["WidgetName"];
+					$WidgetType = $donneesDevice["WidgetType"];
+					$Configuration =  $donneesDevice["Configuration"];
+					$Date = $donneesDevice["Date"];
+					$LieuxId = $donneesDevice["LieuxId"];
+					$LieuxName = $donneesDevice["Lieux"];
 
-				$LieuxName = $Lieux->get_Name();//$donneesDevice["Lieux"];
-				$LieuxImg = $Lieux->get_Img();//$donneesDevice["Img"];
-				$LieuxBackgd = $Lieux->get_Backgd();//$donneesDevice["Backgd"];
-				$CountPlanning = $donneesDevice["CountPlanning"];	
-				$LieuxWithoutSpace = SpaceToScore($LieuxName);
-				$NomWithoutSpace = SpaceToScore($Nom);
-				$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
+					/*if (!empty(json_decode($Configuration)->icons))
+					{*/
+						$IconsWidget = getJsonAttr($Configuration,"icons",$WidgetName);//json_decode($Configuration)->{'icons'};
+				/*}
+					else if ($IconsWidget == "")
+					{
+						$IconsWidget =  $WidgetName; 
+					}*/
 
-				$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+					$CountPlanning = $donneesDevice["CountPlanning"];	
+					$LieuxWithoutSpace = SpaceToScore($LieuxName);
+					$NomWithoutSpace = SpaceToScore($Nom);
+					$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
-				$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
+					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 
-				$data .= "<div class='widget DeviceDetail Corner'>";
-				$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
+					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
 
-				$data .= "<div class='PannelSettings'>";
+					$data .= "<div class='widget DeviceDetail Corner'>";
+					$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
 
-				if ($History == 1 )
-				{
-					$data .= "<i id='LastLog_".$cmd_device_format."' device_id='".$Device_id."' title='Last log' class='fas fa-history fa-fw pull-right visible-sm-*'></i>";	
-				}	
+					$data .= "<div class='PannelSettings'>";
 
-				if($Cmd_type == "Action")
-				{
-					$data .= "<i id='Calendar_".$cmd_device_format."' data-name='".$Nom."' data-cmddeviceId='".$Cmd_device_Id."' data-widget='".$WidgetName."' data-widgettype='".$WidgetName."' title='Calendar' class='far fa-calendar-alt fa-fw  pull-right visible-sm-* addSchedulerData' data-toggle='modal' data-target='#modal-planning-data'></i>";
+					if ($History == 1 )
+					{
+						$data .= "<i id='LastLog_".$cmd_device_format."' device_id='".$Device_id."' title='Last log' class='fas fa-history fa-fw pull-right visible-sm-*'></i>";	
+					}	
+
+					if($Cmd_type == "Action")
+					{
+						$data .= "<i id='Calendar_".$cmd_device_format."' data-name='".$Nom."' data-cmddeviceId='".$Cmd_device_Id."' data-deviceId='".$Device_id."' data-widget='".$WidgetName."' data-widgettype='".$WidgetType."' data-conf='".$Configuration."' title='Calendar' class='far fa-calendar-alt fa-fw  pull-right visible-sm-* addSchedulerData' data-toggle='modal' data-target='#modal-planning-data'></i>";
+					}
+
+					$data .= "</div>";
+
+					LoadTemplate();
+
+					$data .= "</div> ";
+					$data .= "</div> ";
 				}
-
-				$data .= "</div>";
-
-				LoadTemplate();
-
-				$data .= "</div> ";
-				$data .= "</div> ";
+			$data .= '</div>';
+			$data .= '</div>';
+			$data .= '</div>';
 			}
-			$data .= '</div>';
-			$data .= '</div>';
-			$data .= '</div>';
+		}
+		else
+		{
+			$LieuxWithDevice = Lieux::byVisibleWithDevice();
+			//$ListDeviceByLieux =  Device::getAllDeviceAndCmdVisible();
+
+			foreach($LieuxWithDevice as $Lieux)
+			{
+				$IconsWidget="";
+				$LieuxID = $Lieux->get_Id();
+				$LieuxNom =  $Lieux->get_Name();
+				$data .="<div class='DeviceContainer Corner col-xs-12 col-lg-6 col-md-6 col-sm-6' Lieux='".$LieuxID."' >";
+				$data .="<div class='SubContainer Corner'>";
+				$data .="<legend class='Corner'>";
+				$data .=  $LieuxNom;
+				$data .="</legend>";
+
+				$data .= "<div class='ContentLieux col-xs-12 col-lg-12 col-md-12 col-sm-12' id='DivLieux_".$LieuxID."'>";/*class='col-xs-12 col-lg-12 col-md-12 col-sm-12 col-sm-12'*/
+
+				$ListDeviceByLieux = Device::getAllDeviceAndCmdVisibleByLieux($LieuxID);
+
+				foreach($ListDeviceByLieux as $donneesDevice)
+				{
+					$IconsWidget = "";
+					$Pictures_device = "";
+					$Device_id = $donneesDevice["Id"];
+					$Nom = $donneesDevice["Nom"];	
+					$Cmd_device_Id = $donneesDevice["Cmd_device_Id"];
+					$PinId = $donneesDevice["PinId"];
+					$CarteId = $donneesDevice["CarteId"];
+					$Request = $donneesDevice["Request"];
+					$History = $donneesDevice["History"];
+					$Cmd_type = $donneesDevice["Cmd_type"];
+					$CmdDeviceValue = $donneesDevice["Value"];
+					$CmdDeviceEtat = $donneesDevice["Etat"];
+					$CmdDeviceUnite = $donneesDevice["Unite"];
+					$DevicePosition = $donneesDevice["Position"];
+					$ModuleName = $donneesDevice["ModuleName"];
+					$WidgetId =  (empty($donneesDevice["WidgetId"])) ? $donneesDevice["ModuleId"] : $donneesDevice["WidgetId"];
+					$WidgetName = (empty($donneesDevice["WidgetName"])) ? $donneesDevice["ModuleName"] : $donneesDevice["WidgetName"];
+					$WidgetType = $donneesDevice["WidgetType"];
+					$Configuration =  $donneesDevice["Configuration"];
+					$Date = $donneesDevice["Date"];
+
+					/*if (!empty(json_decode($Configuration)->icons))
+					{*/
+						$IconsWidget = getJsonAttr($Configuration,"icons",$WidgetName);//json_decode($Configuration)->{'icons'};
+				/*}
+					else if ($IconsWidget == "")
+					{
+						$IconsWidget =  $WidgetName; 
+					}*/
+					
+					$Lieux = Lieux::byId($LieuxID);
+
+					$LieuxName = $Lieux->get_Name();//$donneesDevice["Lieux"];
+					$LieuxImg = $Lieux->get_Img();//$donneesDevice["Img"];
+					$LieuxBackgd = $Lieux->get_Backgd();//$donneesDevice["Backgd"];
+					$CountPlanning = $donneesDevice["CountPlanning"];	
+					$LieuxWithoutSpace = SpaceToScore($LieuxName);
+					$NomWithoutSpace = SpaceToScore($Nom);
+					$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
+
+					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+
+					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
+
+					$data .= "<div class='widget DeviceDetail Corner'>";
+					$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
+
+					$data .= "<div class='PannelSettings'>";
+
+					if ($History == 1 )
+					{
+						$data .= "<i id='LastLog_".$cmd_device_format."' device_id='".$Device_id."' title='Last log' class='fas fa-history fa-fw pull-right visible-sm-*'></i>";	
+					}	
+
+					if($Cmd_type == "Action")
+					{
+						$data .= "<i id='Calendar_".$cmd_device_format."' data-name='".$Nom."' data-cmddeviceId='".$Cmd_device_Id."' data-deviceId='".$Device_id."' data-widget='".$WidgetName."' data-widgettype='".$WidgetType."' data-conf='".$Configuration."' title='Calendar' class='far fa-calendar-alt fa-fw  pull-right visible-sm-* addSchedulerData' data-toggle='modal' data-target='#modal-planning-data'></i>";
+					}
+
+					$data .= "</div>";
+
+					LoadTemplate();
+
+					$data .= "</div> ";
+					$data .= "</div> ";
+				}
+				$data .= '</div>';
+				$data .= '</div>';
+				$data .= '</div>';
+			}
 		}
 		echo $data;
 		?>

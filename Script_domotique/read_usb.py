@@ -10,8 +10,10 @@ import msql
 import pyudev
 from SendNotification import SendNotification
 
-#import ptvsd
-#ptvsd.enable_attach(secret = 'my_secret')
+# import ptvsd
+# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+# ptvsd.wait_for_attach()
+# ptvsd.break_into_debugger()
 
 print("####### READ USB - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
 
@@ -40,14 +42,9 @@ def ReadArduino():
     while True:
         try:
             x = ""
-            x = ser.readline()  # read one byte
+            x = ser.readline().decode();  # read one byte
             str_usb_read = x
-            mon_fichier = open("/home/ThiDom/Script crontab/debug/toto.txt", "a")
-            mon_fichier.write(getDate()+" : ")
-            mon_fichier.write(x)
-            mon_fichier.write("\r\n")
-            mon_fichier.close()
-            x = x.replace("\r\n", "")
+            x = x.strip()
 
             if ":" in x:
                 widget_type = ""
@@ -57,12 +54,13 @@ def ReadArduino():
                 SlaveCarteId = ""
                 cmd_device_ID = ""
                 lieux = ""
-
                 if "/" in x:
                     try:
                         x, SlaveCarteId = x.split("/")
                     except:
                         setError("Split /", x)
+                else:
+                    SlaveCarteId = "0"
                 try:
                     pinID, status = x.split(":")
                 except:
@@ -89,27 +87,14 @@ def ReadArduino():
                 widget_type = widget_type.strip()
                 status = status.strip()
                 value = value.strip()
+                
+                status = status.rstrip('0').rstrip('.') if '.' in status else status
+                value = value.rstrip('0').rstrip('.') if '.' in value else value
                 x = ""
 
                 if widget_type == "Alert":
                     Alert(str_usb_read)
                 else:
-                    if SlaveCarteId != "" and pinID != "":
-                        cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID, int(SlaveCarteId)))
-
-                    elif pinID != "":
-                        SlaveCarteId = "0"
-#                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
-                        cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=0 and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID))
-                    setHistory(SlaveCarteId, pinID, value, status)
-
-                    if status == 0 or status == "0":
-                        sstatus = "off"
-                    elif status == 1 or status == "1":
-                        sstatus = "on"
-                    else:
-                        status = status
-
                     try:
                         cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
                         for row in cursor.fetchall():
@@ -125,7 +110,28 @@ def ReadArduino():
                            # except ValueError, e:
                            #     Configuration = ''
 
-                        if cmd_device_ID != "":
+                        if cmd_device_ID != "":                            
+                            if SlaveCarteId != "" and pinID != "":
+                                cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID, int(SlaveCarteId)))
+
+                            elif pinID != "":
+                                SlaveCarteId = "0"
+        #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
+                                cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=0 and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID))
+                            setHistory(SlaveCarteId, pinID, value, status)
+                    
+                            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
+                            mon_fichier.write(getDate()+" : "+str_usb_read)
+                            mon_fichier.write("\r\n")
+                            mon_fichier.close()
+                            
+                            if status == 0 or status == "0":
+                                sstatus = "off"
+                            elif status == 1 or status == "1":
+                                sstatus = "on"
+                            else:
+                                sstatus = status
+
                             if widget_Id == "slider":
                                 value = ""
 
@@ -134,14 +140,15 @@ def ReadArduino():
 
                             # if 'Notification' in Configuration:
                             #    if Configuration['Notification'] == '1':
-                            if Notification == 1:
+                            if int(Notification) == 1:
                                 try:
                                     SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
                                 except:
                                     setError("Send Notification New Status")
                                     pass
                         else:
-                            NewDevice(SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
+                            if status == "-999":
+                                NewDevice(SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
                     except:
                         setError("New Status")
                         pass

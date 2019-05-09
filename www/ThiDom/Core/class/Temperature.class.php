@@ -99,11 +99,18 @@ class Temperature
 
 	public function GetTemperatureTest()
 	{
-		$sql = "SELECT Temperature_Test.date, Temperature_Test.temp, Temperature_Test.Lieux_Id, Temperature_Test.cmd_device_Id, Lieux.Nom as LieuxNom, cmd_device.Nom as cmd_deviceName, cmd_device.unite as cmd_deviceUnite FROM Temperature_Test
-				LEFT JOIN cmd_device on cmd_device.Id = Temperature_Test.cmd_device_Id
+		$sql = "SELECT HistoryData.Year
+					, HistoryData.Data
+					, HistoryData.Lieux_Id
+					, HistoryData.cmd_device_Id
+					, Lieux.Nom as LieuxNom
+					, cmd_device.Nom as cmd_deviceName
+					, cmd_device.unite as cmd_deviceUnite
+				FROM HistoryData
+				LEFT JOIN cmd_device on cmd_device.Id = HistoryData.cmd_device_Id
 				LEFT JOIN Device on Device.Id = cmd_device.Device_Id
-				LEFT JOIN Lieux on Lieux.Id = Temperature_Test.Lieux_Id
-				order by Temperature_Test.Lieux_Id, Temperature_Test.cmd_device_Id, Temperature_Test.date;";
+				LEFT JOIN Lieux on Lieux.Id = HistoryData.Lieux_Id
+				ORDER BY HistoryData.Lieux_Id, HistoryData.cmd_device_Id, HistoryData.Year;";
 		return db::execQuery($sql);
 	}
 

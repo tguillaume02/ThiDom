@@ -94,7 +94,7 @@ function setJsonAttr($_attr, $_key, $_value = null) {
     $_attr = json_encode($attr/*, JSON_UNESCAPED_UNICODE*/);
     }
   } else {
-    if ($_attr == '' || !is_json($_attr)) {
+    if (($_attr == '' || $_value === null) || !is_json($_attr)) {
       $attr = array();
     } else {
       $attr = json_decode($_attr, true);

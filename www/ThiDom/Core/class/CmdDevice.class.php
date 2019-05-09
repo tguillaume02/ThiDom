@@ -106,6 +106,31 @@ class CmdDevice
 		WHERE Visible=:Visible';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
+	
+	public static function byDataRequest($data, $contains=0)
+	{
+		if ($contains == 1)
+		{
+			$data = '%'.$data.'%';
+		}
+
+		$values = array(
+			':data' => $data,
+			);
+			
+		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
+		FROM '.self::table_name;
+
+		if ($contains == 1)
+		{
+			$sql .= ' WHERE Request like :data';
+		}
+		else
+		{
+			$sql .= ' WHERE Request=:data';
+		}
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
+	}
 
 	public function GetCmdId($Name,$Device_Id)
 	{
@@ -123,6 +148,15 @@ class CmdDevice
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 				FROM '.self::table_name;
 
+		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
+	}	
+
+	public function GetAllCmdDeviceWithLieux()
+	{		
+		$sql = "SELECT cmd_device.*, Lieux.Nom as LieuxNom
+				FROM ".self::table_name ."				
+				INNER JOIN Device on Device.Id =  ".self::table_name.".Device_Id
+				INNER JOIN Lieux on Lieux.Id = Device.Lieux_Id";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
@@ -159,16 +193,16 @@ class CmdDevice
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
-	public function byDevice_IdWithCmd($Device_Id)
+	public function byCmdId_WithCmd($CmdId)
 	{
 		$values = array(
-			':Id' => $Device_Id
+			':Id' => $CmdId
 			);
 		$sql = 'SELECT cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName
 					FROM cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
 					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
-				WHERE cmd_device.Device_Id  = :Id ';
+				WHERE cmd_device.Id  = :Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
@@ -181,6 +215,12 @@ class CmdDevice
 			);	
 		$req = "UPDATE cmd_device set Value=:value, Etat=:Etat WHERE Device_ID=:Id" ;
 		db::execQuery($req,$values);
+	}
+
+	public function Update_CmdDeviceName()
+	{
+		$req = "UPDATE cmd_device INNER JOIN Device ON Device.Id = cmd_device.Device_Id SET cmd_device.Nom = Device.Nom  WHERE cmd_device.Nom = 'New Device';";
+		db::execQuery($req, []);
 	}
 
 	public function Update_Device_Value($DeviceId, $Value, $Etat, $Name1)
@@ -224,6 +264,22 @@ class CmdDevice
 				db::execQuery($req,$ValUpdate);
 			}*/
 		/*}*/
+	}
+
+	public function Update_Request($Id,$colonne,$value)
+	{
+		/*
+		$RequestJson = json_decode($Request, true);		
+		$RequestJson[$colonne] = $value;
+		$json = json_encode($RequestJson);*/
+
+		$values = array(
+			":Id" => $Id,
+			':value' => cmdDevice::byId($Id)->set_request($colonne, $value)->get_Request()
+			);			
+		$req = "UPDATE cmd_device set Request=:value WHERE Id=:Id" ;		
+		db::execQuery($req,$values);
+		
 	}
 
 	public function Update_Any_Value_By_id($Id,$colonne,$value)
@@ -293,6 +349,7 @@ class CmdDevice
 	public function set_request($key, $value)
 	{		
 		$this->Request = setJsonAttr($this->Request, $key, $value);
+		return $this;
 	}
 
 	public function set_value($value)
@@ -386,15 +443,22 @@ class CmdDevice
 	{
 		return $this->sensor_attachId;
 	}
-
+	
 	public function get_Type()
 	{
 		return $this->Type;
 	}
 
-	public function get_Request()
+	public function get_Request($RequestName="")
 	{
-		return $this->Request;
+		if ($RequestName != "")
+		{
+			return json_decode($this->Request)->$RequestName;
+		}
+		else
+		{
+			return $this->Request;
+		}
 	}
 
 	public function get_Value()
@@ -448,6 +512,11 @@ class CmdDevice
 		return $this->Notification;
 	}
 
+	public function get_WidgetId()
+	{
+		return $this->Widget_Id;
+	}
+
 	public function save()
 	{
 		if ($this->get_Name() == '')
@@ -490,68 +559,39 @@ class CmdDevice
 		//return db::save($this);
 	}
 
-	public function showCommandeListHtml($deviceId)
+	public function showCommandeListHtml($deviceId, $toggleValue="", $dataParam="")
 	{
-		$CmdOfDevice = CmdDevice::byDevice_Id($deviceId);
-		$CmdDeviceList = "";
-		foreach($CmdOfDevice as $Cmd)
-		{			
-			$CmdDeviceList .= '
-						<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" style="margin-bottom: 1vh;">
-							<div class="row">
-								<div class="col-xs-2 col-sm-2 col-md-2 col-lg-3">
-								'.$Cmd->get_Name().'
-								</div>
-								<div class="col-xs-10 col-sm-12 col-md-12 col-lg-9">      
-									<label class="btn btn-success">
-										  <input type="checkbox" name="Visible" id="cmddevice-visible" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_Visible() ? "checked" : "").'>
-										  Visible
-									</label>
-									<label class="btn btn-success">
-										<input type="checkbox" name="History" id="cmddevice-historiser" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_History()? "checked" : "").'>
-										Historiser
-									</label>	
-									<label class="btn btn-success">
-										<input type="checkbox" name="Notification" id="cmddevice-notification" cmdid ="'.$Cmd->get_Id().'" '.($Cmd->get_Notification() ? "checked" : "").'>
-										Notification
-									</label>
-									<label class="col-sm-5 col-xs-6 col-md-12 col-lg-5" style="padding: 0;">Remise à Zero / màj : </label>
-									<div class="col-sm-5 col-xs-5 col-md-5 col-lg-5" style="padding: 0;">
-										<input type="time" class="form-control" id="raz-value" step="1" name="RAZ" placeholder="Remise à zero apres: HH:MM:SS" cmdid ="'.$Cmd->get_Id().'" value="'.gmdate("H:i:s", $Cmd->get_RAZ()).'">
-									</div>																		
-									<div class="form-group">
-										<label for="unite-value" class="col-sm-5 col-xs-6 col-md-12 col-lg-5" style="padding: 0;">Unité : </label>
-										<div class="col-sm-5 col-xs-5 col-md-5 col-lg-5" style="padding: 0;">
-											<input class="form-control" id="cmddevice-unit" name="unite" cmdid ="'.$Cmd->get_Id().'" value="'.$Cmd->get_Unite().'" placeholder="°c, °f, MW, Mb , %, ...">
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>';		
-							/*<div class="col-lg-2 col-md-6 col-sm-6 col-xs-12">
-								<div class="row">			
-									<div class="class=" col-lg-12="" col-md-12="" col-sm-12="">
-										<label class="btn btn-success">
-											<input type="checkbox" name="DeviceHistoriser" id="device-historiser" value="0">Historiser
-										</label>			
-									</div>
-								</div>
-					      	</div>
-							<div class="col-lg-2 col-md-6 col-sm-6 col-xs-12">
-								<div class="row">
-									<div class="class=" col-lg-12="" col-md-12="" col-sm-12="">
-										<label class="btn btn-success">
-											<input type="checkbox" name="DeviceNotification" id="device-notification" value="0">Notification
-										</label>			
-									</div>
-								</div>
-							</div>*/
-		}
+		require(__DIR__."/../../Desktop/Template_CmdConfiguration.php");
+	}
 
-		if ($CmdDeviceList != "")
-		{
-			echo '<div class="row">'.$CmdDeviceList.'</div>';
-		}
+	public function getDesactivateConditions($cmd_device_id)
+	{
+		$dataDesactivateConditions =  '<div class="form-group">
+		<label for="hysteresis" class="col-lg-2 control-label">Desactiver si </label>	
+		<div class="control-group">
+			<div class="controls form-inline">
+				<select id="sensorToDesactivate" name="sensorToDesactivate"  cmdid="'.$cmd_device_id.'" class="form-control">
+					<option value="">-</option>';
+					$cmdDeviceToAttachArray = self::GetAllCmdDeviceWithLieux();
+					foreach($cmdDeviceToAttachArray as $donneesCmdDevice)
+					{								
+						$isDefined = "";
+						/*if ()
+						{
+							$isDefined = "selected";
+						}*/
+						$dataDesactivateConditions.= "<option value='" . $donneesCmdDevice["Id"] . "' ".$isDefined.">" . $donneesCmdDevice["Nom"] . " - ". $donneesCmdDevice["LieuxNom"] ."</option>"; 
+					}
+		$dataDesactivateConditions.= '</select>
+					<select id="list-valueEtat-desactivateConditions" cmdid="'.$cmd_device_id.'" class="form-control">
+						<option value="value">Value =</option>
+						<option value="Etat">Etat = </option>
+					</select>
+					<input id="Data-valueEtat-desactivateConditions"  cmdid="'.$cmd_device_id.'" class="form-control"></input>
+				</div>
+			</div>
+		</div>';
+		return $dataDesactivateConditions;
 	}
 }
 ?>

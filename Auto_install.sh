@@ -71,22 +71,42 @@ install_dependance() {
 	sudo apt-get install libexpat1 -y
 	sudo apt-get install ssl-cert -y
 	sudo apt-get install mysql-server -y
+	sudo apt-get install python -y
 	sudo apt-get install python-mysqldb -y
 	sudo apt-get install python-serial -y
+	sudo apt-get install python3 -y
+	sudo apt-get install python3-mysqldb -y
+	sudo apt-get install python3-serial -y
+	# sudo apt-get install python-jinja2 -y
+	sudo apt-get install python-pip -y
+	sudo apt-get install python3-pip -y
+	sudo apt-get install python-certbot-apache -y
+	sudo apt-get install python3-certbot-apache -y
+	sudo apt-get install python-opencv -y
+	sudo apt-get install python3-opencv -y
+	sudo pip install -U pip 
+	sudo pip install -U tweepy
+	sudo pip install -U httplib2
+	sudo pip install -U imutils
+	sudo pip install -U pyudev
+	sudo pip install -U --upgrade google-api-python-client
+	sudo pip install -U requests
+	sudo pip install -U unidecode
+	sudo pip install -U urllib3
+	sudo pip install -U ptvsd
+	
+	sudo pip3 install -U tweepy
+	sudo pip3 install -U httplib2
+	sudo pip3 install -U imutils
+	sudo pip3 install -U pyudev
+	sudo pip3 install -U --upgrade google-api-python-client
+	sudo pip3 install -U requests
+	sudo pip3 install -U unidecode
+	sudo pip3 install -U urllib3	
+	sudo pip3 install -U ptvsd
+
 	sudo apt-get install fail2ban -y
 	sudo apt-get install htop -y
-	sudo apt-get install python-jinja2 -y
-	sudo apt-get install python-pip -y
-	sudo apt-get install python-certbot-apache -y
-	sudo apt-get install python-opencv -y
-	sudo pip install -U pip 
-	sudo pip install tweepy
-	sudo pip install httplib2
-	sudo pip install imutils
-	sudo pip install pyudev
-	sudo pip install --upgrade google-api-python-client
-	sudo pip install requests
-	sudo pip install unidecode
 	install_php
 	sudo apt-get install ca-certificates -y
 	sudo apt-get install ntpdate -y
@@ -102,6 +122,9 @@ install_dependance() {
 			#fi
 		#done
 	#fi
+	if command -v python3 &>/dev/null; then
+		alias python=python3
+	fi
 		
 	sudo apt-get autoremove -y 
 	sudo apt-get autoclean -y 
@@ -112,6 +135,7 @@ install_dependance() {
 
 install_php() {
 	sudo apt-get install php7.0 -y 
+	sudo apt-get install php7.0-common -y
 	sudo apt-get install php7.0-curl -y 
 	sudo apt-get install php7.0-gd -y
 	sudo apt-get install php7.0-imap -y
@@ -123,7 +147,6 @@ install_php() {
 	sudo apt-get install php7.0-soap -y
 	sudo apt-get install php7.0-xmlrpc -y
 	sudo apt-get install libapache2-mod-php7.0 -y
-	sudo apt-get install php7.0-common -y
 	sudo apt-get install php7.0-dev -y
 	sudo apt-get install php7.0-zip -y
 	sudo apt-get install php7.0-ssh2 -y
@@ -149,15 +172,20 @@ install_php() {
 		sudo pecl channel-update pecl.php.net 
 		yes '' | pecl install -fs zendopcache-7.0.3
 		#for i in fpm cli ; do
-		for file in $(find /etc/ -iname php.ini -type f); do
-			echo "zend_extension=opcache.so" >> ${file}
-			echo "opcache.memory_consumption=256"  >> ${file}
-			echo "opcache.interned_strings_buffer=8"  >> ${file}
-			echo "opcache.max_accelerated_files=4000"  >> ${file}
-			echo "opcache.revalidate_freq=1"  >> ${file}
-			echo "opcache.fast_shutdown=1"  >> ${file}
-			echo "opcache.enable_cli=1"  >> ${file}
-			echo "opcache.enable=1"  >> ${file}
+		for file in $(find /etc/ -iname php.ini -type f); do		
+    		sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
+			sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+			sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+    		sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+			sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1			
+			#echo "zend_extension=opcache.so" >> ${file}
+			#echo "opcache.memory_consumption=256"  >> ${file}
+			#echo "opcache.interned_strings_buffer=8"  >> ${file}
+			#echo "opcache.max_accelerated_files=4000"  >> ${file}
+			#echo "opcache.revalidate_freq=1"  >> ${file}
+			#echo "opcache.fast_shutdown=1"  >> ${file}
+			#echo "opcache.enable_cli=1"  >> ${file}
+			#echo "opcache.enable=1"  >> ${file}
 		done
 		#done
 	else
@@ -167,15 +195,11 @@ install_php() {
 		echo "********************************************************${NORMAL}"
 
 		for file in $(find /etc/ -iname php.ini -type f); do
-			echo "zend_extension=opcache.so" >> ${file}
-			echo "opcache.memory_consumption=256"  >> ${file}
-			echo "opcache.interned_strings_buffer=8"  >> ${file}
-			echo "opcache.max_accelerated_files=4000"  >> ${file}
-			echo "opcache.revalidate_freq=1"  >> ${file}
-			echo "opcache.fast_shutdown=1"  >> ${file}
-			echo "opcache.enable_cli=1"  >> ${file}
-			echo "opcache.enable=1"  >> ${file}
-			echo "opcache.file_cache= .opcache" >>  ${file}
+			sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
+			sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+			sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+    		sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+			sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1	
 		done
 	fi	
 	sudo apt-get install php-curl -y
@@ -300,8 +324,8 @@ sudo mkdir /home/ThiDom
 sudo mkdir /home/ThiDom/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/ThiDom/Script\ crontab/
 sudo chmod +x /home/ThiDom/Script\ crontab/*
-sudo chmod 666 /home/ThiDom/Script\ crontab/*
-
+sudo chmod 755 /home/ThiDom/Script\ crontab/*
+sudo chmod 655 /home/ThiDom/Script\ crontab/debug/*
 
 sudo mkdir /home/ThiDom/Script_domotique/
 sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/ThiDom/Script_domotique/

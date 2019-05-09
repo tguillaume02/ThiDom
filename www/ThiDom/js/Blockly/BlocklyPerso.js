@@ -246,7 +246,7 @@ Blockly.Blocks.logic_timevalue = {
   init: function() {
     this.setColour(230);
     this.appendDummyInput()
-    .appendField(new Blockly.FieldTextInput('00:00',
+    .appendField(new Blockly.FieldTextInput('00:00:00',
       this.TimeValidator), 'TEXT');
     this.setOutput(true, 'String');
     this.setTooltip(Blockly.Msg.LOGIC_BOOLEAN_TOOLTIP);
@@ -254,13 +254,13 @@ Blockly.Blocks.logic_timevalue = {
 };
 
 Blockly.Blocks.logic_timevalue.TimeValidator = function(text) {
-  if (text.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/)) 
+  if (text.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]/)) 
   {
     return text;
   }
   else
   {
-    return "00:00";
+    return "00:00:00";
   }
 };
 

@@ -1,6 +1,4 @@
-<?php 
-	include_once dirname(__FILE__) .'/../Core/Security.php';
-?>
+<?php include_once dirname(__FILE__) .'/../Core/Security.php';  ?>
 <div id="modal-planning-data"  class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -14,6 +12,7 @@
 					<div>
 						<div class="form-group">
 							<input id="planning-cmddeviceId" type="text" name="cmddeviceId" style="display: none;"/>
+							<input id="planning-deviceId" type="text" name="deviceId" style="display: none;"/>
 							<input id="planning-planningId" type="text" name="planningId" style="display: none;"/>
 						</div>
 						
@@ -32,11 +31,12 @@
 						<hr>
 
 						<h4><span><u>Action</u></span></h4>
-						<table class="WidgetContent">
+						<table class="WidgetContent" style="width:100%">
 							<tbody>
 								<tr>
-
-									<!-- FOR ON / OFF -->
+									<td id="DisplayDesign" class="widgetType"></td>
+									
+									<!-- FOR ON / OFF --><!--
 									<td class="Binary Relay widgetType">
 										<label class="btn btn-success">
 											<input type="radio" name="commande" id="action-on" value="1" />On
@@ -44,7 +44,7 @@
 										<label class="btn btn-danger">
 											<input type="radio" name="commande" id="action-off" value="0" />Off
 										</label>
-									</td>
+									</td>-->
 
 									<!-- FOR COLOR-->
 									<td class="Color RGB widgetType">
@@ -52,14 +52,14 @@
 									</td>
 
 									<!-- FOR SLIDER  -->
-									<td class="Slider Thermostat Dimmer widgetType">
+									<!--<td class="Slider Thermostat Dimmer widgetType">
 										<div class="div_btn_device Corner" style="background-color: transparent; user-select: none; cursor: default;">
 											<div id="planning-info-slider" class="img-circle img_btn_device circle" name="commande" readonly value="15">
 										</div>
 									</td>
 									<td class="Slider Thermostat Dimmer widgetType" style="width: 80%;padding: 15px;">
-										<input class="bar" value="0" type="range" step="0.5" min="15" max="30" id="planning-slider" onchange="$('#planning-info-slider').val(this.value);">
-									</td>
+										<input class="bar"  name="commande" value="0" type="range" step="0.5" min="15" max="30" id="planning-slider" oninput="$('#planning-info-slider').html(this.value); $('#planning-info-slider').attr('value',this.value)">
+									</td>-->
 
 									<!-- FOR TEXT-->
 									<td class="Text Numeric widgetType">
@@ -71,19 +71,19 @@
 						<hr>						
 						
 						<div class="form-group">
-							<label style="" class="col-xs-3 col-sm-3 control-label">Jour / Heure<</label>
-							<div class="col-xs-3 col-sm-3 col-md-2">
+							<label style="" class="col-xs-4 col-sm-3 control-label">Jour / Heure</label>
+							<div class="col-xs-7 col-sm-3 col-md-5">
 								<input type="text" id="planning-datetime" name="dateheure" class="form-control">
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label style="" class="col-xs-3 col-sm-3 control-label">Répéter tous les</label>
+							<label style="" class="col-xs-4 col-sm-3 control-label">Répéter tous les</label>
 							<div class="col-xs-3 col-sm-3 col-md-2">
-								<input class="form-control">
+								<input class="form-control" name="eachTime">
 							</div>
 							<div class="col-xs-5 col-sm-5 col-md-5">
-								<select class="form-control">
+								<select class="form-control" name="eachPeriod">
 									<option value="minutes">Minutes(s)</option>
 									<option value="hours">Heure(s)</option>
 									<option value="days" selected="">Jour(s)</option>
@@ -175,23 +175,66 @@
 		{
 			deviceWidget = $(e.relatedTarget).data("widget");
 			deviceWidgetType = $(e.relatedTarget).data("widgettype");
+			//deviceConf = $(e.relatedTarget).data("conf");
 			deviceName = $(e.relatedTarget).data("name");
 			cmddeviceId = $(e.relatedTarget).data("cmddeviceid");
+			deviceId = $(e.relatedTarget).data("deviceid");
+
+			if (deviceWidgetType != "")
+			{
+				widgetDesign_url = "Core/widgetDesign/"+deviceWidgetType+"/"+deviceWidgetType+"DesignScheduler.php";
+			}
+			else if (deviceWidget != "")
+			{
+				widgetDesign_url = "Core/plugins/"+deviceWidget+"/Desktop/"+deviceWidget+"Scheduler.php";
+			}
+
+			
+			var requestGetDesign = $.ajax({
+				type: 'POST',
+				url: widgetDesign_url,
+				data: {
+					mode: 'Schedule',
+					deviceId: deviceId,
+					deviceWidgetType: deviceWidgetType
+				}
+			});
+
+			requestGetDesign.done(function (data) {
+				$("#DisplayDesign").empty();
+				$("#DisplayDesign").append(data);
+				$("#DisplayDesign").show();
+			});
+
+			 		
+			/*$("#planning-info-slider").val(deviceConf.min);
+			$("#planning-info-slider").html(deviceConf.min);	
+			$("#planning-slider").val(deviceConf.min);		
+			$("#planning-slider").attr("min",deviceConf.min)
+			$("#planning-slider").attr("max",deviceConf.max)	*/
+
 			$("#planning-save").show(); 
 			$("#planning-device-name").html(deviceName);
+			$("#planning-deviceId").val(deviceId);
 			$("#planning-cmddeviceId").val(cmddeviceId);
 			$('#modal-planning-data .widgetType').hide();
 			$('#modal-planning-data #DeleteScheduler').hide();
-			$("#modal-planning-data ."+deviceWidget+".widgetType").show();
+			$("#modal-planning-data ."+deviceWidgetType+".widgetType").show();
 		}
-	}).on("hidden.bs.modal", function (e) { 
-		$("#planning-info-slider").val("15");
-		$("#planning-slider").val("15");		
+	}).on("hidden.bs.modal", function (e)
+	{ 		
+		/*$("#planning-info-slider").val(deviceConf.min);
+		$("#planning-info-slider").html(deviceConf.min);	
+		$("#planning-slider").val(deviceConf.min);		
+		$("#planning-slider").attr("min",deviceConf.min)
+		$("#planning-slider").attr("max",deviceConf.max)	*/
+
 		$("#text-button-save").html(" Add");
 		$("#active").prop("checked", false);
 		$(".Action input").prop("checked", false);
 		$(".SchedulerDays").prop("checked", false);
 		$("#planning-datetime").val("");
+		$("#planning-deviceId").val();
 		$("#planning-cmddeviceId").val("");
 		$("#planning-device-name").html("");
 		$("#planning-planningId").val("");

@@ -7,6 +7,7 @@ class Module
 	public $ModuleName;
 	public $ModuleType;
 	public $ModuleConfiguration;
+	public $ApiKey;
 
 	public function byId($id)
 	{
@@ -26,7 +27,7 @@ class Module
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE ModuelName=:name';
+		WHERE ModuleName=:name';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);		
 	}
 
@@ -50,18 +51,38 @@ class Module
 				WHERE Device.Id=:DeviceId";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
+
+	public function apiAccess($apikey="", $module="")
+	{
+		if (trim($apikey) == '')
+		{
+			return false;
+		}
+				
+		$_apikey = self::byName($module)->get_apiKey();
+		if ($apikey == $_apikey)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
 	
 	public function SaveModule(int $Id, string $Name, string $Type, string $Configuration = "")
 	{	
-		if ($Id == "")
+		if ($Id == -1)
 		{
 			$values = array(
 				':Name' => $Name,
 				':Type' => $Type,
-				':Configuration' => $Configuration
+				':Configuration' => $Configuration,
+				':ApiKey' => bin2hex(random_bytes(45))
 				);
 
-			$sql = "INSERT INTO Module_Type (ModuleName, ModuleType, ModuleConfiguration) VALUES (:Name, :Type, :Configuration)";
+			$sql = "INSERT INTO Module_Type (ModuleName, ModuleType, ModuleConfiguration, ApiKey) VALUES (:Name, :Type, :Configuration, :ApiKey)";
 			db::execQuery($sql,$values);
 
 			$msg = "Le Module ".$Name." a bien été ajouté";
@@ -86,6 +107,20 @@ class Module
 		}
 	}
 
+	function DeleteModule(int $Id, string $Name)
+	{
+		$values = array(
+			':Id' => $Id
+			);
+
+		$sql = "DELETE FROM Module_Type WHERE ID=:Id";
+		db::execQuery($sql, $values);
+
+		$msg = "Le Module ".$Name." a bien été supprimé";
+		$value = Array( "msg"=>$msg, "clear"=>"on", "moduleId" => $Id, "refresh"=>true);
+		return json_encode($value);
+	}
+
 	public function ModuleNewId()
 	{		
 		$sql = "SELECT MAX(Id) as Id FROM Module_Type";
@@ -94,58 +129,70 @@ class Module
 
 	public function List_usb($_name="")
 	{
+		$usbMapping = array();
 		foreach (ls('/dev/', 'ttyUSB*') as $usb)
 		{
 			$vendor = '';
 			$model = '';
+			$baudrate = '';
 			foreach (explode("\n", shell_exec('/sbin/udevadm info --name=/dev/' . $usb . ' --query=all')) as $line)
 			{
-				if (strpos($line, 'E: ID_MODEL=') !== false)
+				if (strpos($line, 'E: ID_MODEL_FROM_DATABASE=') !== false)
 				{
-					$model = trim(str_replace(array('E: ID_MODEL=', '"'), '', $line));
+					$model = trim(str_replace(array('E: ID_MODEL_FROM_DATABASE=', '"'), '', $line));
 				}
-				if (strpos($line, 'E: ID_VENDOR=') !== false)
+				if (strpos($line, 'E: ID_VENDOR_FROM_DATABASE=') !== false)
 				{
-					$vendor = trim(str_replace(array('E: ID_VENDOR=', '"'), '', $line));
+					$vendor = trim(str_replace(array('E: ID_VENDOR_FROM_DATABASE=', '"'), '', $line));
+				}
+				if (strpos($line, 'E: ID_MODEL_ID=') !== false)
+				{
+					$modelid = trim(str_replace(array('E: ID_MODEL_ID=', '"'), '', $line));
+				}
+				if (strpos($line, 'E: ID_VENDOR_ID=') !== false)
+				{
+					$vendorid = trim(str_replace(array('E: ID_VENDOR_ID=', '"'), '', $line));
 				}
 			}
-			if ($vendor == '' && $model == '')
+			if ($vendor != '' && $model != '')
 			{
-				$usbMapping['/dev/' . $usb] = '/dev/' . $usb;
-			} else
-			{
-				$name = trim($vendor . '_' . $model);
-				$number = 2;
-				while (isset($usbMapping[$name])) {
-					$name = trim($vendor . '_' . $model . '_' . $number);
-					$number++;
-				}
-				$usbMapping[$name] = '/dev/' . $usb;
+				$baudrate = shell_exec('stty -F /dev/' . $usb . ' speed');
+				$usbMapping[] = array("link"=>'/dev/' . $usb, "model"=>$model, "vendor"=>$vendor, "modelid"=>$modelid, "vendorid"=>$vendorid, "baudrate"=>$baudrate);
 			}
+
 		}				
 
-		foreach (ls('/dev/', 'ttyACM*') as $value)
+		foreach (ls('/dev/', 'ttyACM*') as $usb)
 		{
-			$usbMapping['/dev/' . $value] = '/dev/' . $value;
+			$vendor = '';
+			$model = '';
+			$baudrate = '';
+			foreach (explode("\n", shell_exec('/sbin/udevadm info --name=/dev/' . $usb . ' --query=all')) as $line)
+			{
+				if (strpos($line, 'E: ID_MODEL_FROM_DATABASE=') !== false)
+				{
+					$model = trim(str_replace(array('E: ID_MODEL_FROM_DATABASE=', '"'), '', $line));
+				}
+				if (strpos($line, 'E: ID_VENDOR_FROM_DATABASE=') !== false)
+				{
+					$vendor = trim(str_replace(array('E: ID_VENDOR_FROM_DATABASE=', '"'), '', $line));
+				}
+				if (strpos($line, 'E: ID_MODEL_ID=') !== false)
+				{
+					$modelid = trim(str_replace(array('E: ID_MODEL_ID=', '"'), '', $line));
+				}
+				if (strpos($line, 'E: ID_VENDOR_ID=') !== false)
+				{
+					$vendorid = trim(str_replace(array('E: ID_VENDOR_ID=', '"'), '', $line));
+				}
+			}
+			if ($vendor != '' && $model != '')
+			{
+				$baudrate = shell_exec('stty -F /dev/' . $usb . ' speed');
+				$usbMapping[] = array("link"=>'/dev/' . $usb, "model"=>$model, "vendor"=>$vendor, "modelid"=>$modelid, "vendorid"=>$vendorid, "baudrate"=>$baudrate);
+			}
 		}
-				
-		if ($_name != '')
-		{
-			if (isset($usbMapping[$_name]))
-			{
-				return $usbMapping[$_name];
-			}
-			$usbMapping = self::List_usb('');
-			if (isset($usbMapping[$_name]))
-			{
-				return $usbMapping[$_name];
-			}
-			if (file_exists($_name))
-			{
-				return $_name;
-			}
-			return 'no found';
-		}
+			
 		return $usbMapping;
 	}
 
@@ -174,6 +221,11 @@ class Module
 	public function get_ModuleConfiguration()
 	{
 		return $this->ModuleConfiguration;
+	}
+
+	public function get_apiKey()
+	{
+		return $this->ApiKey;
 	}
 
 	public function get_ModuleSpecificConf($specificConf)

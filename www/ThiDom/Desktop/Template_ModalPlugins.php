@@ -84,9 +84,15 @@
 		else if ($('form#new-plugins').is(":visible"))
 		{
 			bFormValidate = $('form#new-plugins')[0].reportValidity();
+			pluginsName = "";
 			if (bFormValidate)
 			{
-				
+				pluginsName = $("#new-plugins #list-new-plugins option:selected").text();
+				pluginsVal = $("#new-plugins #list-new-plugins option:selected").val();
+				if (pluginsVal != "")
+				{
+					SavePlugins(-1, pluginsName, "", "");					
+				}
 			}
 		}
 	});
