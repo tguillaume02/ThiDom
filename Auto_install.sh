@@ -84,6 +84,9 @@ install_dependance() {
 	sudo apt-get install python3-certbot-apache -y
 	sudo apt-get install python-opencv -y
 	sudo apt-get install python3-opencv -y
+	sudo apt-get install libcurl4-openssl-dev libssl-dev
+	
+	sudo pip install --upgrade pip
 	sudo pip install -U pip 
 	sudo pip install -U tweepy
 	sudo pip install -U httplib2
@@ -94,6 +97,9 @@ install_dependance() {
 	sudo pip install -U unidecode
 	sudo pip install -U urllib3
 	sudo pip install -U ptvsd
+	sudo pip install -U pycurl
+	sudo pip install -U pyOpenSSL
+
 	
 	sudo pip3 install -U tweepy
 	sudo pip3 install -U httplib2
@@ -104,6 +110,8 @@ install_dependance() {
 	sudo pip3 install -U unidecode
 	sudo pip3 install -U urllib3	
 	sudo pip3 install -U ptvsd
+	sudo pip3 install -U pycurl
+	sudo pip3 install -U pyOpenSSL
 
 	sudo apt-get install fail2ban -y
 	sudo apt-get install htop -y
@@ -111,7 +119,8 @@ install_dependance() {
 	sudo apt-get install ca-certificates -y
 	sudo apt-get install ntpdate -y
 	sudo apt-get install mailutils mpack -y
-	sudo apt-get install ssmtp -y
+	sudo apt-get install msmtp msmtp-mta -y
+	sudo apt-get install rng-tools -y
 
 	#pecl install oauth
 	#if [ $? -eq 0 ] ; then
@@ -364,12 +373,12 @@ sed -i 's/{{pwdsql}}/'${bdd_password}'/' /home/ThiDom/Script_domotique/msql.py
 sed -i 's/{{usersql}}/thidom/' /home/ThiDom/Script_domotique/msql.py
 sed -i 's/{{bddsql}}/thidom/' /home/ThiDom/Script_domotique/msql.py
 
-echo ""
-echo "${VERT}"
-echo "${msg_id_notify}"
-read idnotify < /dev/tty
+# echo ""
+# echo "${VERT}"
+# echo "${msg_id_notify}"
+# read idnotify < /dev/tty
 
-sed -i 's/{{idnotify}}/'${idnotify}'/' /home/ThiDom/Script_domotique/msql.py
+# sed -i 's/{{idnotify}}/'${idnotify}'/' /home/ThiDom/Script_domotique/msql.py
 
 echo "${VERT}********************************************************"
 echo "${msg_setup_apache}"

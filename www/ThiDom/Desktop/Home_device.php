@@ -9,6 +9,7 @@ function LoadTemplate()
 			$LieuxWithoutSpace,
 			$Device_id,
 			$AddDate,
+			$AddBattery,
 			$IconsWidget,
 			$CmdDeviceEtat,
 			$Cmd_Type,
@@ -18,29 +19,38 @@ function LoadTemplate()
 			$Cmd_type,
 			$WidgetName,
 			$WidgetType;
-	
-	$plugins_url = "../Core/plugins/".$WidgetName."/Desktop/".$WidgetName.".php";
-	$widgetDesign_url = "../Core/widgetDesign/".$WidgetType."/".$WidgetType."Design.php";
-	$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
+	$plugins_url = "../Core/plugins/".$WidgetName."/Desktop/".$WidgetName.".php";
+	$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 	if (file_exists($plugins_url))
 	{		
 		ob_start();
 		include $plugins_url;
 		$data .=  ob_get_clean();
 	}
-	elseif (file_exists($widgetDesign_url)) // Text : Numeric // Slider: Dimmer || Thermostat // Color: RGB //
-	{
-		ob_start();
-		include $widgetDesign_url;
-		$data .=  ob_get_clean();
-	}
 	else
 	{
-		$widgetDesign_url = "../Core/widgetDesign/Default/DefaultDesign.php";
-		ob_start();
-		include $widgetDesign_url;
-		$data .=  ob_get_clean();
+		$ListCmdDeviceByDeviceId = CmdDevice::byDevice_Id_WithCmd($Device_id);
+		foreach($ListCmdDeviceByDeviceId as $donneesDevice)
+		{
+			$WidgetType= $donneesDevice["WidgetType"];
+			$Cmd_device_Id= $donneesDevice["Id"];
+
+			$widgetDesign_url = "../Core/widgetDesign/".$WidgetType."/".$WidgetType."Design.php";
+			if (file_exists($widgetDesign_url)) // Text : Numeric // Slider: Dimmer || Thermostat // Color: RGB //
+			{
+				ob_start();
+				include $widgetDesign_url;
+				$data .=  ob_get_clean();
+			}
+			else
+			{
+				$widgetDesign_url = "../Core/widgetDesign/Default/DefaultDesign.php";
+				ob_start();
+				include $widgetDesign_url;
+				$data .=  ob_get_clean();
+			}
+		}
 	}
 }
 ?>
@@ -114,7 +124,7 @@ function LoadTemplate()
 
 					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 
-					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
+					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." ModuleType=".$ModuleName." >";
 
 					$data .= "<div class='widget DeviceDetail Corner'>";
 					$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
@@ -167,6 +177,7 @@ function LoadTemplate()
 				{
 					$IconsWidget = "";
 					$Pictures_device = "";
+					$AddBattery = "";
 					$Device_id = $donneesDevice["Id"];
 					$Nom = $donneesDevice["Nom"];	
 					$Cmd_device_Id = $donneesDevice["Cmd_device_Id"];
@@ -184,6 +195,7 @@ function LoadTemplate()
 					$WidgetName = (empty($donneesDevice["WidgetName"])) ? $donneesDevice["ModuleName"] : $donneesDevice["WidgetName"];
 					$WidgetType = $donneesDevice["WidgetType"];
 					$Configuration =  $donneesDevice["Configuration"];
+					$Vcc = $donneesDevice["Vcc"];
 					$Date = $donneesDevice["Date"];
 
 					/*if (!empty(json_decode($Configuration)->icons))
@@ -206,8 +218,12 @@ function LoadTemplate()
 					$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
 					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+					if ($Vcc != null)
+					{
+						$AddBattery = '<span  id="Battery_'.$cmd_device_format.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i><tspan>'.$Vcc.'</tspan> V</span>';
+					}
 
-					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." >";
+					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." ModuleType=".$ModuleName." >";
 
 					$data .= "<div class='widget DeviceDetail Corner'>";
 					$data .= "<div class='Device_title Corner text-center'>".$Nom."</div>";
@@ -262,7 +278,7 @@ function LoadTemplate()
 			$data .="<div class='div_btn_device Corner' id='Lieux_".$LieuxId."' Lieuxid='".$LieuxId."'>";
 			if ($LieuxIcon != "")
 			{
-				$data .="<img class='img-circle img_btn_device rounded-circle ' alt='icon".$LieuxName."' src='Core/".$LieuxIcon."'>";
+				$data .="<img class='img-circle img_btn_device rounded-circle ' alt='icon".$LieuxName."' src='".$LieuxIcon."'>";
 			}
 			else
 			{				
@@ -346,7 +362,39 @@ function LoadTemplate()
 
 </div>
 
+<div id="dialog-message" title="Demo Mode">
+  <p>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+    Bienvenu en mode demo !<br>
+	N'hésitez pas à faire part de vos commentaires et à suivre ThiDom sur <b style="color:#2986d5"><a style="color:#2986d5" href="https://twitter.com/thidom1">twitter </a></b>
+	<hr>
+    <span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+	Welcome to demo mode ! <br>
+	Your comments will be most welcome and you can follow ThiDom on <b style="color:#2986d5"><a style="color:#2986d5" href="https://twitter.com/thidom1">twitter </a></b>
+  </p>
+</div>
+
 <script>
 	//$(".slider").bootstrapToggle();
 	//resizeMaison();	
+    $( document ).ready(function() {		
+		$( "#dialog-message" ).dialog({
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$( this ).dialog( "close" );
+				}
+			},
+    closeOnEscape: false,
+    open: function(event, ui) {
+        $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+    }
+		});
+
+		if (<?php echo $_SESSION['userIsAdmin']; ?> == 0)
+		{
+      	$( "#dialog-message" ).dialog( "open" );
+		}
+	});
 </Script>

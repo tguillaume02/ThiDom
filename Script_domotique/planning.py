@@ -170,7 +170,7 @@ while True:
                 # Minute = datetime.datetime.now().minute
                 # cursor.execute("update cmd_device set date = (select DATE_FORMAT(now(), '%Y-%m-%d %H:00:00') - INTERVAL "+str(Minute % RAZ)+" SECOND)  where ID ="+str(cmd_device_id))
             elif Request != "":
-                #context = ssl._create_unverified_context()
+                context = ssl._create_unverified_context()
                 Request = json.loads(Request)
                 url = "https://127.0.0.1/ThiDom/Core/"+Request["url_ajax"]
                 data = Request["data"]

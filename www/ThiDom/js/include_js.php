@@ -42,6 +42,12 @@
 
 	$(document).ready( function ()
 	{
+		$(document).on('click','.navbar-collapse.in',function(e) {
+			if( $(e.target).is('a') ) {
+				$(this).collapse('hide');
+			}
+		});
+
 		showTabFromHash();
 		//resizeWhenChangeTab();
 		$(window).on('hashchange', showTabFromHash);
@@ -89,25 +95,40 @@
 
 	function DeviceEvent()
 	{		
-		$("#Content-desktop .div_btn_device").filter("[data-Type='Action']").bind("click", function (event, ui)
+		$("#Content-desktop .div_btn_device").filter("[data-Type='Action']").off().bind("click", function (event, ui)
 		{
 			var device_id = $(this).attr('device_id');
 			var cmd_device_id = $(this).attr('cmd_device_id');
 			var device_role = $(this).attr('data-role');
 			var device_type = $(this).attr('data-type');
 			var mode = $(this).attr('data-mode');
-			if ($(this).attr("data-role") == "Color" || $(this).attr("data-role") == "Slider")
+			if ($(this).attr("data-role") == "Slider")
 			{
 				var value = $(this).children().text()
 			}
-			else
+			else if ($(this).val() != "")
 			{
 				var value = $(this).val();
 			}
+			else if ($(this).attr("value") != "")
+			{
+				var value = $(this).attr("value");
+			}
+			action_domo(device_id,cmd_device_id,device_role,device_type,value, mode);
+		});
+		
+		$("#Content-desktop .div_btn_device").filter("[data-Type='Action'][data-role='Color']").off().bind('change', function()
+		{
+			var device_id = $(this).attr('device_id');
+			var cmd_device_id = $(this).attr('cmd_device_id');
+			var device_role = $(this).attr('data-role');
+			var device_type = $(this).attr('data-type');
+			var mode = $(this).attr('data-mode');
+			var value = $(this).children().val();
 			action_domo(device_id,cmd_device_id,device_role,device_type,value, mode);
 		});
 
-		$("#Content-desktop .bar").filter("[data-Type='Action']").bind('change', function(){
+		$("#Content-desktop .bar").filter("[data-Type='Action']").off().bind('change', function(){
 			var device_id = $(this).attr('device_id');
 			var cmd_device_id = $(this).attr('cmd_device_id');
 			var device_role = $(this).attr('data-role');
@@ -250,10 +271,11 @@
 						}); 
 					}
 					$("#modal-manage-device #list-type").change(function(event) {
-						$typeId = $("#modal-manage-device #list-type option:selected").val();
-						$typeName = $("#modal-manage-device #list-type option:selected").html();
-						$cmdid = $("#modal-manage-device #list-type option:selected").parent().attr("cmdid");
-						loadEquipementConsignContent($typeId, $typeId, $cmdid);
+						$typeId = $("option:selected", this).val();
+						//$typeName = $("#modal-manage-device #list-type option:selected").html();
+						$typeName = $("option:selected", this).attr("data-module_Type");						
+						$cmdid = $("option:selected", this).parent().attr("cmdid");
+						loadEquipementConsignContent($typeId, $typeName, $cmdid);
 					})
 				});
 				
@@ -356,6 +378,7 @@
 		$("#modal-manage-room #room-id").val(data.Id);
 		$("#modal-manage-room #room-name").val(data.Nom);
 		$("#modal-manage-room #room-position").val(data.Position);
+		$("#modal-manage-room #defaultRoomicons").attr("src", data.Img);
 		$("#modal-manage-room #room-visible").prop('checked',parseInt(data.Visible));
 		$("#modal-manage-room").modal('toggle');
 	}
@@ -401,18 +424,20 @@
 
 	function loadEquipementConsignContent(id, name, cmdId)
 	{
-		$linkWidgetConfig = "Core/widgetConfig/"+name+"/"+name+"Config.php";
-
-		$("#modal-manage-device #ModalEquipementConsignContent[cmdid='"+cmdId+"']").load(linkWidgetConfig, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function( response, status, xhr ) {
-			if ( status == "error" )
-			{
-				$("#ModalEquipementConsignContent").hide();
-			}
-			else
-			{
-				$("#ModalEquipementConsignContent").show();
-			}
-		});
+		linkWidgetConfig = "Core/widgetConfig/"+name+"/"+name+"Config.php?mode=echo";
+		//if (file_exists($linkWidgetConfig))
+		//{
+			$("#modal-manage-device #ModalEquipementConsignContent[cmdid='"+cmdId+"']").load(linkWidgetConfig, {device_id: id, cmd_device_id: cmdId}, function( response, status, xhr ) {
+				if ( status == "error" )
+				{
+					$("#ModalEquipementConsignContent[cmdid='"+cmdId+"']").hide();
+				}
+				else
+				{
+					$("#ModalEquipementConsignContent[cmdid='"+cmdId+"']").show();
+				}
+			});
+		//}
 	}
 
 	function strToRGB(str){
@@ -467,7 +492,10 @@
 				break;
 			case "#manage-plugins":
 				LoadPlugins();
-				break;				
+				break;	
+			case "#sante":
+				CheckStatusProcessus();
+				break;
 			case "#user":
 				LoadUser();
 				break;			
@@ -546,6 +574,7 @@
 		$('#manage-plugins-link').off();
 		$('#manage-equipement-link').off();
 		$('#manage-room-link').off();
+		$("#sante-link").off();
 		$('#user-link').off();
 		$(".Enlarge").off();
 		$("#remove-all-log").off();
@@ -652,6 +681,8 @@
 		$("#Content-desktop .DeviceContent").hide();
 		$("#Content-desktop .DeviceContent").filter('[WidgetId="'+WidgetId+'"]').parentsUntil( "#Content-desktop" ).show();
 		$("#Content-desktop .DeviceContent").filter('[WidgetId="'+WidgetId+'"]').show();
+		$("#Content-desktop .DeviceContent").filter('[ModuleType="'+WidgetId+'"]').parentsUntil( "#Content-desktop" ).show();
+		$("#Content-desktop .DeviceContent").filter('[ModuleType="'+WidgetId+'"]').show();
 		resizeMaison();
 	}
 
@@ -911,7 +942,7 @@
 				{
 					posX = tb[z].Pos;
 				}
-				if (((posX != posOld) || (z == tb.length))  && posOld != 0)
+				if (((posX != posOld) || (z == tb.length)))
 				{	
 					for (Y = ZFirst; Y<z; Y++)
 					{
@@ -1558,9 +1589,13 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 				events: {
 					load: function(chart) {						
 						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
-						{						
+						{								
+							this.xAxis[0].setExtremes(
+								Date.UTC(1988, new Date().getMonth()-1, 1, 0, 0, 0),
+								Date.UTC(1988, new Date().getMonth()+1, 31, 0, 0, 0)
+							);			
 							$("#Min"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMin.toFixed(2))
-							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2)) 
+							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2)) 		
 						};
 						/*this.setTitle(null, {
 							text: 'Built chart at '+ (new Date() - start) +'ms'
@@ -1637,9 +1672,7 @@ function GenerateGraph(GraphId, Lieux, unite, data)
                   	year	: '%b'
 				},
 				/*min: new Date().getTime()- 48 * 3600 * 1000,
-				max: new Date().getTime() +1  * 3600 *1000,*/				
-				min: Date.UTC(1988, new Date().getMonth()-1, 0),
-				max: Date.UTC(1988, new Date().getMonth()+1, 31),
+				max: new Date().getTime() +1  * 3600 *1000,*/			
 				ordinal: false/*,
 				plotLines: [{
 					value: 0,
@@ -1680,4 +1713,5 @@ $("#pencilEdit").click(function()
 	}	
 	DragAndDrop();
 })
+
 </script>

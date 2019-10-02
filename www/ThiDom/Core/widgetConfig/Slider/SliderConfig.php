@@ -21,11 +21,11 @@ $tplWidgetConfig = '
 		<div class="form-group">
 			<label for="min" class="col-lg-2  control-label">Min</label>	
 			<div class="col-lg-2">
-				<input type="number" class="form-control" id="min"  cmdid="'.$cmd_device_id.'"  name="Min" value="'.$min.'" placeholder="Temp. min" step="0.1" request=1>
+				<input type="number" class="form-control" id="min"  cmdid="'.$cmd_device_id.'"  name="Min" value="'.$min.'" placeholder="Min" step="0.1" request=1>
 			</div>
 			<label for="max" class="col-lg-2 control-label">Max</label>	
 			<div class="col-lg-2">		
-				<input type="number" class="form-control" id="max"  cmdid="'.$cmd_device_id.'"  name="Max" value="'.$max.'" placeholder="Temp. max" step="0.1" request=1>
+				<input type="number" class="form-control" id="max"  cmdid="'.$cmd_device_id.'"  name="Max" value="'.$max.'" placeholder="Max" step="0.1" request=1>
 			</div>
 		</div>
 	</div>
@@ -61,5 +61,10 @@ $tplWidgetConfig = '
 		$tplWidgetConfig.= CmdDevice::getDesactivateConditions($cmd_device_id);
 		$tplWidgetConfig.='</div>
 		</div>';
+	}
+	
+	if (getparameter("mode") == "echo")
+	{
+		echo $tplWidgetConfig;
 	}
 ?>

@@ -21,7 +21,8 @@ while DbConnect is None:
         except:
             setError("Connexion DB Failed")
             pass
-    except MySQLdb.Error:
+    except MySQLdb.Error as e:
+        print("####### SQL Error #######" + e)
         DbConnect = None
         time.sleep(10)
         

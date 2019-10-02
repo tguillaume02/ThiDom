@@ -131,11 +131,16 @@ class Webcam extends Device
 		return 'data: '.$a.';base64,'.$imageData;
 	}
 
-	public function Install()
+	public function Install($DeviceId="")
 	{ 
+		if ($DeviceId == "")
+		{
+			$DeviceId = $this->DeviceNewId()->get_Id();
+		}
+
 		$WebcamCmd = new WebcamCmd;
 		$WebcamCmd->set_Name('Refresh Snapshot');
-		$WebcamCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$WebcamCmd->set_device_Id($DeviceId);
 		$WebcamCmd->set_request('url', 'plugins/Webcam/Desktop/Webcam.php');
 		$WebcamCmd->set_request('url_ajax', 'plugins/Webcam/Desktop/Webcam_ajax.php');
 		$WebcamCmd->set_request('data', 'act=getSnap');

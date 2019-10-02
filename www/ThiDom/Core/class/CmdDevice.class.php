@@ -132,6 +132,26 @@ class CmdDevice
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}
 
+	public function InstallCmd($ModuleId, $DeviceId="")
+	{
+		$ModuleObject= new Module();
+		$ModuleName = $ModuleObject->byId($ModuleId)->get_ModuleName();
+		
+		if (class_exists($ModuleName))
+		{
+			$object = new $ModuleName;
+		}
+
+		/*if ($ModuleType == "Plugins")
+		{*/
+			if (method_exists($object, 'Install')/* && empty($CmdDevice)*/)
+			{
+				$object->Install($DeviceId);		
+			}
+		//}
+		return $object;
+	}
+
 	public function GetCmdId($Name,$Device_Id)
 	{
 		$values = array(
@@ -198,11 +218,24 @@ class CmdDevice
 		$values = array(
 			':Id' => $CmdId
 			);
-		$sql = 'SELECT cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName
+		$sql = 'SELECT cmd_device.Id, cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName, widget.Type as WidgetType
 					FROM cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
 					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
 				WHERE cmd_device.Id  = :Id ';
+		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+	}
+
+	public function byDevice_Id_WithCmd($Device_Id)
+	{
+		$values = array(
+			':Device_Id' => $Device_Id
+			);
+		$sql = 'SELECT cmd_device.Id, cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName, widget.Type as WidgetType
+					FROM cmd_device 
+					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
+					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
+				WHERE cmd_device.Device_Id  = :Device_Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
@@ -315,6 +348,24 @@ class CmdDevice
 		//}
 	}
 
+	public function DeleteCmdDevice($Id)
+	{		
+		$getdata = self::byId($Id);
+
+		$values = array(
+			':Id' => $Id
+			);	
+		$req = "Delete From cmd_device WHERE Id=:Id";
+		$nbCmdDeviceDelete = db::getNbResult($req,$values);
+
+		if ($nbCmdDeviceDelete > 0)
+		{
+			$msg = "La commande ". $getdata->Nom." a bien été supprimé";
+			$value = Array( "msg"=>$msg, "clear"=>"on");
+			return json_encode($value);
+		}
+	}
+	
 	public function CmdDeviceNewId()
 	{		
 		$sql = "SELECT MAX(Id) as Id FROM cmd_device ";
@@ -559,7 +610,7 @@ class CmdDevice
 		//return db::save($this);
 	}
 
-	public function showCommandeListHtml($deviceId, $toggleValue="", $dataParam="")
+	public function showCommandeListHtml($deviceId, $toggleValue="", $dataParam="", $displayCategorie="", $displayAddCommad="false")
 	{
 		require(__DIR__."/../../Desktop/Template_CmdConfiguration.php");
 	}

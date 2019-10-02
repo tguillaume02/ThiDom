@@ -18,7 +18,36 @@
 									<input type="text" class="form-control"  name="Name" id="room-name" placeholder="Nom de la pièce" required>
 								</div>
 						</div>
-						<div class="form-group">						
+						<div class="col-xs-4 col-sm-3 col-md-3 col-lg-2 form-group dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Icons
+							<span class="caret"></span></button>
+							<img id="defaultRoomicons" src="" alt="defaultRoomicons" style="width: 50px; height: 50px;">
+							<ul class="dropdown-menu" style="overflow: scroll;max-height: 408px;">
+								<li>
+									<a href='#' onclick="$('#CustomRoomIcons').val('')" title="">Default</a>
+								</li>
+							<?php
+								if ($handle = opendir('Core/pic/Room/')) {
+									while (false !== ($entry = readdir($handle)))
+									{
+										if ($entry != "." && $entry != ".." )
+										{
+											$filename = substr($entry, 0, strrpos($entry, "."));
+											echo "<li>
+													<a href='#' onclick=\"$('#CustomRoomIcons').val('Core/pic/Room/$filename');
+														$('#defaultRoomicons').attr('src','Core/pic/Room/$filename');
+														$('#defaultRoomicons').show();\" title=\"$entry\">
+														<img class='img-circle img_btn_device rounded-circle' src='Core/pic/Room/$entry'>$filename</a>
+												</li>";
+										}
+									}
+									closedir($handle);
+								}
+							?>
+							</ul>
+							<input id="CustomRoomIcons" name="Icons" type="text" class="form-control" style="display: none">
+						</div>
+						<div class="form-group">
 							<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 control-label">  
 								<label class="btn btn-success">
 									<input type="checkbox" name="Visible" id="room-visible" value="1"> Visible

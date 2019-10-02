@@ -7,6 +7,6 @@
 
 #mysqldump thidom > $FILE
 
-#find /home/ackup_bdd.sh:#FILE="/home/ThiDom/backup_bdd_$N/backup_bdd_* -mtime +2 -exec rm -rf {} \;
+#find /home/ThiDom/backup_bdd_* -mtime +2 -exec rm -rf {} \;
 
-python /home/ThiDom/Script_domotique/backup_bdd.py  >> /home/ThiDom/Script\ crontab/debug/console.log 2>&1 &
+python3 /home/ThiDom/Script_domotique/backup_bdd.py  >> /home/ThiDom/Script\ crontab/debug/console.log 2>&1 &

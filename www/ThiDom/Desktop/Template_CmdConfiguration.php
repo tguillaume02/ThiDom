@@ -25,9 +25,11 @@ foreach($CmdOfDevice as $Cmd)
     $Template_CmdConfiguration .= '
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom: 1vh;">
                     <div class="form-group">
-                        <label style="text-decoration:underline">
+                        <label id="CommandeName'.$Cmd->get_Id().'" cmdId='.$Cmd->get_Id().' class="CommandeName" style="text-decoration:underline">
                             '.$Cmd->get_Name().'
                         </label>
+                        <span class="EditCommandeName" onclick="EditCommandeName(\'#CommandeName'.$Cmd->get_Id().'\')" style="cursor:pointer"><i class="fas fa-pencil-alt" style="color:lightseagreen"></i></span>
+                        <span class="DeleteCommandeName" onclick="DeleteCommandeDevice(\''.$Cmd->get_Name().'\','.$Cmd->get_Id().')"  style="cursor:pointer"><i class="fa fa-trash" style="color:red"></i></span>
                     </div>
                     <div class="form-horizontal">
                         <div class="form-group" style="display:none">
@@ -35,8 +37,10 @@ foreach($CmdOfDevice as $Cmd)
                             <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
                                 <input class="form-control" id="device-id"  name="DeviceId" cmdid="'.$Cmd->get_Id().'" placeholder="Identifiant de l\'appareil:" value="'.$Cmd->get_DeviceId().'" required disabled>
                             </div>
-                        </div>								
-                        <div class="form-group grouplistType">
+                        </div>';					
+                        if ($displayCategorie != "false")			
+                        {
+                            $Template_CmdConfiguration .= '<div class="form-group grouplistType">
                             <label for="list-type" class="col-sm-5 col-xs-2 col-md-5 col-lg-2 control-label">Categorie</label>
                             <div class="col-sm-6 col-xs-5 col-md-5 col-lg-5">
                                 <select id="list-type" name="Widget_Id" class="form-control" cmdid="'.$Cmd->get_Id().'" required>';										
@@ -57,13 +61,16 @@ foreach($CmdOfDevice as $Cmd)
                                             $isDefined = "selected";													
                                             $linkWidgetConfig = __DIR__ ."/../Core/widgetConfig/".$widgetListData["Type"]."/".$widgetListData["Type"]."Config.php";
                                         }
-                                        $Template_CmdConfiguration.= "<option value='" . $widgetListData["Id"] . "' data-module_Id='".$widgetListData["ModuleType_Id"]."' ".$isDefined.">" . $widgetListData["Name"] ."</option>"; 
+                                        $Template_CmdConfiguration.= "<option value='" . $widgetListData["Id"] . "' data-module_Id='".$widgetListData["ModuleType_Id"]."' data-module_Type='".$widgetListData["Type"]."' ".$isDefined.">" . $widgetListData["Name"] ."</option>"; 
                                     }											
-    $Template_CmdConfiguration .='
-                                </select>
-                            </div>
-                        </div>
-                    </div>';
+                            $Template_CmdConfiguration .='
+                                        </select>
+                                    </div>
+                                </div>';
+                        }					
+
+                    $Template_CmdConfiguration .='</div>';
+
                     if ($linkWidgetConfig)
                     {
                         $Template_CmdConfiguration .='<div id="ModalEquipementConsignContent" cmdid="'.$Cmd->get_Id().'" >';
@@ -120,7 +127,7 @@ foreach($CmdOfDevice as $Cmd)
                             </div>';
                     }
                     
-$Template_CmdConfiguration .= 
+    $Template_CmdConfiguration .= 
                     $paramView.'
                     <div class="form-inline">
                         <div class="form-group">
@@ -144,9 +151,15 @@ $Template_CmdConfiguration .=
                 </div>';
 }                            
 
+//    echo '<div class="row">'.$Template_CmdConfiguration.'</div>';
+    if ($displayAddCommad == "true")
+    {
+        echo '<div class="col-lg-12 text-right" style="height:30px"> <button type="button" id="add-command" onclick="InstallCommand();"class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" style="width:30px; height:30px"><i class="fas fa-plus"></i></button>
+            </div>';
+    }
+    
 if ($Template_CmdConfiguration != "")
 {
-//    echo '<div class="row">'.$Template_CmdConfiguration.'</div>';
     echo '<div >'.$Template_CmdConfiguration.'</div>';
 }
 ?>

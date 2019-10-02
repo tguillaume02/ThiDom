@@ -5,8 +5,8 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 
 <div class="embed-responsive embed-responsive-4by3">
 
-	<!--<img id="Status<?php echo $Cmd_device_Id ?>" alt="video" src="<?php echo Device::byId($Device_id)->get_Configuration("url", "")?>" class="embed-responsive-item video Enlarge Corner-bottom ">-->
-	<img id="Status<?php echo $Cmd_device_Id ?>" alt="video" class="embed-responsive-item video Enlarge Corner-bottom ">
+	<img id="Status<?php echo $Cmd_device_Id ?>" alt="video" src="<?php echo Device::byId($Device_id)->get_Configuration("url", "")?>" class="embed-responsive-item video Enlarge Corner-bottom ">
+	<!--<img id="Status<?php echo $Cmd_device_Id ?>" alt="video" class="embed-responsive-item video Enlarge Corner-bottom ">-->
 
 </div>
 
@@ -36,10 +36,12 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 	 	$res = CmdDevice::getCmdId("Refresh Snapshot", $Device_id);
 		 if ($res != false)
 		 {
-			 $refresh = $res->get_RAZ() * 1000;
-			 echo "setInterval(function(){
-				getSnap($Device_id)
-			},$refresh);";
+			 if ($res->get_RAZ() != null)
+			 {
+				$refresh = $res->get_RAZ() * 1000;
+				echo "setInterval(function(){
+				   getSnap($Device_id		   },$refresh);";
+			 }
 		}
 	 ?>
 </script>

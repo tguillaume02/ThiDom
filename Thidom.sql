@@ -1,5 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `thidom` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `thidom`;		
+USE `thidom`;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -11,6 +11,12 @@ USE `thidom`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- MySQL dump 10.17  Distrib 10.3.17-MariaDB, for debian-linux-gnueabihf (armv7l)
+--
+-- Host: localhost    Database: thidom
+-- ------------------------------------------------------
+-- Server version	10.3.17-MariaDB-0+deb10u1
 
 --
 -- Table structure for table `ConnectLog`
@@ -25,7 +31,8 @@ CREATE TABLE `ConnectLog` (
   `Region` varchar(20) NOT NULL,
   `Country` varchar(20) NOT NULL,
   `Date` datetime NOT NULL,
-  `IdentificationType` varchar(45) DEFAULT NULL
+  `IdentificationType` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`IP`,`Date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -62,14 +69,14 @@ DROP TABLE IF EXISTS `HistoryData`;
 CREATE TABLE `HistoryData` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Year` year(4) DEFAULT NULL,
-  `Data` longtext,
+  `Data` longtext DEFAULT NULL,
   `Lieux_Id` int(11) DEFAULT NULL,
-  `Cmd_device_Id` int(5) NOT NULL DEFAULT '0',
+  `Cmd_device_Id` int(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),
   KEY `Lieux_Id` (`Lieux_Id`),
   KEY `cmd_device_Id` (`Cmd_device_Id`),
   KEY `date` (`Year`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +94,8 @@ CREATE TABLE `Lieux` (
   `Position` int(11) NOT NULL,
   `Visible` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `Nom` (`Nom`)
+  KEY `Nom` (`Nom`),
+  KEY `idx_Lieux_Visible` (`Visible`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -162,8 +170,8 @@ CREATE TABLE `Scenario` (
   `LastTimeEvents` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `NextTimeEvents` datetime DEFAULT NULL,
   `NextActionEvents` int(11) DEFAULT NULL,
-  `IsExecuted` int(11) DEFAULT '0',
-  `ToExecute` tinyint(4) DEFAULT '0',
+  `IsExecuted` int(11) DEFAULT 0,
+  `ToExecute` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`Id`),
   KEY `XmlID` (`XmlId`),
   CONSTRAINT `FK_Scenario_Xml_Scenario_XmlId` FOREIGN KEY (`XmlId`) REFERENCES `Scenario_Xml` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -197,9 +205,9 @@ DROP TABLE IF EXISTS `Temperature`;
 CREATE TABLE `Temperature` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `temp` float NOT NULL DEFAULT '0',
+  `temp` float NOT NULL DEFAULT 0,
   `Lieux_Id` int(11) DEFAULT NULL,
-  `cmd_device_Id` int(5) NOT NULL DEFAULT '0',
+  `cmd_device_Id` int(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),
   KEY `Lieux_Id` (`Lieux_Id`),
   KEY `cmd_device_Id` (`cmd_device_Id`),
@@ -265,10 +273,10 @@ CREATE TABLE `cmd_device` (
   `Nom` varchar(100) NOT NULL,
   `Device_Id` int(11) NOT NULL,
   `DeviceId` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `sensor_attachId` int(11) NOT NULL DEFAULT '-1',
+  `sensor_attachId` int(11) NOT NULL DEFAULT -1,
   `Request` varchar(500) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `Value` varchar(250) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `Etat` varchar(4) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Value` varchar(500) DEFAULT '0',
+  `Etat` varchar(4) DEFAULT '0',
   `Date` datetime DEFAULT '0000-00-00 00:00:00',
   `DateRAZ` datetime DEFAULT NULL,
   `RAZ` int(11) DEFAULT NULL,
@@ -276,10 +284,11 @@ CREATE TABLE `cmd_device` (
   `Widget_Id` int(11) DEFAULT NULL,
   `Type` varchar(10) CHARACTER SET utf8 NOT NULL,
   `Unite` varchar(5) CHARACTER SET utf8 DEFAULT NULL,
-  `History` tinyint(4) DEFAULT '0',
-  `Notification` tinyint(4) DEFAULT '0',
+  `History` tinyint(4) DEFAULT 0,
+  `Notification` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`Id`),
-  KEY `FK_cmd_device_Device_Id` (`Device_Id`)
+  KEY `FK_cmd_device_Device_Id` (`Device_Id`),
+  KEY `idx_cmd_device_Visible` (`Visible`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -308,4 +317,4 @@ CREATE TABLE `widget` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-01-10  8:33:52
+-- Dump completed on 2019-10-02 15:16:44

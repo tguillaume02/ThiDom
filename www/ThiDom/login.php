@@ -1,11 +1,14 @@
-
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>		
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#20B2AA">
 	<?php	
-	session_start();
 	include_once dirname(__FILE__) .'/Core/ListRequire.php';
 	include_once dirname(__FILE__) .'/css/include_css.php';
 	?>

@@ -44,6 +44,50 @@ if (isset($_POST['Act']))
 	$act = $_POST['Act'];
 } 
 
+
+if ($act == "GetStatusProcessus")
+{	
+	$read_usb = str_replace(array("\r\n","\n"),'', shell_exec('ps auxw | grep -v "grep" | grep -c "read_usb.py"'));
+	$planning = str_replace(array("\r\n","\n"),'', shell_exec('ps auxw | grep -v "grep" | grep -c "planning.py"'));
+	$thermostat = str_replace(array("\r\n","\n"),'', shell_exec('ps auxw | grep -v "grep" | grep -c "thermostat.py"'));
+	$scenario = str_replace(array("\r\n","\n"),'', shell_exec('ps auxw | grep -v "grep" | grep -c "Scenario.py"'));
+
+	if ($read_usb > 0)
+	{
+		$read_usb = "<span class='label label-success pull-center'>OK</span>";
+	}
+	else
+	{	
+		$read_usb = "<span class='label label-danger pull-center'>NOK</span>";
+	}
+	if ($planning > 0)
+	{
+		$planning = "<span class='label label-success pull-center'>OK</span>";
+	}
+	else
+	{	
+		$planning = "<span class='label label-danger pull-center'>NOK</span>";
+	}
+	if ($thermostat > 0)
+	{
+		$thermostat = "<span class='label label-success pull-center'>OK</span>";
+	}
+	else
+	{	
+		$thermostat = "<span class='label label-danger pull-center'>NOK</span>";
+	}
+	if ($scenario > 0)
+	{
+		$scenario = "<span class='label label-success pull-center'>OK</span>";
+	}
+	else
+	{	
+		$scenario = "<span class='label label-danger pull-center'>NOK</span>";
+	}
+
+	echo '[{"Process":"read_usb.py", "Status": "'.$read_usb.'"}, {"Process":"planning.py", "Status": "'.$planning.'"}, {"Process":"thermostat.py", "Status": "'.$thermostat.'"}, {"Process":"Scenario.py", "Status": "'.$scenario.'"}]';
+}
+
 if ($act == "GetAllEquipement")
 {	
 	$dbObject->ResultToJsonArray($deviceObject->GetAll());	
@@ -78,21 +122,8 @@ if ($act == "SaveDevice")
 
 	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $DeviceConfiguration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId))
 	{
-		$Id = json_decode($result)->{'deviceId'};		
-		$ModuleName = $ModuleObject->byId($ModuleId)->get_ModuleName();
-		
-		if (class_exists($ModuleName))
-		{
-			$object = new $ModuleName;
-		}
-
-		if ($ModuleType == "Plugins")
-		{
-			if (method_exists($object, 'Install') && empty($CmdDevice))
-			{
-					$object->Install();		
-			}
-		}
+		$Id = json_decode($result)->{'deviceId'};	 
+		$object = $cmdDeviceObject->InstallCmd($ModuleId, $Id);
 			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));	
 		
 		if (!empty($CmdDevice))
@@ -155,10 +186,30 @@ if ($act == "SaveDevice")
 
 }
 
+if ($act == "AddCommande")
+{	
+	$ModuleId = getParameter('ModuleId');
+	$DeviceId = getParameter('DeviceId');
+	$object = $cmdDeviceObject->InstallCmd($ModuleId, $DeviceId);
+}
+
+if ($act == "NewCommandeName")
+{
+	$cmddeviceId = getParameter('cmddeviceId');
+	$NewName = getParameter('NewName');
+	$cmdDeviceObject->Update_Any_Value_By_id($cmddeviceId, 'Nom', $NewName);
+}
+
 if ($act == "DeleteDevice")
 {	
 	$deviceId = getParameter('DeviceId');
 	echo $deviceObject->DeleteDevice($deviceId);
+}
+
+if ($act == "DeleteCmdDevice")
+{	
+	$CmdDeviceId = getParameter('cmddeviceId');	
+	echo $cmdDeviceObject->DeleteCmdDevice($CmdDeviceId);
 }
 
 if ($act == "ReorderDevice")
@@ -219,13 +270,13 @@ if ($act == "SaveLieux")
 	$Backgd = "";
 	$Visible = ""; 
 
-	$Img = getParameter('Img');
+	$Icons = getParameter('Icons');
 	$Name = getParameter('Name');
 	$Backgd = getParameter('Backgd');
 	$Position = getParameter('Position');
 	$Visible = getParameter('Visible');
 
-	echo $lieuxObject->SaveLieux($id, $Name, $Visible, $Position, $Img);
+	echo $lieuxObject->SaveLieux($id, $Name, $Visible, $Position, $Icons);
 }
 
 if ($act == "DeleteLieux")
@@ -335,7 +386,25 @@ if ($act == "GetNewHash")
 
 if ($act == "GetModuleType") 
 {
-	$dbObject->ResultToJsonArray($ModuleObject->GetModuleType());	
+	$jsonArray = array();
+	$jsonresult =$ModuleObject->GetModuleType();// $dbObject->ResultToJsonArray($ModuleObject->GetModuleType());
+	foreach($jsonresult as $key => $value) {		
+		$bFileExist = true;
+		if (!file_exists("/var/www/ThiDom/Core/plugins/".$value->ModuleName."/Core/".$value->ModuleName."ConfigPlugins.php"))
+		{
+			$bFileExist = false;
+		}
+
+		$jsonArray[] = array(
+			'Id' => $value->Id,
+			'ModuleName' => $value->ModuleName,
+			'ModuleConfiguration' => $value->ModuleConfiguration,
+			'ModuleName' => $value->ModuleName,
+			'ModuleType' => $value->ModuleType,
+			'bFileExist' => $bFileExist
+		);
+	}	
+	echo json_encode($jsonArray);
 }
 
 if ($act == "GetTypeWidget") 

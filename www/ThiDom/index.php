@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 	require_once dirname(__FILE__) .'/Core/Security.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 	<meta name="google" content="notranslate">
@@ -44,7 +44,7 @@
 						<li class="dropdown"><a id="analyse" data-toggle="dropdown"><i class="fas fa-wrench"></i> Analyse <span class="caret"></span></a>
 							<ul class="dropdown-menu" aria-labelledby="analyse">  	
 								<li><a href="#graph" id="graphic-link"><i class="fas fa-chart-area"></i> Graphique</a></li>
-								<li><a href="#log" id="log-link"><i class="far fa-file" aria-hidden="true"></i> Log</a></li>
+								<li><a href="#log" id="log-link"><i class="fas fa-file" aria-hidden="true"></i> Log</a></li>
 							</ul>
 						</li>
 						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span></a>
@@ -53,11 +53,13 @@
 								<li><a href="#manage-equipement"  id="manage-equipement-link"> Manage Equipement</a></li>
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
 								<li><a href="#scenario" id="scenario-link"><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
+								<li><a href="#sante" id="sante-link"><i class="fas fa-briefcase-medical" aria-hidden="true"></i> Santé</a></li>
 								<li><a href="#user" id="user-link"><i class="fas fa-user" aria-hidden="true"></i> Utilisateur</a></li>
 							</ul>
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right" role="tablist">		
+						<li><a href="#"><span id="pencilEdit"><i class="fas fa-pencil-alt"></i></span></a></li>
 						<li><a href="#"><span id="hour"><?php echo date('H:i:s');?></span></a></li>
 						<!--<li><img id="icons-weather" src="" ></li>-->
 						<li><a href="logout.php" id="disconnect">Deconnection <i class="fas fa-sign-out-alt"></i></a></li>
@@ -97,7 +99,7 @@
 							</tbody>
 						</table>
 						<br>
-						<button type="button" id="remove-all-log" class="btn btn-danger pull-right absolute"><i class="fas fa-trash-o"></i> Remove all log</button>
+						<button type="button" id="remove-all-log" class="btn btn-danger pull-right absolute"><i class="fas fa-trash"></i> Remove all log</button>
 					</div>
 				</div>
 
@@ -121,7 +123,7 @@
 				<div id="manage-equipement" role="tabpanel" class="tab-pane ">
 					<button type="button" id="add-device" class="btn-add btn-bottom-right btn-success btn-md pull-right absolute" data-toggle="modal" data-target="#modal-manage-device"><i class="fas fa-plus"></i></button>
 					<div id="content-manage-equipement"  data-role="content"  class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
-						<table id="table-content-equipement" class="table table-striped dataTable dt-responsive nowrap display text-center">
+						<table id="table-content-equipement" class="table table-striped dt-responsive nowrap display text-center" style="width:100%">
 							<thead> 
 								<tr>
 									<th class="text-center">Appareil</th> 
@@ -151,6 +153,7 @@
 							<thead> 
 								<tr>
 									<th class="text-center">ID</th> 
+									<th class="text-center">Icons</th> 
 									<th class="text-center">Nom de la pièce</th>
 									<!--<th class="text-center">Position</th>-->
 									<th class="text-center">Visible</th>
@@ -199,14 +202,27 @@
 							</div>
 							<div class="row">
 								<div class="col-xs-12 col-lg-6 col-md-12 col-sm-12">
-									<button type="button" class="btn btn-success btn-md col-md-12" id="scenario-save"><i class="far fa-save"></i> Save</button>
+									<button type="button" class="btn btn-success btn-md col-md-12" id="scenario-save"><i class="fas fa-save"></i> Save</button>
 								</div>
 								<div class="col-xs-12 col-lg-6 col-md-12 col-sm-12">
-									<button type="button" class="btn btn-danger btn-md col-lg-12" id="scenario-delete"><i class="far fa-trash-alt"></i> Delete</button>
+									<button type="button" class="btn btn-danger btn-md col-lg-12" id="scenario-delete"><i class="fas fa-trash"></i> Delete</button>
 								</div>
 							</div>
 						</div>
 					</div>			
+				</div>
+
+				<div id="sante" role="tabpanel" class="tab-pane">
+					<table id="table-content-sante" class="table table-striped dataTable dt-responsive nowrap display text-center">
+						<thead> 
+							<tr> 
+								<th class="text-center">Nom</th> 
+								<th class="text-center">Status</th> 
+							</tr> 
+						</thead>
+						<tbody id="tbody-content-sante">
+						</tbody>
+					</table>
 				</div>
 
 				<div id="user" role="tabpanel" class="tab-pane">
@@ -242,6 +258,7 @@
 	<xml id="toolbox" style="display: none">
 		<category name="Control">
 			<block type="controls_if"></block>
+			<block type="controlsCalling"></block>
 		</category>
 		<category name="Logic">
 			<block type="logic_compare"></block>

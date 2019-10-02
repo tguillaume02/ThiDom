@@ -27,11 +27,12 @@ class Telegram extends Device
 	function __destruct() {
 	}
 
-    public function Install()
+    public function Install($DeviceId="")
     { 
+       $DeviceId = empty($DeviceId) ? $this->DeviceNewId()->get_Id() : $DeviceId;
        $telegramCmd = new TelegramCmd();
        $telegramCmd->set_Name('SendMessage');
-       $telegramCmd->set_device_Id($this->DeviceNewId()->get_Id());
+       $telegramCmd->set_device_Id($DeviceId);
        $telegramCmd->set_request('url', 'plugins/Telegram/Desktop/Telegram.php');
        $telegramCmd->set_request('url_ajax', 'plugins/Telegram/Desktop/Telegram_ajax.php');
        $telegramCmd->set_request('data', 'act=SendMessage');

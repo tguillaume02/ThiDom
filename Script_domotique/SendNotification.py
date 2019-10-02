@@ -25,7 +25,7 @@ oldMessage = ""
 # #############  TRY CONNECT SQL ##################
 cursor = msql.cursor
 DbConnect = msql.DbConnect
-urlPool = urllib3.PoolManager()
+urlPool = urllib3.PoolManager(assert_hostname=False)
 urllib3.disable_warnings()
 
 def SendNotification(value, id_notif="now", to=""):
@@ -54,7 +54,10 @@ def SendNotification(value, id_notif="now", to=""):
                 # data['channelId'] =  Scenario.channelId
             # except:
                 # data['channelId'] = ""
-            url_values = urllib.parse.urlencode(data)
+            if sys.version_info[0] < 3:
+                url_values = urllib.urlencode(data) 
+            else:               
+                url_values = urllib.parse.urlencode(data)
             context = ssl._create_unverified_context()
             try:
                 url = url + "?" + url_values

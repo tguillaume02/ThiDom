@@ -108,25 +108,46 @@ if($Device_id)
 
 /*  ##############   GET SUNRISE / SUNSET ######## */
 
-	echo $act;
 if ($departement != "" and ($act == "Sunrise" or $act == "Sunset" or $act == ""))
 {
 	$SunSatus = file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement);
 	//$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
-
-	if ($act == "Sunrise" or $act == "")
-	{
-		$Sunrise = getJsonAttr($SunSatus,"heureLeveSoleil", "");// $SunSatus->{'heureLeveSoleil'};
-		$Sunrise = str_replace("h", ":", $Sunrise);	
-		$Sunrise = date("H:i:s", strtotime($Sunrise));	
-	}
 	
-	if  ($act == "Sunset" or $act == "")
+	if (is_json($SunSatus))
 	{
-		$Sunset = getJsonAttr($SunSatus, "heureCoucheSoleil","");//$SunSatus->{'heureCoucheSoleil'};
-		$Sunset = str_replace("h", ":", $Sunset);
-		$Sunset = date("H:i:s", strtotime($Sunset));
+		if ($act == "Sunrise" or $act == "")
+		{
+			$Sunrise = getJsonAttr($SunSatus,"heureLeveSoleil", "");// $SunSatus->{'heureLeveSoleil'};
+			$Sunrise = str_replace("h", ":", $Sunrise);	
+			$Sunrise = date("H:i:s", strtotime($Sunrise));	
+		}
+		
+		if  ($act == "Sunset" or $act == "")
+		{
+			$Sunset = getJsonAttr($SunSatus, "heureCoucheSoleil","");//$SunSatus->{'heureCoucheSoleil'};
+			$Sunset = str_replace("h", ":", $Sunset);
+			$Sunset = date("H:i:s", strtotime($Sunset));
 
+		}
+	}
+	else if ($city != "" )
+	{
+		$SunSatus = file_get_contents($urldomogeek.'sun/'.$city."/all/now");
+
+		if ($act == "Sunrise" or $act == "")
+		{
+			$Sunrise = getJsonAttr($SunSatus,"sunrise", "");// $SunSatus->{'heureLeveSoleil'};
+			$Sunrise = str_replace("h", ":", $Sunrise);	
+			$Sunrise = date("H:i:s", strtotime($Sunrise));	
+		}
+		
+		if  ($act == "Sunset" or $act == "")
+		{
+			$Sunset = getJsonAttr($SunSatus, "sunset","");//$SunSatus->{'heureCoucheSoleil'};
+			$Sunset = str_replace("h", ":", $Sunset);
+			$Sunset = date("H:i:s", strtotime($Sunset));
+
+		}
 	}
 }
 

@@ -21,7 +21,7 @@ import SendNotification
 # ptvsd.wait_for_attach()
 # ptvsd.break_into_debugger()
 
-urlPool = urllib3.PoolManager()
+urlPool = urllib3.PoolManager(assert_hostname=False)
 urllib3.disable_warnings()
 
 # urlnotify = "http://notify8702.freeheberg.org/"
@@ -149,7 +149,7 @@ def GetActionCommand(index):
         Value_with_space = tbAction.replace("DeviceValue", "").replace("=", "").replace('\"', '')
         Value = tbAction.replace("DeviceValue", "").replace("=", "").replace('\"', '').replace(" ", "")
     if tbAction.find("To") >= 0:
-        To = tbAction.replace("To", "").replace("=", "").replace('\"', '')
+        To = tbAction.replace("To", "").replace("=", "").replace('\"', '').replace('undefined', '')
     
 def SetValue(cmdId, Etat):
     sql_updateValue = "UPDATE cmd_device set Etat = "+Etat+", Date = Now()  WHERE ID = "+cmdId
@@ -180,7 +180,7 @@ def main(Name = ""):
 
     sql_Liste_Scenario = "SELECT Scenario.ID as ScenarioID, XmlID,Conditions,Actions, SequenceNo,Scenario_Xml.Name, Scenario_Xml.status,Scenario.NextTimeEvents,Scenario.NextActionEvents, Scenario.IsExecuted, Scenario.ToExecute FROM Scenario  inner join Scenario_Xml on Scenario_Xml.ID = Scenario.XmlID where status = 1  and (NextActionEvents is NULL or NextActionEvents >= Now()) ORDER BY XmlID, SequenceNo"
     cursor.execute(sql_Liste_Scenario)
-    Old_XmlID = -5555    
+    Old_ScenarioID = -5555    
     for row in cursor.fetchall():
         ScenarioID = str(row[0])
         XmlID = int(row[1])
@@ -202,8 +202,8 @@ def main(Name = ""):
         Actions = Actions.split(",")
 
     # ############ SI NOUVEAU SCENARIO #################
-        if XmlID != Old_XmlID:
-            Old_XmlID = XmlID     
+        if ScenarioID != Old_ScenarioID:
+            Old_ScenarioID = ScenarioID     
             ID = ""
             Etat = ""
             Value = ""
@@ -233,8 +233,8 @@ def main(Name = ""):
                 #        sql_check_etat = " SELECT 0;"
                 try:
                     cursor.execute(sql_check_etat)
-                    # ############### EXECUTION DU SCENARIO SI RESULTAT DE LA REQUETE
                     bTimer = False
+                    # ############### EXECUTION DU SCENARIO SI RESULTAT DE LA REQUETE
                     if int(cursor.fetchone()[0]) > 0:
                         if int(IsExecuted) == 0 or int(ToExecute) == 1:
                             for row_Action in range(len(Actions)):
@@ -343,7 +343,7 @@ def main(Name = ""):
                                                 # #print "############################"
 
                                                 SendDataToUsb(ModuleName ,Configuration, val.replace(' ', ''))
-                                            BScenarioExecute = True
+                                                BScenarioExecute = True
 
 
                                             ############  ACTION SI SCENARIO AVEC ACTION FOR XX MINUTES ##########################
@@ -387,7 +387,10 @@ def main(Name = ""):
                                                     if RequestUrl != "":
                                                         url = "https://localhost/ThiDom/" + RequestUrl
                                                         # url_values = urllib.urlencode(RequestData)
-                                                        url_values = urllib.parse.urlencode(RequestData)
+                                                        if sys.version_info[0] < 3:                                                        
+                                                            url_values = urllib.urlencode(RequestData)
+                                                        else:
+                                                            url_values = urllib.parse.urlencode(RequestData)
                                                         url = url + "?" + url_values
                                                         try:
                                                             exec_cmd = urlPool.request("POST",url)
@@ -417,14 +420,14 @@ def main(Name = ""):
                                             try:
                                                 SendNotification.SendNotification("Scenario : " + ScenarioName)
                                             except:
-                                                print ("####### SCENARIO - Scenario: ScenarioName #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0]))
+                                                print ("####### SCENARIO - Scenario: "+ ScenarioName+" #######" + time.strftime('%A %d. %B %Y  %H:%M:%S', time.localtime()) +" #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % (sys.exc_info()[0]))
                                                 pass
                                     time.sleep(1)
                                     # print val
                     elif (int(IsExecuted) == 1):
                         cursor.execute("UPDATE Scenario set IsExecuted=%s where ID=%s", (0, ScenarioID))                
-                except Exception as e:
-                    print ("####### SCENARIO - sql - sql_check_etat #######" + sql_check_etat + " Error => "+ e.message)
+                except Exception as e: 
+                    print ("####### SCENARIO - sql - sql_check_etat #######" + time.strftime('%A %d. %B %Y  %H:%M:%S', time.localtime()) +" #######" + sql_check_etat + " Error => "+ e)
                     pass
         # ############  SI MEME SCENARIO ###############
         #elif XmlID == Old_XmlID:

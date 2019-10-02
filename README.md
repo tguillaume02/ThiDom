@@ -21,3 +21,25 @@
     * Si vous rencontrez des problèmes, assurez-vous d'avoir un nom de domaine valide pointant sur votre adresse IP, assurez-vous que le port 80 et le port 443 sont débloqués.
     * Les certificats qui sont saisis par le client certbot seront stockés dans le dossier suivant. Bien sûr, permuter example.com avec votre propre nom de domaine.
     `/etc/letsencrypt/live/example.com/`
+
+
+### Envoie d'email à la connection ssh
+    * Ajouter dans /etc/bash.bashrc
+        ``echo 'Acces SSH en '`id | cut -d "(" -f2 | cut -d ")" -f1`' sur '`hostname`' le: ' `date` `who` | mail -s "NOTIFICATION - Connexion en "`id | cut -d '(' -f2 | cut -d ')' -f1`" via SSH depuis: `echo $SSH_CONNECTION | cut -d " " -f 1`" ``**EMAILDUDESTINATAIRE**
+    * Editer le fichier (ou le créer si besoin) /etc/msmtprc 
+        `# Set default values for all following accounts.
+        account defaults
+        port 587
+        tls on
+        tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+        account gmail
+        host smtp.gmail.com
+        from <user>@gmail.com
+        auth on
+        user <user>
+        password <password>
+
+        # Set a default account
+        account default : gmail`       
+            

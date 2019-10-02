@@ -17,6 +17,9 @@ echo  '<div class="">
                             <tr>
                                 <td class="WidgetStatus-left"> '.$AddDate.'</td>
                             </tr>
+                            <tr>
+                                <td class="WidgetStatus-left"> '.$AddBattery.'</td>
+                            </tr>
                         </table>
                     </td>
                 </tr>

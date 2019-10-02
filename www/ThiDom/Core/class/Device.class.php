@@ -106,7 +106,7 @@ class Device
 
 	public function getAllDeviceAndCmd()			    
 	{
-		$sql = "SELECT * FROM 
+		$sql = "SELECT * , (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where CarteId = T.CarteId  ) as Vcc FROM 		 
 		(
 		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.visible as DeviceVisible, Device.CarteId AS CarteId, cmd_device.Visible as cmd_visible, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
 	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
@@ -120,7 +120,7 @@ class Device
 		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL 
 		GROUP BY Device.Id, cmd_device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
-		) as T 
+		) as T where (T.WidgetId is null or T.WidgetId  != 9)
 		ORDER BY Id, Position, Lieux, Nom";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 
@@ -139,7 +139,7 @@ class Device
 		LEFT JOIN Planning ON Planning.Cmddevice_Id = cmd_device.Id AND Planning.Activate =1 	
 		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
         LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
-		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 AND cmd_device.visible = 1
+		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 /*AND cmd_device.visible = 1*/
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T 
@@ -152,11 +152,14 @@ class Device
 		$values = array(
 			':LieuxId' => $LieuxId
 			);
-		$sql = "SELECT * FROM 
+		$sql = "SELECT *
+				, (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where CarteId = T.CarteId  ) as Vcc 
+			FROM 
 		(
 		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
 	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
-			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning
+			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date
+			, COUNT( Activate ) AS CountPlanning
 			,IFNULL(Device.Position,999) as DevicePosition  
 		FROM Lieux
 		LEFT JOIN Device on Device.Lieux_ID= Lieux.Id
@@ -164,11 +167,11 @@ class Device
 		LEFT JOIN Planning ON Planning.Cmddevice_Id = cmd_device.Id AND Planning.Activate =1 	
 		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
         LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
-		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 AND cmd_device.visible = 1
+		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 /*AND cmd_device.visible = 1*/
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
-		) as T WHERE T.LieuxId= :LieuxId
+		) as T WHERE T.LieuxId= :LieuxId  and (T.WidgetId is null or T.WidgetId  != 9)
 		GROUP BY Id, Position, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
@@ -349,6 +352,27 @@ class Device
 					Id IN ($DeviceIdListParam)
 				ORDER BY 
 					FIELD(id,$DeviceIdListParam);";
+		db::execQuery($sql,$values);
+	}
+
+	public function getVcc($DeviceId)
+	{
+		$values = array(
+			':DeviceId' => $DeviceId
+			);
+
+		$sql = "SELECT 
+					Value
+				FROM
+					Device
+						INNER JOIN
+					Device d1 ON Device.CarteId = d1.CarteId
+						AND d1.id = :DeviceId
+						INNER JOIN
+					cmd_device ON cmd_device.Device_Id = Device.id
+				WHERE
+					Widget_Id = 9";
+					
 		db::execQuery($sql,$values);
 	}
 

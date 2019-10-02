@@ -10,12 +10,13 @@ import msql
 import pyudev
 from SendNotification import SendNotification
 
-# import ptvsd
-# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+#import ptvsd
+#ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
 # ptvsd.wait_for_attach()
 # ptvsd.break_into_debugger()
 
-print("####### READ USB - Start #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
+print("####### READ USB - Start #######" +
+      time.strftime('%A %d. %B %Y  %H:%M', time.localtime()))
 
 
 # #############  TRY CONNECT SQL ##################
@@ -24,17 +25,19 @@ DbConnect = msql.DbConnect
 
 SendNotification("Demarrage read usb", "-1")
 
+
 def find_usb_port(vendor, model):
     context = pyudev.Context()
     for device in context.list_devices(subsystem='tty'):
         if 'ID_VENDOR' not in device:
             continue
-        if device['ID_VENDOR_ID'] != vendor:
+        if device.get('ID_VENDOR_ID') != vendor:
             continue
-        if device['ID_MODEL_ID'] != model:
-            continue        
+        if device.get('ID_MODEL_ID') != model:
+            continue
         return str(device.device_node)
     return None
+
 
 def ReadArduino():
     global Alert_LastTime
@@ -42,8 +45,14 @@ def ReadArduino():
     while True:
         try:
             x = ""
-            x = ser.readline().decode();  # read one byte
+            x = ser.readline().decode()  # read one byte
             str_usb_read = x
+
+            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
+            mon_fichier.write(getDate()+" : "+str_usb_read)
+            mon_fichier.write("\r\n")
+            mon_fichier.close()
+
             x = x.strip()
 
             if ":" in x:
@@ -87,16 +96,22 @@ def ReadArduino():
                 widget_type = widget_type.strip()
                 status = status.strip()
                 value = value.strip()
-                
-                status = status.rstrip('0').rstrip('.') if '.' in status else status
-                value = value.rstrip('0').rstrip('.') if '.' in value else value
+
+                status = status.rstrip('0').rstrip(
+                    '.') if '.' in status else status
+                value = value.rstrip('0').rstrip(
+                    '.') if '.' in value else value
                 x = ""
 
                 if widget_type == "Alert":
                     Alert(str_usb_read)
                 else:
                     try:
-                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
+                        if widget_type != "-99":
+                            cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s and widget.Id=%s", (pinID, SlaveCarteId, widget_type))
+                        else:
+                            cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE DeviceID=%s and Device.CarteID=%s", (pinID, SlaveCarteId))
+
                         for row in cursor.fetchall():
                             cmd_device_ID = row[0]
                             nom = row[1]
@@ -110,50 +125,51 @@ def ReadArduino():
                            # except ValueError, e:
                            #     Configuration = ''
 
-                        if cmd_device_ID != "":                            
-                            if SlaveCarteId != "" and pinID != "":
-                                cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID, int(SlaveCarteId)))
+                        if cmd_device_ID != "":
+                            if status != "-999":
+                                if SlaveCarteId != "" and pinID != "":
+                                    cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=%s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (
+                                        value, status, getDate(), pinID, int(SlaveCarteId), widget_Id))
 
-                            elif pinID != "":
-                                SlaveCarteId = "0"
-        #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
-                                cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=0 and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID))
-                            setHistory(SlaveCarteId, pinID, value, status)
-                    
-                            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
-                            mon_fichier.write(getDate()+" : "+str_usb_read)
-                            mon_fichier.write("\r\n")
-                            mon_fichier.close()
-                            
-                            if status == 0 or status == "0":
-                                sstatus = "off"
-                            elif status == 1 or status == "1":
-                                sstatus = "on"
-                            else:
-                                sstatus = status
+                                elif pinID != "":
+                                    SlaveCarteId = "0"
+            #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
+                                    cursor.execute(
+                                        "UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE cmd_device.DeviceId = %s and Device.CarteId=0 and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), pinID, widget_Id))
+                                setHistory(SlaveCarteId, pinID, value, status)
 
-                            if widget_Id == "slider":
-                                value = ""
+                                if status == 0 or status == "0":
+                                    sstatus = "off"
+                                elif status == 1 or status == "1":
+                                    sstatus = "on"
+                                else:
+                                    sstatus = status
 
-                            if int(bLog) == 1:
-                                setLog(cmd_device_ID, str_usb_read, nom, lieux, value, sstatus )
+                                if widget_Id == "slider":
+                                    value = ""
 
-                            # if 'Notification' in Configuration:
-                            #    if Configuration['Notification'] == '1':
-                            if int(Notification) == 1:
-                                try:
-                                    SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
-                                except:
-                                    setError("Send Notification New Status")
-                                    pass
-                        else:
-                            if status == "-999":
-                                NewDevice(SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
+                                if int(bLog) == 1:
+                                    setLog(cmd_device_ID, str_usb_read,
+                                           nom, lieux, value, sstatus)
+
+                                # if 'Notification' in Configuration:
+                                #    if Configuration['Notification'] == '1':
+                                if int(Notification) == 1:
+                                    try:
+                                        SendNotification(
+                                            nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
+                                    except:
+                                        setError(
+                                            "Send Notification New Status")
+                                        pass
+                        elif status == "-999":
+                            NewDevice(SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
                     except:
                         setError("New Status")
                         pass
                         try:
-                            SendNotification("Erreur dans la requete read_usb", "-2")
+                            SendNotification(
+                                "Erreur dans la requete read_usb", "-2")
                         except:
                             setError("Erreur dans la requete read_usb")
                             pass
@@ -169,7 +185,8 @@ def ReadArduino():
 
 def Alert(str_usb_read):
     try:
-        cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)", ("", getDate(), "", "Alert : " + str_usb_read))
+        cursor.execute("INSERT INTO Log (DeviceID,DATE,ACTION,Message) VALUES (%s, %s, %s, %s)",
+                       ("", getDate(), "", "Alert : " + str_usb_read))
         try:
             SendNotification(str_usb_read)
         except:
@@ -186,9 +203,11 @@ def NewDevice(SlaveCarteId, pinID, value, module_type, widget_type="-99"):
     try:
         cursor.execute("SELECT MAX(id)+1 as maxid from Device ")
         maxId = cursor.fetchone()[0]
-        cursor.execute("INSERT INTO Device (ID, Nom, CarteId, Module_Id) VALUES (%s, %s, %s, %s) ", (maxId, "New Device", SlaveCarteId, module_type))
-        cursor.execute("INSERT INTO cmd_device (Nom, Device_Id, DeviceId, Value, Date, Widget_Id) VALUES (%s, %s, %s, %s, %s, %s) ", ("New Device", maxId, pinID, value, getDate(), widget_type))
-        setLog(maxId, '', 'New Device', '', value, value )
+        cursor.execute("INSERT INTO Device (ID, Nom, CarteId, Module_Id) VALUES (%s, %s, %s, %s) ",
+                       (maxId, "New Device", SlaveCarteId, module_type))
+        cursor.execute("INSERT INTO cmd_device (Nom, Device_Id, DeviceId, Value, Date, Widget_Id) VALUES (%s, %s, %s, %s, %s, %s) ",
+                       ("New Device", maxId, pinID, value, getDate(), widget_type))
+        setLog(maxId, '', 'New Device', '', value, value)
     except:
         setError("New Device")
         pass
@@ -216,25 +235,31 @@ def setHistory(CarteId, pinId, value, etat):
                         INNER JOIN Device on Device.Id = cmd_device.Device_Id
                         INNER JOIN widget ON cmd_device.Widget_Id = widget.Id
                         WHERE DeviceId = %s and Device.CarteId = %s""",
-                    (pinId, CarteId)
-                )
+                   (pinId, CarteId)
+                   )
     result = cursor.fetchone()
     if result:
         if result[0] == 1:
-            cursor.execute("INSERT INTO Temperature_Temp (Date, Temp, Lieux_Id, Cmd_device_Id) VALUES (%s, %s, %s, %s)", (getDate(), value if result[3] == "Text" else etat, result[2], result[1]))
-    cursor.execute("delete from Log where Log.date < SUBDATE(CURRENT_DATE, INTERVAL 15 DAY)")
+            cursor.execute("INSERT INTO Temperature_Temp (Date, Temp, Lieux_Id, Cmd_device_Id) VALUES (%s, %s, %s, %s)",
+                           (getDate(), value if result[3] == "Text" else etat, result[2], result[1]))
+    cursor.execute(
+        "delete from Log where Log.date < SUBDATE(CURRENT_DATE, INTERVAL 15 DAY)")
 
-def setLog(cmd_device_ID, str_usb_read, nom, lieux, value, sstatus ):
-    cursor.execute("INSERT INTO Log (DeviceId, DATE, ACTION, Message, Value, Etat) VALUES (%s, %s, %s, %s, %s, %s)", (cmd_device_ID, getDate(), str_usb_read, nom + " " + lieux + " " + str(value) + " : " + sstatus, str(value), sstatus))
+
+def setLog(cmd_device_ID, str_usb_read, nom, lieux, value, sstatus):
+    cursor.execute("INSERT INTO Log (DeviceId, DATE, ACTION, Message, Value, Etat) VALUES (%s, %s, %s, %s, %s, %s)",
+                   (cmd_device_ID, getDate(), str_usb_read, nom + " " + lieux + " " + str(value) + " : " + sstatus, str(value), sstatus))
+
 
 def setError(situ, value=(sys.exc_info()[0])):
-    print("####### READ USB  "+situ+" #######" + time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % value)
+    print("####### READ USB  "+situ+" #######" +
+          time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % value)
 
 
 try:
     device = find_usb_port("2341", "0043")
     while device is None:
-	    device = find_usb_port("2341", "0043")
+        device = find_usb_port("2341", "0043")
     ser = serial.Serial(port=device, baudrate=115200)
     ReadArduino()
 except KeyboardInterrupt:

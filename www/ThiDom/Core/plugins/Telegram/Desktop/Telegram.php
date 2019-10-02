@@ -5,8 +5,13 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 ?>
 
 <div> <!--/* class="DeviceDetail Corner"*/-->
-	<table class="table text-center table-borderless WidgetContent" id="Contentcmd_<?php echo CmdDevice::GetCmdId('SendMessage',$Device_id)->get_Id()?>">
+	<table class="table text-center table-borderless WidgetContent" >
 		<tbody>
+			<tr class="WidgetStatus-center">
+				<td colspan="2">
+					<textarea id="TelegramMessage" type="text" class="form-control"  placeholder="Message"></textarea>
+				</td>
+			</tr>
 			<?php
 				$listCmd = CmdDevice::byDevice_Id($Device_id);
 				$nbIter = 0;
@@ -21,11 +26,11 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 						echo "<td><table><tbody>";
 					}
 			?>					
-					<tr class="WidgetStatus-center">
+					<!--<tr class="WidgetStatus-center">
 						<td>
 							<textarea id="TelegramMessage_<?php echo $value->get_Id() ?>" type="text" class="form-control"  placeholder="Message"></textarea>
 						</td>
-					</tr>
+					</tr>-->
 					<tr class="WidgetStatus-center">
 						<td>
 							<div class="btn btn-primary pull-center TelegramSendMessage" data-i18n="Edit" data-theme="a" id="SendMessage_<?php echo $value->get_Id() ?>" cmdDeviceId="<?php echo $value->get_Id() ?>"><?php echo $value->get_Name() ?></div>
@@ -51,7 +56,8 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 <script>
 	$(".TelegramSendMessage").click(function()
 	{
-		$msg = $("#TelegramMessage_"+$(this).attr("cmdDeviceId")).val();
+		//$msg = $("#TelegramMessage_"+$(this).attr("cmdDeviceId")).val();
+		$msg = $("#TelegramMessage").val();
         if ($msg != "")
         {
 		    sendMessage($(this).attr("cmdDeviceId"), $msg );
@@ -74,12 +80,13 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		});
 
 		request.done(function (data) {
+			info("Message sent");
+			$("#TelegramMessage").val("");
 		});
 
 		request.fail(function (jqXHR, textStatus, errorThrown) {
 		});
 		
-		$("#TelegramMessage").val("")
 
 	}
 

@@ -150,8 +150,7 @@ class Livebox extends Device
 				$j = date("j", strtotime('now -'.$LastChange.' Seconds')); 
 				$m = date("n", strtotime('now -'.$LastChange.' Seconds')); 
 				$Y = date("Y", strtotime('now -'.$LastChange.' Seconds')); 
-				$LastChange = $j." ".$mois[$m]." ".$Y."-".date("H \h i", strtotime('now -'.$LastChange.' Seconds')); 
-
+				$LastChange = $j." ".$mois[$m]." ".$Y."-".date("H \h i", strtotime('now -'.$LastChange.' Seconds'));
 				CmdDevice::Update_Device_Value($this->Device_id, $UpStream,$UpStream,"Up");
 				CmdDevice::Update_Device_Value($this->Device_id, $DownStream,$DownStream,"Down");
 				CmdDevice::Update_Device_Value($this->Device_id, $LastChange,"","Last Change");

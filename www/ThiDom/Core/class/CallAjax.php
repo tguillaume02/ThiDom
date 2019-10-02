@@ -4,6 +4,62 @@ require_once dirname(__FILE__) .'/../ListRequire.php';
 ?>
 <script>
 
+function CheckStatusProcessus()
+{
+	if ($.fn.DataTable.isDataTable("#table-content-sante"))
+	{
+		$("#tbody-content-sante").html("");
+		$("#table-content-sante").dataTable().fnDestroy();
+	}
+	var santeTable = $("#table-content-sante").dataTable(
+	{
+		"order": [[ 1, "asc" ]],
+		"columnDefs": [
+		{"className": "dt-center", "targets": "_all"},
+		],
+		"searching": false,
+		"pagingType": "numbers",
+		"iDisplayLength": 13,
+		"lengthMenu": [[15, 100, -1], [15, 50, "All"]],
+		"bLengthChange": false,		
+		"columns": [
+		{data: "Process"},
+		{data: "Status"},
+		/*{data: null, sortable: false, render: function(data, type, full) 
+			{
+				return '<button class="btn btn-primary btn-md"> Edit <i class="fas fa-pencil-alt" aria-hidden="true"></i></button>   <button class="btn btn-danger btn-md"> Delete <i class="fas fa-trash" aria-hidden="true"></i></button>';
+			}
+		}*/
+		]
+	});
+
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'GetStatusProcessus',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+
+	request.done(function (data) {		
+		santeTable.fnClearTable();
+		if (data.length != 0)
+		{
+			santeTable.fnAddData(data);
+			santeTable.fnDraw();
+		}
+	})
+
+	request.fail(function (jqXHR, textStatus, errorThrown) {
+		ErrorLoading('LoadSanteProcessus');
+	});
+}
+
 function callPlugins(plugins, device_id,role,type,value)
 {
 	value = value+"";
@@ -62,6 +118,7 @@ function Recup_Etat()
 			Etat = item.Etat;
 			Value = item.Value;
 			Unite = item.Unite;
+			Vcc = item.Vcc;
 			StringEtat = Boolean(parseInt(Etat)) ? "on" : "off";
 			StringColorEtat = Boolean(parseInt(Etat)) ? "#276941" : "#FF0000";
 			Widget_Id = item.WidgetId;
@@ -107,6 +164,11 @@ function Recup_Etat()
 			if (Unite != null)
 			{
 				Value = Value + " " + Unite;
+			}
+
+			if (Vcc != null)
+			{
+				$("#Battery_"+cmd_device_format+" tspan").html(Vcc);
 			}
 
 			if (Widget_Type == "Text") // Numeric
@@ -446,6 +508,11 @@ function LoadPlugins()
 		}
 		$.each(data, function (index, item) {
 			$("#list-plugins").append(new Option(item.ModuleName, item.Id));
+			if(item.bFileExist == false)
+			{
+				$($("#table-content-plugins tr .btn-primary")[index]).prop( "disabled", true );
+				$($("#table-content-plugins tr .btn-primary")[index]).css({"background":"transparent", "color":"transparent", "border-color":"transparent"})
+			}
 		})
 	})
 
@@ -541,10 +608,10 @@ function LoadLieux()
 	}
 	var roomTable = $("#table-content-room").dataTable(
 	{
-		"order": [[ 1, "asc" ]],
+		"order": [[ 2, "asc" ]],
 		"columnDefs": [
 		{"className": "dt-center", "targets": "_all"},
-		{ "visible": false, "targets": [0,] },		
+		{ "visible": false, "targets": [0,1,] },		
 		{ "type": "alt-string", "targets": [3] }
 		],
 		"searching": false,
@@ -554,6 +621,7 @@ function LoadLieux()
 		"bLengthChange": false,
 		"columns": [
 		{data: "Id"},
+		{data: "Img"},
 		{data: "Nom"},
 		//{data: "Position"},
 		{
@@ -1211,6 +1279,7 @@ function DeleteScenario(id)
 	});
 }*/
 
+
 function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "", CmdDeviceConfiguration ="")
 {
 	//Data.Act = "SaveDevice";
@@ -1491,6 +1560,96 @@ function LoadEquipement()
 		DeleteDevice(DeviceData, $(this).parent().parent());
 	});
 }
+
+function InstallCommand()
+{
+	var request = $.ajax({
+		type:'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'AddCommande',
+			ModuleId: DeviceData.ModuleId,
+			DeviceId: DeviceData.DeviceId
+		}
+	});
+	EditDevice(DeviceData);
+}
+
+function EditCommandeName(elem)
+{	
+	var value = $.trim($(elem).text());
+	var id = $(elem).attr("id");
+	$("#Edit_"+id).remove();
+	var new_html = ('<input id="Edit_'+id+'" value="' + value + '" onkeyup="$('+id+').text($(this).val())" onfocusout="UpdateCommandeName(this,'+id+');" size="'+$(elem).html().trim().length+'">');
+	$(elem).after(new_html);
+	$(elem).hide();
+	$("#Edit_"+id).focus();
+}
+
+function UpdateCommandeName(elemInput, elemLabel)
+{	
+	$(elemInput).remove();
+	$(elemLabel).show();
+
+	var request = $.ajax({
+		type:'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'NewCommandeName',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:'',
+			cmddeviceId: $(elemLabel).attr("cmdId"),
+			NewName: $(elemLabel).html()
+		}
+	});
+}
+
+function DeleteCommandeDevice(Name, cmdId)
+{
+	bootbox.confirm({
+    	message: `Êtes vous sûr de vouloir supprimer: ${Name}?`,
+	    buttons: {
+	        confirm: {
+	            label: 'Yes',
+	            className: 'btn-success'
+	        },
+	        cancel: {
+	            label: 'No',
+	            className: 'btn-danger'
+	        }
+	    },
+
+		callback: function (result){
+    		if (result)
+    		{
+				var request = $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: 'Core/class/GetAjaxResult.php',		
+					data: {
+						Act: "DeleteCmdDevice",
+						cmddeviceId: cmdId
+					},
+					cache: false
+				});
+
+				request.done(function (data) {
+					info(data.msg);
+					LoadMaison();
+				});
+
+				request.fail(function (jqXHR, textStatus, errorThrown) {
+					ErrorLoading('DeleteCommandDevice');
+				});
+    		}
+        }
+	});
+}
+
 // OLD	
 /*	function Recup_Conditions()
 	{		

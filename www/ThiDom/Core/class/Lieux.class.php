@@ -72,14 +72,14 @@ class Lieux
 		
 	}
 
-	public function SaveLieux($Id, $Name, $Visible, $Position, $Img)
+	public function SaveLieux($Id, $Name, $Visible, $Position, $Icons)
 	{
 		if ($Id == "")
 		{
 			$values = array(
 				':Name' => $Name,
 				':Visible' => $Visible,
-				':Img' => $Img
+				':Img' => $Icons
 				);
 
 			$sql = "INSERT INTO Lieux (Nom,Visible,Position, Img) select :Name, :Visible, max(Position)+1 as max, :Img from Lieux";			
@@ -96,7 +96,7 @@ class Lieux
 				':Name' => $Name,
 				':Visible' => $Visible,
 				':Position' => $Position,
-				':Img' => $Img
+				':Img' => $Icons
 				);
 
 			$sql = "UPDATE Lieux set Nom=:Name, Visible=:Visible, Position=:Position, Img=:Img where ID = :id";
