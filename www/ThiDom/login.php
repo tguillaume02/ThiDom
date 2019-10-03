@@ -54,7 +54,7 @@ if (session_status() == PHP_SESSION_NONE) {
 		</div>
 	</div>
 
-	<script type="text/javascript" src="js/jquery/jquery-2.2.0.min.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="js/fontawesome/fontawesome.min.js"></script>
 	<script type="text/javascript" src="js/fontawesome/fa-solid.min.js"></script>
 	<script type="text/javascript" src="js/fontawesome/fa-regular.min.js"></script>
