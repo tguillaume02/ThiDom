@@ -14,7 +14,7 @@ init_msg()
 	msg_no="N"
 	msg_cancel_install="Annulation de l'installation"
 	msg_answer_yesno="Répondez Y ou N"
-	msg_installer_welcome="*Bienvenue dans l'assistant d'intallation/mise à jour de Thidom*"
+	msg_installer_welcome="*Bienvenue dans l'assistant d'installation/mise à jour de Thidom*"
 	msg_question_install_thidom="Etes-vous sûr de vouloir installer Thidom?"
 	msg_warning_install_thidom="Attention : cela écrasera la configuration par défaut de ${ws_upname} si elle existe !"
 	msg_warning_overwrite_thidom="Attention : votre installation existante de Thidom va être écrasée !"
@@ -70,7 +70,7 @@ install_dependance() {
 	sudo apt-get install apache2-utils -y
 	sudo apt-get install libexpat1 -y
 	sudo apt-get install ssl-cert -y
-	sudo apt-get install mysql-server -y
+	sudo apt-get install mariadb-server -y
 	sudo apt-get install python -y
 	sudo apt-get install python-mysqldb -y
 	sudo apt-get install python-serial -y
@@ -143,60 +143,92 @@ install_dependance() {
 }
 
 install_php() {
-	sudo apt-get install php7.0 -y 
-	sudo apt-get install php7.0-common -y
-	sudo apt-get install php7.0-curl -y 
-	sudo apt-get install php7.0-gd -y
-	sudo apt-get install php7.0-imap -y
-	sudo apt-get install php7.0-json -y
-	sudo apt-get install php7.0-mcrypt -y
-	sudo apt-get install php7.0-mysql -y
-	sudo apt-get install php7.0-xml -y
-	sudo apt-get install php7.0-opcache -y
-	sudo apt-get install php7.0-soap -y
-	sudo apt-get install php7.0-xmlrpc -y
-	sudo apt-get install libapache2-mod-php7.0 -y
-	sudo apt-get install php7.0-dev -y
-	sudo apt-get install php7.0-zip -y
-	sudo apt-get install php7.0-ssh2 -y
-	sudo apt-get install php7.0-calendar -y
-	sudo apt-get install php7.0-intl -y
+	sudo apt-get install php7.3 -y 
+	sudo apt-get install php7.3-common -y
+	sudo apt-get install php7.3-curl -y 
+	sudo apt-get install php7.3-gd -y
+	sudo apt-get install php7.3-imap -y
+	sudo apt-get install php7.3-json -y
+	sudo apt-get install php7.3-mcrypt -y
+	sudo apt-get install php7.3-mysql -y
+	sudo apt-get install php7.3-xml -y
+	sudo apt-get install php7.3-opcache -y
+	sudo apt-get install php7.3-soap -y
+	sudo apt-get install php7.3-xmlrpc -y
+	sudo apt-get install libapache2-mod-php7.3 -y
+	sudo apt-get install php7.3-dev -y
+	sudo apt-get install php7.3-zip -y
+	sudo apt-get install php7.3-ssh2 -y
+	sudo apt-get install php7.3-calendar -y
+	sudo apt-get install php7.3-intl -y
 	if [ $? -ne 0 ]; then
-		sudo apt-get install libapache2-mod-php5 -y
-		sudo apt-get install php5 -y
-		sudo apt-get install php5-common -y
-		sudo apt-get install php5-curl -y
-		sudo apt-get install php5-dev -y
-		sudo apt-get install php5-gd -y
-		sudo apt-get install php5-json -y
-		sudo apt-get install php5-memcached -y
-		sudo apt-get install php5-mysql -y
-		sudo apt-get install php5-cli -y
-		sudo apt-get install php5-ssh2 -y		
+		sudo apt-get install php7.0 -y 
+		sudo apt-get install php7.0-common -y
+		sudo apt-get install php7.0-curl -y 
+		sudo apt-get install php7.0-gd -y
+		sudo apt-get install php7.0-imap -y
+		sudo apt-get install php7.0-json -y
+		sudo apt-get install php7.0-mcrypt -y
+		sudo apt-get install php7.0-mysql -y
+		sudo apt-get install php7.0-xml -y
+		sudo apt-get install php7.0-opcache -y
+		sudo apt-get install php7.0-soap -y
+		sudo apt-get install php7.0-xmlrpc -y
+		sudo apt-get install libapache2-mod-php7.0 -y
+		sudo apt-get install php7.0-dev -y
+		sudo apt-get install php7.0-zip -y
+		sudo apt-get install php7.0-ssh2 -y
+		sudo apt-get install php7.0-calendar -y
+		sudo apt-get install php7.0-intl -y		
+		if [ $? -ne 0 ]; then
+			sudo apt-get install libapache2-mod-php5 -y
+			sudo apt-get install php5 -y
+			sudo apt-get install php5-common -y
+			sudo apt-get install php5-curl -y
+			sudo apt-get install php5-dev -y
+			sudo apt-get install php5-gd -y
+			sudo apt-get install php5-json -y
+			sudo apt-get install php5-memcached -y
+			sudo apt-get install php5-mysql -y
+			sudo apt-get install php5-cli -y
+			sudo apt-get install php5-ssh2 -y		
 
-		echo "${VERT}********************************************************"
-		echo "${msg_optimize_webserver_cache_opcache}"
-		echo "********************************************************${NORMAL}"
+			echo "${VERT}********************************************************"
+			echo "${msg_optimize_webserver_cache_opcache}"
+			echo "********************************************************${NORMAL}"
 
-		sudo pecl channel-update pecl.php.net 
-		yes '' | pecl install -fs zendopcache-7.0.3
-		#for i in fpm cli ; do
-		for file in $(find /etc/ -iname php.ini -type f); do		
-    		sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
-			sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
-			sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
-    		sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
-			sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1			
-			#echo "zend_extension=opcache.so" >> ${file}
-			#echo "opcache.memory_consumption=256"  >> ${file}
-			#echo "opcache.interned_strings_buffer=8"  >> ${file}
-			#echo "opcache.max_accelerated_files=4000"  >> ${file}
-			#echo "opcache.revalidate_freq=1"  >> ${file}
-			#echo "opcache.fast_shutdown=1"  >> ${file}
-			#echo "opcache.enable_cli=1"  >> ${file}
-			#echo "opcache.enable=1"  >> ${file}
-		done
-		#done
+			sudo pecl channel-update pecl.php.net 
+			yes '' | pecl install -fs zendopcache-7.0.3
+			#for i in fpm cli ; do
+			for file in $(find /etc/ -iname php.ini -type f); do		
+				sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
+				sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1			
+				#echo "zend_extension=opcache.so" >> ${file}
+				#echo "opcache.memory_consumption=256"  >> ${file}
+				#echo "opcache.interned_strings_buffer=8"  >> ${file}
+				#echo "opcache.max_accelerated_files=4000"  >> ${file}
+				#echo "opcache.revalidate_freq=1"  >> ${file}
+				#echo "opcache.fast_shutdown=1"  >> ${file}
+				#echo "opcache.enable_cli=1"  >> ${file}
+				#echo "opcache.enable=1"  >> ${file}
+			done
+			#done
+		else
+			echo "${VERT}********************************************************"
+			echo "${msg_optimize_webserver_cache_opcache}"
+			echo "********************************************************${NORMAL}"
+
+			for file in $(find /etc/ -iname php.ini -type f); do
+				sed -i 's/max_execution_time = 30/max_execution_time = 600/g' ${file} > /dev/null 2>&1
+				sed -i 's/;opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/opcache.enable=0/opcache.enable=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/;opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1
+				sed -i 's/opcache.enable_cli=0/opcache.enable_cli=1/g' ${file} > /dev/null 2>&1	
+			done
+		fi
 	else
 
 		echo "${VERT}********************************************************"
