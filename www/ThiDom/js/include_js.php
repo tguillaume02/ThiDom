@@ -223,9 +223,9 @@
 						{
 							$("#modal-manage-device #raz-value").val(moment().startOf('day').seconds(data.RAZ).format('HH:mm:ss'));
 						}*/
-						$("#modal-manage-device #defaulticons").hide();
 						$("#add-device-general").hide();
 
+						//$("#modal-manage-device #defaulticons_"+data.Cmd_device_Id+"").hide();
 						if (!$.isEmptyObject(data.Configuration))
 						{
 							var obj = $.parseJSON(data.Configuration);
@@ -233,13 +233,13 @@
 							{
 								$("#modal-manage-device #"+i).val(el);
 							});
-							$("#modal-manage-device #cmddevice-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
+							/*$("#modal-manage-device #cmddevice-notification").prop('checked',parseInt(JSON.parse(data.Configuration).Notification));
 							if (JSON.parse(data.Configuration).icons != undefined && JSON.parse(data.Configuration).icons != "")
 							{
-								$("#modal-manage-device #defaulticons").attr("src", "Core/pic/Widget/"+JSON.parse(data.Configuration).icons);	
+								$("#modal-manage-device #defaulticons_"+data.Cmd_device_Id+"").attr("src", "Core/pic/Widget/"+JSON.parse(data.Configuration).icons);	
 								$("#modal-manage-device #CustomIcons").val(JSON.parse(data.Configuration).icons)							
 								$("#modal-manage-device #defaulticons").show();
-							}
+							}*/
 						}
 					}
 					else

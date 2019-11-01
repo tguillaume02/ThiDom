@@ -8,7 +8,7 @@ host = "localhost"
 usr = "{{usersql}}"
 pwd = "{{pwdsql}}"
 db = "{{bddsql}}"
-idnotify = "{{idnotify}}"
+# idnotify = "{{idnotify}}"
 
 DbConnect = None
 while DbConnect is None:
@@ -22,7 +22,7 @@ while DbConnect is None:
             setError("Connexion DB Failed")
             pass
     except MySQLdb.Error as e:
-        print("####### SQL Error #######" + e)
+        print("####### SQL Error #######")
         DbConnect = None
         time.sleep(10)
         

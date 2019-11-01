@@ -10,7 +10,7 @@ else
     $icons = $IconsWidget.'_'.$strEtat;
 }
 $Pictures_device = '<img id="Icons_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle " alt="icons'.$IconsWidget.'" src="Core/pic/Widget/'.$icons.'">';
-echo '<div class="">
+echo '<div id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd">
             <table class="table table-borderless text-center WidgetContent">
                 <tr>						
                     <td>

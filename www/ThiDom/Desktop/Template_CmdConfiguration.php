@@ -127,6 +127,9 @@ foreach($CmdOfDevice as $Cmd)
                             </div>';
                     }
                     
+    $Template_CmdConfiguration .=get_iconsButtonList($Cmd->get_Id(), getJsonAttr($request,"icons", ""));
+    
+
     $Template_CmdConfiguration .= 
                     $paramView.'
                     <div class="form-inline">

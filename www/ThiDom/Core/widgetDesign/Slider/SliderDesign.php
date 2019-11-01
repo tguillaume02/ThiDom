@@ -52,7 +52,7 @@ if ($cmddetails != "")
 }
 */
 
-echo  '<div class="">
+echo  '<div id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd">
             <table class="table table-borderless text-center WidgetContent">
                 <tr>
                     <td>

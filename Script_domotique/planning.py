@@ -133,7 +133,7 @@ while True:
                     AND now() >= t.DateToRaz 
                     AND now() > t.DateRAZ
         #            AND (t.Status != t.Etat or t.widget_Id = 5)
-                    AND (t.Status != t.Etat and  t.Etat != '' or t.Request != '')
+                    AND (t.Status != t.Etat and  t.Etat != '' or JSON_EXTRACT(t.Request, '$.url') != '')
                 group by Device_ID, sRequest;"""
 
         cursor.execute(sql)

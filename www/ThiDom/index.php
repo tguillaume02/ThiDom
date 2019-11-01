@@ -54,6 +54,7 @@
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
 								<li><a href="#scenario" id="scenario-link"><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
 								<li><a href="#sante" id="sante-link"><i class="fas fa-briefcase-medical" aria-hidden="true"></i> Santé</a></li>
+								<li><a href="#update" id="update-link"><i class="fa fa-sync" aria-hidden="true"></i> Mise à jour</a></li>
 								<li><a href="#user" id="user-link"><i class="fas fa-user" aria-hidden="true"></i> Utilisateur</a></li>
 							</ul>
 						</li>

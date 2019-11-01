@@ -232,4 +232,34 @@ function ls($folder = "", $pattern = "*", $recursivly = false, $options = array(
 	return $all;
 }
 
+function get_iconsButtonList($id, $defaultIcons) {
+  $iconslist = "";  
+  $display = $defaultIcons == ""? "display:none" : "";
+  $iconslist = '<div class="col-xs-4 col-sm-3 col-md-3 col-lg-2 form-group dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Icons
+  <span class="caret"></span></button>
+  <img id="defaulticons_'.$id.'" src="Core/pic/Widget/'.$defaultIcons.'" alt="defaulticons" style="width: 50px; height: 50px;'.$display.'">
+  <ul class="dropdown-menu" style="overflow: scroll;max-height: 408px;">
+      <li>
+          <a href="#" onclick="$(\'#CustomIcons_'.$id.'\').val(\'\')" title="">Default</a>
+      </li>';
+  if ($handle = opendir(dirname(__FILE__).'/../pic/Widget/')) {
+          /* Ceci est la façon correcte de traverser un dossier. */
+          while (false !== ($entry = readdir($handle)))
+          {
+              if ($entry != "." && $entry != ".." && (strpos($entry, '_on') === false && strpos($entry, '_On') === false && strpos($entry, '_off') === false && strpos($entry, '_Off') === false))
+              {
+                  $filename = substr($entry, 0, strrpos($entry, "."));
+                  $iconslist .= "<li><a href='#' onclick=\"$('#CustomIcons_$id').val('$filename');$('#defaulticons_$id').attr('src','Core/pic/Widget/$filename');$('#defaulticons_$id').show();\" title=\"$entry\"><img class='img-circle img_btn_device rounded-circle' src='Core/pic/Widget/$entry'>$filename</a></li>";
+              }
+          }
+          closedir($handle);
+  }
+  $iconslist .=' </ul>
+        <input id="CustomIcons_'.$id.'" name="icons" type="text" class="form-control" style="display: none">
+      </div>';
+  return $iconslist;
+
+}
+
 ?>

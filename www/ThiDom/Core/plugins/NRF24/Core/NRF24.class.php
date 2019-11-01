@@ -21,6 +21,7 @@ class NRF24 extends Device
             {
                 foreach($DeviceData as $donnees)
                 {
+                    $Device_guid = $donnees["GUID"];
                     $cmd_nom = $donnees["Cmd_nom"];
                     $Device_nom = $donnees["Device_nom"];
                     $carte_id = $donnees["CarteId"];
@@ -28,6 +29,7 @@ class NRF24 extends Device
                     $Value = empty($donnees["Value"]) ? 0 : $donnees["Value"];
                     $Etat = $donnees["Etat"];
                     $WidgetType = $donnees["WidgetName"];
+                    $WidgetId = $donnees["WidgetId"];
                 }
         
                 /*if($role == "Alerte")
@@ -76,9 +78,12 @@ class NRF24 extends Device
                         else
                         {
                             $act = "";
-                        } 
+                        }
+
                         
-                        $act = $act.$pinID."@".$Value.":".$Etat; 
+                        $guid = $Device_guid;
+                        
+                        $act = $act.$guid."_".$WidgetId."_".$pinID."@".$Value.":".$Etat; 
 
                         $comPort = Module::GetModuleTypeByDevice($device_id)->get_ModuleSpecificConf("com");
                         $fp =fopen($comPort, "w");

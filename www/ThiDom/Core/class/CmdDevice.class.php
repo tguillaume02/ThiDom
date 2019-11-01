@@ -218,11 +218,26 @@ class CmdDevice
 		$values = array(
 			':Id' => $CmdId
 			);
-		$sql = 'SELECT cmd_device.Id, cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName, widget.Type as WidgetType
-					FROM cmd_device 
+		$sql = 'SELECT
+					Device.GUID,
+					cmd_device.Id,
+					cmd_device.nom AS Cmd_nom,
+					Device.nom AS Device_nom,
+					CarteId,
+					DeviceId,
+					cmd_device.Value,
+					cmd_device.Etat,
+					cmd_device.Unite,
+					Date,
+					Request,
+					widget.Name AS WidgetName,
+					widget.Type AS WidgetType,
+					Widget_Id AS WidgetId
+				FROM
+					cmd_device
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
 					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
-				WHERE cmd_device.Id  = :Id ';
+				WHERE cmd_device.Widget_Id != 9 and  cmd_device.Id  = :Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
@@ -231,11 +246,26 @@ class CmdDevice
 		$values = array(
 			':Device_Id' => $Device_Id
 			);
-		$sql = 'SELECT cmd_device.Id, cmd_device.nom as Cmd_nom, Device.nom as Device_nom, CarteId, DeviceId, Value, Etat, widget.Name as WidgetName, widget.Type as WidgetType
-					FROM cmd_device 
+		$sql = 'SELECT 
+					Device.GUID,
+					cmd_device.Id,
+					cmd_device.nom AS Cmd_nom,
+					Device.nom AS Device_nom,
+					CarteId,
+					DeviceId,
+					cmd_device.Value,
+					cmd_device.Etat,
+					cmd_device.Unite,
+					Date,
+					Request,
+					widget.Name AS WidgetName,
+					widget.Type AS WidgetType,
+					Widget_Id AS WidgetId
+				FROM
+					cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
 					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
-				WHERE cmd_device.Device_Id  = :Device_Id ';
+				WHERE cmd_device.Widget_Id != 9 and cmd_device.Device_Id  = :Device_Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 

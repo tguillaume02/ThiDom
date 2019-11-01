@@ -35,21 +35,31 @@ function LoadTemplate()
 		{
 			$WidgetType= $donneesDevice["WidgetType"];
 			$Cmd_device_Id= $donneesDevice["Id"];
+			$CmdDeviceValue = $donneesDevice["Value"];
+			$CmdDeviceEtat = $donneesDevice["Etat"];
+			$CmdDeviceUnite = $donneesDevice["Unite"];
+			$Date = $donneesDevice["Date"];
+			$Request =  $donneesDevice["Request"];			
+			$WidgetName =  $donneesDevice["WidgetName"];
+			$CmdVisible =  $donneesDevice["cmd_visible"];
 
-			$widgetDesign_url = "../Core/widgetDesign/".$WidgetType."/".$WidgetType."Design.php";
-			if (file_exists($widgetDesign_url)) // Text : Numeric // Slider: Dimmer || Thermostat // Color: RGB //
-			{
-				ob_start();
-				include $widgetDesign_url;
-				$data .=  ob_get_clean();
-			}
-			else
-			{
-				$widgetDesign_url = "../Core/widgetDesign/Default/DefaultDesign.php";
-				ob_start();
-				include $widgetDesign_url;
-				$data .=  ob_get_clean();
-			}
+				$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
+				$IconsWidget = getJsonAttr($Request,"icons",$WidgetName);
+				$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+				$widgetDesign_url = "../Core/widgetDesign/".$WidgetType."/".$WidgetType."Design.php";
+				if (file_exists($widgetDesign_url)) // Text : Numeric // Slider: Dimmer || Thermostat // Color: RGB //
+				{
+					ob_start();
+					include $widgetDesign_url;
+					$data .=  ob_get_clean();
+				}
+				else
+				{
+					$widgetDesign_url = "../Core/widgetDesign/Default/DefaultDesign.php";
+					ob_start();
+					include $widgetDesign_url;
+					$data .=  ob_get_clean();
+				}
 		}
 	}
 }
@@ -95,9 +105,6 @@ function LoadTemplate()
 					$Request = $donneesDevice["Request"];
 					$History = $donneesDevice["History"];
 					$Cmd_type = $donneesDevice["Cmd_type"];
-					$CmdDeviceValue = $donneesDevice["Value"];
-					$CmdDeviceEtat = $donneesDevice["Etat"];
-					$CmdDeviceUnite = $donneesDevice["Unite"];
 					$DevicePosition = $donneesDevice["Position"];
 					$ModuleName = $donneesDevice["ModuleName"];
 					$WidgetId =  (empty($donneesDevice["WidgetId"])) ? $donneesDevice["ModuleId"] : $donneesDevice["WidgetId"];
@@ -122,7 +129,7 @@ function LoadTemplate()
 					$NomWithoutSpace = SpaceToScore($Nom);
 					$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
-					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+//					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 
 					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." ModuleType=".$ModuleName." >";
 
@@ -186,9 +193,6 @@ function LoadTemplate()
 					$Request = $donneesDevice["Request"];
 					$History = $donneesDevice["History"];
 					$Cmd_type = $donneesDevice["Cmd_type"];
-					$CmdDeviceValue = $donneesDevice["Value"];
-					$CmdDeviceEtat = $donneesDevice["Etat"];
-					$CmdDeviceUnite = $donneesDevice["Unite"];
 					$DevicePosition = $donneesDevice["Position"];
 					$ModuleName = $donneesDevice["ModuleName"];
 					$WidgetId =  (empty($donneesDevice["WidgetId"])) ? $donneesDevice["ModuleId"] : $donneesDevice["WidgetId"];
@@ -217,7 +221,7 @@ function LoadTemplate()
 					$NomWithoutSpace = SpaceToScore($Nom);
 					$cmd_device_format = /*$NomWithoutSpace.'_'.*/$LieuxWithoutSpace.'_'.$Cmd_device_Id;
 
-					$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
+					//$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 					if ($Vcc != null)
 					{
 						$AddBattery = '<span  id="Battery_'.$cmd_device_format.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i><tspan>'.$Vcc.'</tspan> V</span>';

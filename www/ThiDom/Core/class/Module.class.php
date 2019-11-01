@@ -79,7 +79,7 @@ class Module
 				':Name' => $Name,
 				':Type' => $Type,
 				':Configuration' => $Configuration,
-				':ApiKey' => bin2hex(random_bytes(45))
+				':ApiKey' => bin2hex(random_bytes(22))
 				);
 
 			$sql = "INSERT INTO Module_Type (ModuleName, ModuleType, ModuleConfiguration, ApiKey) VALUES (:Name, :Type, :Configuration, :ApiKey)";

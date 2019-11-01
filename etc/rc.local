@@ -17,7 +17,7 @@
 	  #printf "My IP address is %s\n" "$_IP"
 	  #echo "My IP address is %s\n" "$_IP" >> /home/ThiDom/mon_ip.txt
 	#fi
-echo "########### $(date +"%d-%B-%Y %H:%M") ##############" >> /home/Thidom/Script\ crontab/debug/console.log
+echo "########### $(date +"%d-%B-%Y %H:%M") ##############" >> /home/ThiDom/Script\ crontab/debug/console.log
 /home/ThiDom/Script\ crontab/run_read.sh
 /home/ThiDom/Script\ crontab/planning.sh
 /home/ThiDom/Script\ crontab/thermostat.sh

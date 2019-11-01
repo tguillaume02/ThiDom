@@ -43,32 +43,7 @@
 									<input type="text" class="form-control" id="device-name"  name="DeviceName" placeholder="Nom de l'appareil (qui apparaitras sur le site):" required>
 								</div>
 								<button id='add-device-general' class='col-lg-1 col-md-3 col-sm-3 col-xs-3 btn btn-success' type='button'><i class='fas fa-plus' aria-hidden='true'></i></button><br/>
-							</div>	
-							<div class="col-xs-4 col-sm-3 col-md-3 col-lg-2 form-group dropdown">
-								<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Icons
-								<span class="caret"></span></button>
-								<img id="defaulticons" src="" alt="defaulticons" style="width: 50px; height: 50px;">
-								<ul class="dropdown-menu" style="overflow: scroll;max-height: 408px;">
-									<li>
-										<a href='#' onclick="$('#CustomIcons').val('')" title="">Default</a>
-									</li>
-								<?php
-									if ($handle = opendir('Core/pic/Widget/')) {
-											/* Ceci est la façon correcte de traverser un dossier. */
-											while (false !== ($entry = readdir($handle)))
-											{
-												if ($entry != "." && $entry != ".." && (strpos($entry, '_on') === false && strpos($entry, '_On') === false && strpos($entry, '_off') === false && strpos($entry, '_Off') === false))
-												{
-													$filename = substr($entry, 0, strrpos($entry, "."));
-														echo "<li><a href='#' onclick=\"$('#CustomIcons').val('$filename');$('#defaulticons').attr('src','Core/pic/Widget/$filename');$('#defaulticons').show();\" title=\"$entry\"><img class='img-circle img_btn_device rounded-circle' src='Core/pic/Widget/$entry'>$filename</a></li>";
-													}
-											}
-											closedir($handle);
-									}
-								?>
-								</ul>
-								<input id="CustomIcons" name="icons" type="text" class="form-control" style="display: none">
-							</div>													
+							</div>														
 							<div class="row form-group">
 								<div class="col-xs-8 col-sm-5 col-md-5 col-lg-5">  
 									<label class="btn btn-success">

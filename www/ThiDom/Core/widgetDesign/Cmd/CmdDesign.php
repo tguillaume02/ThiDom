@@ -11,7 +11,7 @@ $cmdTable = '';
 //{
     //if ($DefaultName != $cmdList->get_Name())
     //{
-        $cmddetails .= '<td id="Contentcmd_'. $cmdList->get_Id() .'">
+        $cmddetails .= '<td>
                             <div id="'.$cmdList->get_Name().'_'.$cmdList->get_Id().'"  
                                 class="btn btn-primary pull-left CommandEvent div_btn_device" 
                                 data-i18n="Edit" 
@@ -35,8 +35,7 @@ if ($cmddetails != "")
                 </table>';
 }
 
-echo  '<div class="" style="display:inline-flex">
+echo  '<div  id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd" style="display:inline-flex">
 '.$cmdTable.'           
 </div>';
-
 ?>

@@ -106,9 +106,9 @@ class Device
 
 	public function getAllDeviceAndCmd()			    
 	{
-		$sql = "SELECT * , (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where CarteId = T.CarteId  ) as Vcc FROM 		 
+		$sql = "SELECT * , (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where GUID = T.GUID AND CarteId = T.CarteId  ) as Vcc FROM 		 
 		(
-		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.visible as DeviceVisible, Device.CarteId AS CarteId, cmd_device.Visible as cmd_visible, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
+		SELECT Device.GUID  AS GUID, Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.visible as DeviceVisible, Device.CarteId AS CarteId, cmd_device.Visible as cmd_visible, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
 	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
 			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date, COUNT( Activate ) AS CountPlanning 
 		FROM Lieux
@@ -153,10 +153,10 @@ class Device
 			':LieuxId' => $LieuxId
 			);
 		$sql = "SELECT *
-				, (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where CarteId = T.CarteId  ) as Vcc 
+				, (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where GUID = T.GUID AND CarteId = T.CarteId  ) as Vcc 
 			FROM 
 		(
-		SELECT Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
+		SELECT Device.GUID  AS GUID, Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
 	        cmd_device.Type as Cmd_type, cmd_device.Value,cmd_device.Etat, cmd_device.Unite, Lieux.Nom AS Lieux, Lieux.Id as LieuxId, Lieux.Position AS Position,
 			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date
 			, COUNT( Activate ) AS CountPlanning

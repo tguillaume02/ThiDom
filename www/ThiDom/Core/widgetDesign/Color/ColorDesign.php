@@ -1,7 +1,7 @@
 <?php
 
 $Pictures_device = '<input id="InfoDevice_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle  circle" type="color" >';
-echo '<div class="">
+echo '<div id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd">
             <table class="table table-borderless text-center WidgetContent">
                 <tr>
                     <td>

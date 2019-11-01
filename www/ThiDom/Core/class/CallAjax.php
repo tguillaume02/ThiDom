@@ -126,6 +126,7 @@ function Recup_Etat()
 			Widget_Type = item.WidgetType;
 			//Type_Device_Action = item.Type_Device_Action;
 			Configuration  = item.Configuration;
+			Request  = item.Request;
 			TypeTemplate  = item.TypeTemplate;
 			device_format =  item_Nom + "_" + item_Lieux+"_"+device_id;
 			cmd_device_format = /* Device_Nom + "_" +*/ item_Lieux+"_"+Cmd_device_Id;
@@ -134,32 +135,35 @@ function Recup_Etat()
 			if (isVisible == 0)
 			{					
 				$("#Contentcmd_"+Cmd_device_Id).hide();
-				$("#InfoDevice_"+cmd_device_format).hide();
-				$("#Contentcmd_"+Cmd_device_Id).parent().hide();
+				//$("#InfoDevice_"+cmd_device_format).hide();
+				if ($("#Contentcmd_"+Cmd_device_Id).parent().find(".ContentCmd:visible").length == 0)
+				{
+					$("#Contentcmd_"+Cmd_device_Id).parent().hide();
+				}
 			}
 			else
 		 	{
 				$("#Contentcmd_"+Cmd_device_Id).show();
-				$("#InfoDevice_"+cmd_device_format).show();
+				//$("#InfoDevice_"+cmd_device_format).show();
 				$("#Contentcmd_"+Cmd_device_Id).parent().show();
 		 	}
 
 
 			$("#Date_"+cmd_device_format).html(dDate);
-			if (Configuration != "" && Configuration != null)
+			if (Request != "" && Request != null)
 			{
-				Obj_Configuration = $.parseJSON(Configuration);
+				Obj_Configuration = $.parseJSON(Request);
 				if (!$.isEmptyObject(Obj_Configuration.icons))
 				{
 					Widget_icons =  Obj_Configuration.icons;
 				}
 			}
 
-			if (Widget_icons == undefined && TypeTemplate != null)
+			/*if (Widget_icons == undefined && TypeTemplate != null)
 			{
 				Obj_Configuration = $.parseJSON(TypeTemplate);
 				Widget_icons =  Obj_Configuration.icons;
-			}
+			}*/
 
 			if (Unite != null)
 			{

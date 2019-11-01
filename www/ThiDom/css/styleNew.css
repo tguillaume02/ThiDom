@@ -127,6 +127,20 @@ legend
   border-bottom-right-radius: 0px !important;
 }
 
+.count
+{  
+  display: inline-block;
+  font-size: 13px;
+  background-color: #78ab74;
+  color: white;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 16px;
+  margin-left: 3px;
+  vertical-align: super;
+}
 
 #Content-desktop legend
 {	
