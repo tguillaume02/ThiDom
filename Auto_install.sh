@@ -364,13 +364,13 @@ sudo cp -Rf /tmp/ThiDom/www/* "${webserver_home}"
 sudo mkdir /home/ThiDom
 sudo mkdir /home/ThiDom/Script\ crontab/
 sudo cp -Rf /tmp/ThiDom/Script\ crontab/* /home/ThiDom/Script\ crontab/
-sudo chmod +x /home/ThiDom/Script\ crontab/*
-sudo chmod 755 /home/ThiDom/Script\ crontab/*
-sudo chmod 655 /home/ThiDom/Script\ crontab/debug/*
+sudo chmod 755 -R /home/ThiDom/Script\ crontab/*
+sudo chmod 666 -R /home/ThiDom/Script\ crontab/debug/*
+sudo chmod +x -R /home/ThiDom/Script\ crontab/*
 
 sudo mkdir /home/ThiDom/Script_domotique/
 sudo cp -Rf /tmp/ThiDom/Script_domotique/* /home/ThiDom/Script_domotique/
-sudo chmod +x /home/ThiDom/Script_domotique/*
+sudo chmod +x -R /home/ThiDom/Script_domotique/*
 
 #mkdir "${webserver_home}"/thidom/tmp
 chmod 775 -R "${webserver_home}"
@@ -450,6 +450,13 @@ sudo mysql -uroot -p"${MySQL_root}" thidom < /tmp/ThiDom/Thidom.sql
 sudo cp /etc/resolvconf/resolv.conf.d/original /etc/resolvconf/resolv.conf.d/base
 
 rm -rf /tmp/ThiDom
+
+sudo touch  /etc/udev/rules.d/99-usb-serial.rules
+sudo chmod 767 /etc/udev/rules.d/99-usb-serial.rules
+sudo echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="ttyUSBArduino"' >>  /etc/udev/rules.d/99-usb-serial.rules
+sudo udevadm trigger  
+sudo udevadm control --reload-rules
+# sudo mv /etc/udev/rules.d/99-usb-serial.rules /etc/udev/rules.d/99-usb-serial.rules.save
 
 #sudo pip install MySQL-python
 echo "${VERT}********************************************************"

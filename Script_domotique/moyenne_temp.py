@@ -85,9 +85,9 @@ try:
 
     cursor.execute("DELETE FROM Temperature_Temp WHERE Date between (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00') - INTERVAL  20 MINUTE - INTERVAL 1 SECOND) and (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00'))")
     db.commit()
-    mon_fichier = open("/home/pi/text.txt", "w")
-    mon_fichier.write("test")
-    mon_fichier.close()
+    # mon_fichier = open("/home/pi/text.txt", "w")
+    # mon_fichier.write("test")
+    # mon_fichier.close()
     cursor.close()
     db.close()
     time.sleep(1)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import serial
 import sys
 import datetime
@@ -23,6 +24,7 @@ cursor = msql.cursor
 DbConnect = msql.DbConnect
 
 SendNotification("Demarrage read usb", "-1")
+path = os.path.dirname(os.path.realpath(__file__))
 
 
 def find_usb_port(vendor, model):
@@ -30,11 +32,10 @@ def find_usb_port(vendor, model):
     for device in context.list_devices(subsystem='tty'):
         if 'ID_VENDOR' not in device:
             continue
-        if device.get('ID_VENDOR_ID') != vendor:
+        if device.get('ID_VENDOR_ID') == vendor and device.get('ID_MODEL_ID') == model:            
+            return str(device.device_node)
+        else:
             continue
-        if device.get('ID_MODEL_ID') != model:
-            continue
-        return str(device.device_node)
     return None
 
 
@@ -47,7 +48,7 @@ def ReadArduino():
             x = ser.readline().decode()  # read one byte
             str_usb_read = x
 
-            mon_fichier = open("/home/pi/Script crontab/debug/toto.txt", "a")
+            mon_fichier = open(path+"/../Script crontab/debug/toto.txt", "a")
             mon_fichier.write(getDate()+" : "+str_usb_read)
             mon_fichier.write("\r\n")
             mon_fichier.close()
@@ -215,7 +216,7 @@ def NewDevice(guid, SlaveCarteId, pinID, value, module_type, widget_type="-99"):
             if cursor._rows[0][1] != SlaveCarteId:
                 cursor.execute("UPDATE Device SET CarteID=%s WHERE GUID=%s", (SlaveCarteId, guid))
         else:
-            cursor.execute("SELECT MAX(id)+1 as maxid from Device ")
+            cursor.execute("SELECT  COALESCE(MAX(id)+1,1) as maxid from Device ")
             maxId = cursor.fetchone()[0]
             try:
                 cursor.execute("INSERT INTO Device (ID, GUID, Nom, CarteId, Module_Id) VALUES (%s, %s, %s, %s, %s) ",
@@ -237,7 +238,7 @@ def getModuleType(port):
                         FROM Module_Type """)
         if cursor.rowcount > 0:
             for row in cursor.fetchall():
-                if json.loads(row[1])['com'] == port:
+                if os.path.realpath(json.loads(row[1])['com']) == os.path.realpath(port):
                     return row[0]
     except:
         setError("getModuleType")
@@ -272,12 +273,16 @@ def setError(situ, value=(sys.exc_info()[0])):
     print("####### READ USB  "+situ+" #######" +
           time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Error: %s" % value)
 
-
-try:
+def FindUSB():
+    global ser
     device = find_usb_port("2341", "0043")
     while device is None:
         device = find_usb_port("2341", "0043")
+        time.sleep(15)
     ser = serial.Serial(port=device, baudrate=115200)
+
+try:
+    FindUSB()
     ReadArduino()
 except KeyboardInterrupt:
     print("Bye")

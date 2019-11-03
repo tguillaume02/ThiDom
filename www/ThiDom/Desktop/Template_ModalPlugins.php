@@ -79,6 +79,7 @@
 				disabled.attr('disabled','disabled');
 				$("#ConfigurationPlugins").children().remove();
 				SavePlugins(PluginsId, PluginsName, PluginsType, PluginsConfiguration);
+				$("#modal-manage-plugins").modal('toggle');
 			}
 		}
 		else if ($('form#new-plugins').is(":visible"))
@@ -91,7 +92,8 @@
 				pluginsVal = $("#new-plugins #list-new-plugins option:selected").val();
 				if (pluginsVal != "")
 				{
-					SavePlugins(-1, pluginsName, "", "");					
+					SavePlugins(-1, pluginsName, "", "");			
+					$("#modal-manage-plugins").modal('toggle');		
 				}
 			}
 		}

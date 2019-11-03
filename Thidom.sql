@@ -312,6 +312,18 @@ CREATE TABLE `widget` (
   `ModuleType_Id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+INSERT INTO `widget` VALUES (0,	'Temperature',	Text,	',1,' );
+INSERT INTO `widget` VALUES (1,	'Relay',	Binary,	',1,11,99,6,');
+INSERT INTO `widget` VALUES (2,	'Dimmer',	Slider,	',1,22,11,' );
+INSERT INTO `widget` VALUES (3,	'RGB',	Color,	',1,' );
+INSERT INTO `widget` VALUES (4,	'Motion',	Binary,	',1,' );
+INSERT INTO `widget` VALUES (5,	'Thermostat',	Slider,	',1,' );
+INSERT INTO `widget` VALUES (6,	'Humidity',	Text,	',1,' );
+INSERT INTO `widget` VALUES (7,	'Text',	Text, NULL );
+INSERT INTO `widget` VALUES (8,	'Commande',	Cmd, NULL );
+INSERT INTO `widget` VALUES (9,	'Vcc',	Text, NULL );
+			
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
