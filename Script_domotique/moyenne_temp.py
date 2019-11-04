@@ -9,14 +9,15 @@ cursor = msql.cursor
 db = msql.DbConnect
 
 def insertData(year, data, lieux_id, cmd_device_id, reason):        
-    cursor.execute(" SELECT data FROM HistoryData WHERE Lieux_Id = %s and Year = %s and Cmd_device_Id = %s" , (lieux_id, year, cmd_device_id))    
-    if cursor.rowcount > 0:
-        for row in cursor.fetchall():
-            datas = row[0]
-            dataNew = datas + data
-        cursor.execute(""" UPDATE HistoryData set Data = %s where Lieux_Id = %s and  Year = %s and Cmd_device_Id = %s """ , (dataNew, lieux_id, year, cmd_device_id))    
-    else:
-        cursor.execute(""" INSERT INTO HistoryData ( Year, Data, Lieux_id, Cmd_device_Id) VALUES (%s, %s, %s, %s)""",  (year, data, lieux_id, cmd_device_id))    
+    if data != "":        
+        cursor.execute(" SELECT data FROM HistoryData WHERE Lieux_Id = %s and Year = %s and Cmd_device_Id = %s" , (lieux_id, year, cmd_device_id))    
+        if cursor.rowcount > 0:
+            for row in cursor.fetchall():
+                datas = row[0]
+                dataNew = datas + data
+            cursor.execute(""" UPDATE HistoryData set Data = %s where Lieux_Id = %s and  Year = %s and Cmd_device_Id = %s """ , (dataNew, lieux_id, year, cmd_device_id))    
+        else:
+            cursor.execute(""" INSERT INTO HistoryData ( Year, Data, Lieux_id, Cmd_device_Id) VALUES (%s, %s, %s, %s)""",  (year, data, lieux_id, cmd_device_id))    
 
 # while True:
 try:
