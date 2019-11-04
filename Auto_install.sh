@@ -249,6 +249,9 @@ install_php() {
 
 init_msg
 
+sudo service apache2 stop
+sudo ps -au | grep 'Scrpt_domotique' | awk '{print $2}' | xargs sudo kill -9
+
 echo "${VERT}****************************************************************"
 echo "${msg_installer_welcome}"
 echo "****************************************************************${NORMAL}"
