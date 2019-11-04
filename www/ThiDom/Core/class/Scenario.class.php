@@ -16,7 +16,7 @@ class Scenario
 	{
 		if ($id-1 == -1)
 		{
-			$sql = "select max(Id)+1 as max from Scenario_Xml";
+			$sql = "select COALESCE(max(Id)+1,1) as max from Scenario_Xml";
 
 			$IdMaxScenario = db::execQuery($sql,[]);
 

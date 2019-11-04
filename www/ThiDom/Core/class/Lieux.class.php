@@ -82,7 +82,7 @@ class Lieux
 				':Img' => $Icons
 				);
 
-			$sql = "INSERT INTO Lieux (Nom,Visible,Position, Img) select :Name, :Visible, max(Position)+1 as max, :Img from Lieux";			
+			$sql = "INSERT INTO Lieux (Nom,Visible,Position, Img) select :Name, :Visible, COALESCE(max(Position)+1,1) as max, :Img from Lieux";			
 			db::execQuery($sql, $values);
 			
 			$msg = "La pièce ".$Name." a bien été ajoutée";
