@@ -96,7 +96,7 @@ CREATE TABLE `Lieux` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Img` varchar(100) NOT NULL,
   `Nom` varchar(50) NOT NULL,
-  `Backgd` varchar(100) NOT NULL,
+  `Backgd` varchar(100) DEFAULT NULL,
   `Position` int(11) NOT NULL,
   `Visible` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`Id`),

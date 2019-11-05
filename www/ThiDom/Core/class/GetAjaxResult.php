@@ -106,7 +106,7 @@ if ($act == "SaveDevice")
 	$LieuxId = getParameter('LieuxId'); // Id de la piece
 	$ModuleId = getParameter('ModuleId'); 
 	$DeviceName = getParameter('DeviceName'); // Nom du device
-	$DeviceVisible = getParameter('DeviceVisible'); // Device Visible ou pas	
+	$DeviceVisible = getParameter('DeviceVisible')+0; // Device Visible ou pas	
 	$CmdDevice = getParameter('CmdDevice'); // Liste des actions des differentes commandes
 	$DeviceHistoriser = getParameter('DeviceHistoriser');
 	$CmdDeviceId = getParameter('CmdDeviceid');	
@@ -274,7 +274,7 @@ if ($act == "SaveLieux")
 	$Name = getParameter('Name');
 	$Backgd = getParameter('Backgd');
 	$Position = getParameter('Position');
-	$Visible = getParameter('Visible');
+	$Visible = getParameter('Visible')+0;
 
 	echo $lieuxObject->SaveLieux($id, $Name, $Visible, $Position, $Icons);
 }
