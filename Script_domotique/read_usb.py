@@ -45,148 +45,150 @@ def ReadArduino():
     while True:
         try:
             x = ""
-            x = ser.readline().decode()  # read one byte
-            str_usb_read = x
+            try:
+                x = ser.readline().decode()  # read one byte
+                str_usb_read = x
 
-            mon_fichier = open(path+"/../Script crontab/debug/toto.txt", "a")
-            mon_fichier.write(getDate()+" : "+str_usb_read)
-            mon_fichier.write("\r\n")
-            mon_fichier.close()
+                mon_fichier = open(path+"/../Script crontab/debug/toto.txt", "a")
+                mon_fichier.write(getDate()+" : "+str_usb_read)
+                mon_fichier.write("\r\n")
+                mon_fichier.close()
 
-            x = x.strip()
+                x = x.strip()
 
-            if ":" in x:
-                guid = "0"
-                widget_type = ""
-                pinID = ""
-                value = ""
-                status = ""
-                SlaveCarteId = ""
-                cmd_device_ID = ""
-                lieux = ""
-                if "/" in x:
-                    try:
-                        x, SlaveCarteId = x.split("/")
-                    except:
-                        setError("Split /", x)
-                else:
-                    SlaveCarteId = "0"
-                try:
-                    pinID, status = x.split(":")
-                except:
-                    setError("Split :", x)
-
-                if "_" in pinID:
-                    try:
-                        tbRef =  pinID.split("_")
-                        if len(tbRef) == 3:
-                            guid, widget_type, pinID = pinID.split("_")
-                        else:
-                            widget_type, pinID = pinID.split("_")
-                    except:
-                        setError("Split _", pinID)
-
-                if "@" in pinID:
-                    try:
-                        pinID, value = pinID.split("@")
-                    except:
-                        setError("Split @", x)
-
-#                ############ TEMPORAIRE A RETIRER QUAND CORRECTIF FAIT SUR ARDUINO
-
-                if status == "":
-                    status = value
-
-                guid = guid.strip()
-                pinID = pinID.strip()
-                widget_type = widget_type.strip()
-                status = status.strip()
-                value = value.strip()
-
-                status = status.rstrip('0').rstrip('.') if '.' in status else status
-                value = value.rstrip('0').rstrip('.') if '.' in value else value
-                x = ""
-
-                if widget_type == "Alert":
-                    Alert(str_usb_read)
-                else:
-                    try:
-                        if pinID != "-99" and status == "-999":
-                            NewDevice(guid, SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
-                        elif  pinID != "-99":
-                            cursor.execute("SELECT GUID, carteId FROM Device where GUID=%s LIMIT 1", [guid])
-                            if cursor.rowcount > 0:
-                                if cursor._rows[0][1] != SlaveCarteId and guid != '0':
-                                    try:
-                                        cursor.execute("UPDATE Device SET CarteID=%s WHERE GUID=%s", (SlaveCarteId, guid))
-                                    except:                                        
-                                        setError("Update Carte Id")
-                                        pass
-                                if widget_type != "-99":
-                                    cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE GUID=%s and DeviceID=%s and Device.CarteID=%s and widget.Id=%s", (guid, pinID, SlaveCarteId, widget_type))
-                                else:
-                                    cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE  GUID=%s and DeviceID=%s and Device.CarteID=%s", (guid, pinID, SlaveCarteId))
-
-                                for row in cursor.fetchall():
-                                    cmd_device_ID = row[0]
-                                    nom = row[1]
-                                    lieux = row[2]
-                                    widget_Id = row[3]
-                                    bHistory = row[5]
-                                    Notification = row[6]
-                                    bLog = 0 if row[7] is None else row[7]
-                                # try:
-                                #     Configuration = json.loads(row[4])
-                                # except ValueError, e:
-                                #     Configuration = ''
-
-                                if cmd_device_ID != "":
-                                    if status != "-999":
-                                        if SlaveCarteId != "" and pinID != "":
-                                            cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE Device.GUID=%s and Device.CarteId=%s and cmd_device.DeviceId = %s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (
-                                                value, status, getDate(), guid, int(SlaveCarteId), pinID, widget_Id))
-
-                                        elif pinID != "":
-                                            SlaveCarteId = "0"
-                    #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
-                                            cursor.execute(
-                                                "UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE Device.GUID=%s and Device.CarteId=0  and cmd_device.DeviceId = %s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), guid, pinID, widget_Id))
-                                        setHistory(guid, SlaveCarteId, pinID, value, status)
-
-                                        if status == 0 or status == "0":
-                                            sstatus = "off"
-                                        elif status == 1 or status == "1":
-                                            sstatus = "on"
-                                        else:
-                                            sstatus = status
-
-                                        if widget_Id == "slider":
-                                            value = ""
-
-                                        if int(bLog) == 1:
-                                            setLog(cmd_device_ID, str_usb_read,
-                                                nom, lieux, value, sstatus)
-
-                                        # if 'Notification' in Configuration:
-                                        #    if Configuration['Notification'] == '1':
-                                        if int(Notification) == 1:
-                                            try:
-                                                SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
-                                            except:
-                                                setError("Send Notification New Status")
-                                                pass
-                    except:
-                        setError("New Status")
-                        pass
+                if ":" in x:
+                    guid = "0"
+                    widget_type = ""
+                    pinID = ""
+                    value = ""
+                    status = ""
+                    SlaveCarteId = ""
+                    cmd_device_ID = ""
+                    lieux = ""
+                    if "/" in x:
                         try:
-                            SendNotification("Erreur dans la requete read_usb", "-2")
+                            x, SlaveCarteId = x.split("/")
                         except:
-                            setError("Erreur dans la requete read_usb")
+                            setError("Split /", x)
+                    else:
+                        SlaveCarteId = "0"
+                    try:
+                        pinID, status = x.split(":")
+                    except:
+                        setError("Split :", x)
+
+                    if "_" in pinID:
+                        try:
+                            tbRef =  pinID.split("_")
+                            if len(tbRef) == 3:
+                                guid, widget_type, pinID = pinID.split("_")
+                            else:
+                                widget_type, pinID = pinID.split("_")
+                        except:
+                            setError("Split _", pinID)
+
+                    if "@" in pinID:
+                        try:
+                            pinID, value = pinID.split("@")
+                        except:
+                            setError("Split @", x)
+
+    #                ############ TEMPORAIRE A RETIRER QUAND CORRECTIF FAIT SUR ARDUINO
+
+                    if status == "":
+                        status = value
+
+                    guid = guid.strip()
+                    pinID = pinID.strip()
+                    widget_type = widget_type.strip()
+                    status = status.strip()
+                    value = value.strip()
+
+                    status = status.rstrip('0').rstrip('.') if '.' in status else status
+                    value = value.rstrip('0').rstrip('.') if '.' in value else value
+                    x = ""
+
+                    if widget_type == "Alert":
+                        Alert(str_usb_read)
+                    else:
+                        try:
+                            if pinID != "-99" and status == "-999":
+                                NewDevice(guid, SlaveCarteId, pinID, value, getModuleType(ser.port), widget_type)
+                            elif  pinID != "-99":
+                                cursor.execute("SELECT GUID, carteId FROM Device where GUID=%s LIMIT 1", [guid])
+                                if cursor.rowcount > 0:
+                                    if cursor._rows[0][1] != SlaveCarteId and guid != '0':
+                                        try:
+                                            cursor.execute("UPDATE Device SET CarteID=%s WHERE GUID=%s", (SlaveCarteId, guid))
+                                        except:                                        
+                                            setError("Update Carte Id")
+                                            pass
+                                    if widget_type != "-99":
+                                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE GUID=%s and DeviceID=%s and Device.CarteID=%s and widget.Id=%s", (guid, pinID, SlaveCarteId, widget_type))
+                                    else:
+                                        cursor.execute("SELECT cmd_device.ID, cmd_device.Nom, Lieux.Nom as Lieux, widget.Id, Device.Configuration, cmd_device.History, cmd_device.Notification, Device.History as Log FROM cmd_device LEFT JOIN Device on Device.ID= cmd_device.Device_ID LEFT JOIN widget on cmd_device.widget_Id = widget.Id LEFT JOIN Lieux on Lieux.ID = Device.Lieux_ID WHERE  GUID=%s and DeviceID=%s and Device.CarteID=%s", (guid, pinID, SlaveCarteId))
+
+                                    for row in cursor.fetchall():
+                                        cmd_device_ID = row[0]
+                                        nom = row[1]
+                                        lieux = row[2]
+                                        widget_Id = row[3]
+                                        bHistory = row[5]
+                                        Notification = row[6]
+                                        bLog = 0 if row[7] is None else row[7]
+                                    # try:
+                                    #     Configuration = json.loads(row[4])
+                                    # except ValueError, e:
+                                    #     Configuration = ''
+
+                                    if cmd_device_ID != "":
+                                        if status != "-999":
+                                            if SlaveCarteId != "" and pinID != "":
+                                                cursor.execute("UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE Device.GUID=%s and Device.CarteId=%s and cmd_device.DeviceId = %s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (
+                                                    value, status, getDate(), guid, int(SlaveCarteId), pinID, widget_Id))
+
+                                            elif pinID != "":
+                                                SlaveCarteId = "0"
+                        #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
+                                                cursor.execute(
+                                                    "UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE Device.GUID=%s and Device.CarteId=0  and cmd_device.DeviceId = %s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), guid, pinID, widget_Id))
+                                            setHistory(guid, SlaveCarteId, pinID, value, status)
+
+                                            if status == 0 or status == "0":
+                                                sstatus = "off"
+                                            elif status == 1 or status == "1":
+                                                sstatus = "on"
+                                            else:
+                                                sstatus = status
+
+                                            if widget_Id == "slider":
+                                                value = ""
+
+                                            if int(bLog) == 1:
+                                                setLog(cmd_device_ID, str_usb_read,
+                                                    nom, lieux, value, sstatus)
+
+                                            # if 'Notification' in Configuration:
+                                            #    if Configuration['Notification'] == '1':
+                                            if int(Notification) == 1:
+                                                try:
+                                                    SendNotification(nom + " " + lieux + " " + str(value) + " : " + sstatus, str(cmd_device_ID))
+                                                except:
+                                                    setError("Send Notification New Status")
+                                                    pass
+                        except:
+                            setError("New Status")
                             pass
+                            try:
+                                SendNotification("Erreur dans la requete read_usb", "-2")
+                            except:
+                                setError("Erreur dans la requete read_usb")
+                                pass
 
-#                    if (cmd_device_ID != ""):
-#                        Alert('can Scenario cmd_device_id: '+str(cmd_device_ID))
-
+    #                    if (cmd_device_ID != ""):
+    #                        Alert('can Scenario cmd_device_id: '+str(cmd_device_ID))
+            except:
+                pass
             DbConnect.commit()
         except KeyboardInterrupt:
             print("Bye")
@@ -226,6 +228,16 @@ def NewDevice(guid, SlaveCarteId, pinID, value, module_type, widget_type="-99"):
                 setLog(maxId, '', 'New Device', '', value, value)
             except:
                 setError("New Device Insert")
+                pass
+        cursor.execute("SELECT * FROM Device inner join cmd_device on cmd_device.Device_Id = Device.Id and DeviceID=%s and Widget_Id=%s WHERE Device.GUID=%s"), (pinID, widget_type, guid)
+        if cursor.rowcount == 0:
+            try:
+                cursor.execute("SELECT Id from Device WHERE GUID=%s ", [guid])
+                maxId = cursor.fetchone()[0]
+                cursor.execute("INSERT INTO cmd_device (Nom, Device_Id, DeviceId, Value, Date, Widget_Id, Type) VALUES (%s, %s, %s, %s, %s, %s,'') ",
+                            ("New Device", maxId, pinID, value, getDate(), widget_type))
+            except:
+                setError("New Device Insert2")
                 pass
     except:
         setError("New Device")
