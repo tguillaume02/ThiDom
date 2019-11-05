@@ -229,7 +229,7 @@ def NewDevice(guid, SlaveCarteId, pinID, value, module_type, widget_type="-99"):
             except:
                 setError("New Device Insert")
                 pass
-        cursor.execute("SELECT * FROM Device inner join cmd_device on cmd_device.Device_Id = Device.Id and DeviceID=%s and Widget_Id=%s WHERE Device.GUID=%s"), (pinID, widget_type, guid)
+        cursor.execute("SELECT * FROM Device inner join cmd_device on cmd_device.Device_Id = Device.Id and DeviceID=%s and Widget_Id=%s WHERE Device.GUID=%s", (pinID, widget_type, guid)
         if cursor.rowcount == 0:
             try:
                 cursor.execute("SELECT Id from Device WHERE GUID=%s ", [guid])
