@@ -165,9 +165,10 @@ class CmdDevice
 
 	public function GetAllCmdDevice()
 	{		
-		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
-				FROM '.self::table_name;
-
+		$sql = 'SELECT t.*, Lieux.Nom as LieuxNom
+				FROM '.self::table_name ." as t
+				LEFT JOIN Device on Device.Id =  ".self::table_name.".Device_Id
+				LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}	
 

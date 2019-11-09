@@ -554,6 +554,7 @@ function SavePlugins(id, name, type, configuration)
 	request.done(function (data) {		
 		info(data.msg);
 		LoadPlugins();
+		init_component();
 	});
 
 	request.fail(function (jqXHR, textStatus, errorThrown) {

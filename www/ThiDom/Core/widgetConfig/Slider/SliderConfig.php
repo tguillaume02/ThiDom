@@ -45,7 +45,7 @@ $tplWidgetConfig = '
 					<div class="col-lg-4">	
 						<select id="sensorAttach" name="sensor_attachId"  cmdid="'.$cmd_device_id.'" class="form-control" required="">
 							<option value="">-</option>';
-							$cmdDeviceToAttachArray = CmdDevice::GetAllCmdDeviceWithLieux();
+							$cmdDeviceToAttachArray = CmdDevice::GetAllCmdDevice();
 							foreach($cmdDeviceToAttachArray as $donneesCmdDevice)
 							{								
 								$isDefined = "";
