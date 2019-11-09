@@ -188,6 +188,11 @@ def ReadArduino():
     #                    if (cmd_device_ID != ""):
     #                        Alert('can Scenario cmd_device_id: '+str(cmd_device_ID))
             except:
+                try:
+                    serial.Serial(ser.port)
+                except:
+                    FindUSB()
+                    pass
                 pass
             DbConnect.commit()
         except KeyboardInterrupt:
