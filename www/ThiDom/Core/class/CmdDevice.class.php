@@ -653,7 +653,7 @@ class CmdDevice
 			<div class="controls form-inline">
 				<select id="sensorToDesactivate" name="sensorToDesactivate"  cmdid="'.$cmd_device_id.'" class="form-control">
 					<option value="">-</option>';
-					$cmdDeviceToAttachArray = self::GetAllCmdDeviceWithLieux();
+					$cmdDeviceToAttachArray = self::GetAllCmdDevice();
 					foreach($cmdDeviceToAttachArray as $donneesCmdDevice)
 					{								
 						$isDefined = "";
