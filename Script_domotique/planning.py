@@ -34,7 +34,7 @@ def UpdateDateRaz(deviceId):
         print (time.strftime('%A %d. %B %Y  %H:%M', time.localtime()) + " Erreur dans la requete UpdateDateRaz dateRaz= " + str(dateRaz)+ "  cmd_device_id= "+str(cmd_device_id))
         pass
 
-def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_attach_value, ValueAct, EtatAct, ModuleName,  ModuleConfiguration):
+def Action(New_status, DeviceID, GUID, CarteID, Nom, Type, Widget_Id, Lieux, Device_Id, sensor_attach_value, ValueAct, EtatAct, ModuleName,  ModuleConfiguration):
     try:                                 
         Configuration = json.loads(ModuleConfiguration)
     except:
@@ -45,7 +45,7 @@ def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_at
             str_action = "1"
         else:
             str_action = "0"
-        val = str(CarteID)+"/"+str(DeviceID)+"@"+str(New_Status)+":"+str(str_action)+"\n"
+        val = str(CarteID)+"/"+str(GUID)+"_"+str(Widget_Id)+"_"+str(DeviceID)+"@"+str(New_Status)+":"+str(str_action)+"\n"
         if (str(ValueAct) != str(New_Status) or str(str_action) != str(EtatAct)):
             SendDataToUsb(ModuleName, Configuration["com"], Configuration["baudrate"], val)
             now = datetime.datetime.now()
@@ -54,7 +54,7 @@ def Action(New_status, DeviceID, CarteID, Nom, Type, Lieux, Device_Id, sensor_at
             UpdateDateRaz(cmd_device_id)
             cursor.execute("INSERT INTO Log (DeviceID, DATE, Message) VALUES (%s, %s, %s)", (Device_Id, now, "Planning: "+Lieux+" "+Nom+" " + val))                        
     else:
-        val = str(CarteID)+"/"+str(DeviceID)+"@"+str(New_Status)+":"+str(New_Status)+"\n"
+        val = str(CarteID)+"/"+str(GUID)+"_"+str(Widget_Id)+"_"+str(DeviceID)+"@"+str(New_Status)+":"+str(New_Status)+"\n"
         if (ValueAct != New_Status or New_Status != EtatAct):    
             SendDataToUsb(ModuleName, Configuration["com"], Configuration["baudrate"], val)
             now = datetime.datetime.now()
@@ -70,6 +70,7 @@ while True:
         sql = """ SELECT Status
                     ,cmd_device.id
                     ,cmd_device.DeviceID
+                    ,Device.GUID
                     ,Device.CarteID
                     ,Device.Nom
                     ,cmd_device.Type as TypeAction
@@ -105,6 +106,7 @@ while True:
                 SELECT Status
                 ,cmd_device_id
                 ,DeviceID
+                ,GUID
                 ,CarteID
                 ,Nom
                 ,TypeAction
@@ -121,7 +123,7 @@ while True:
                 ,ModuleType
                 ,ModuleConfiguration
                 FROM (
-                    SELECT 0 as Status, cmd_device.id as cmd_device_id, cmd_device.DeviceID, Device.CarteID, Device.Nom, cmd_device.Type as TypeAction, widget.Name as WidgetName, widget.Id as widget_Id, Lieux.Nom as LieuxNom, Device.ID as Device_ID,Request, Date, IFNULL(DATE_ADD(Date ,INTERVAL RAZ SECOND),"1900/01/01 00:00:00") as DateToRaz, RAZ, DateRAZ, Value, Etat
+                    SELECT 0 as Status, Device.GUID, cmd_device.id as cmd_device_id, cmd_device.DeviceID, Device.CarteID, Device.Nom, cmd_device.Type as TypeAction, widget.Name as WidgetName, widget.Id as widget_Id, Lieux.Nom as LieuxNom, Device.ID as Device_ID,Request, Date, IFNULL(DATE_ADD(Date ,INTERVAL RAZ SECOND),"1900/01/01 00:00:00") as DateToRaz, RAZ, DateRAZ, Value, Etat
                     ,Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration
                     FROM cmd_device
                         INNER JOIN Device on Device.ID = cmd_device.Device_ID
@@ -141,25 +143,26 @@ while True:
             New_Status = row[0]
             cmd_device_id = row[1]
             DeviceID = row[2]
-            CarteID = row[3]
-            Nom = row[4]
-            TypeAction = row[5]
-            WidgetName = row[6]
-            Widget_Id = row[7]
-            Lieux = row[8]
-            Device_Id = row[9]
-            sensor_attach_value = row[10]
-            Request = row[11]
-            RAZ = row[12]
-            Value = row[13]
-            Etat = row[14]
-            ModuleName = row[15]
-            ModuleType = row[16]
-            ModuleConfiguration = row[17]
+            GUID = row[3]
+            CarteID = row[4]
+            Nom = row[5]
+            TypeAction = row[6]
+            WidgetName = row[7]
+            Widget_Id = row[8]
+            Lieux = row[9]
+            Device_Id = row[10]
+            sensor_attach_value = row[11]
+            Request = row[12]
+            RAZ = row[13]
+            Value = row[14]
+            Etat = row[15]
+            ModuleName = row[16]
+            ModuleType = row[17]
+            ModuleConfiguration = row[18]
 
             if ModuleType == "Communication":                                            
                 Configuration = json.loads(ModuleConfiguration)
-                Action(New_Status, DeviceID, CarteID, Nom, WidgetName, Lieux, Device_Id, sensor_attach_value, Value, Etat, ModuleName, ModuleConfiguration)
+                Action(New_Status, DeviceID, GUID, CarteID, Nom, WidgetName, Widget_Id, Lieux, Device_Id, sensor_attach_value, Value, Etat, ModuleName, ModuleConfiguration)
                 if TypeAction == "Info":
                     dateRaz = (datetime.datetime.now()+datetime.timedelta(seconds=1)).strftime('%Y-%m-%d %H:%M:%S')
                     try:

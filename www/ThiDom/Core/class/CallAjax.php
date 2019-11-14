@@ -60,6 +60,36 @@ function CheckStatusProcessus()
 	});
 }
 
+function checkUpdate()
+{
+	var request = $.ajax({
+		type: 'POST',
+		dataType: "json",
+		url: 'Core/class/GetAjaxResult.php',
+		data: {
+			Act: 'CheckUpdate',
+			Property: '',
+			Lieux:'',
+			Id:'',
+			Mode:''
+		}
+	});
+	
+	request.done( function (data) 
+	{
+		if (data.status == "true")
+		{
+			$("#tools .count").show();
+			$("#update-link .count").show();
+		}
+		else
+		{
+			$("#tools .count").hide();
+			$("#update-link .count").hide();
+		}
+	})
+}
+
 function callPlugins(plugins, device_id,role,type,value)
 {
 	value = value+"";

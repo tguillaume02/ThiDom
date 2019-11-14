@@ -47,14 +47,14 @@
 								<li><a href="#log" id="log-link"><i class="fas fa-file" aria-hidden="true"></i> Log</a></li>
 							</ul>
 						</li>
-						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span></a>
+						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span><span class='count' style='display:none'>1</span></a>
 							<ul class="dropdown-menu" aria-labelledby="tools">  	
 								<li><a href="#manage-plugins" id="manage-plugins-link"> Plugins </a></li>
 								<li><a href="#manage-equipement"  id="manage-equipement-link"> Manage Equipement</a></li>
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
 								<li><a href="#scenario" id="scenario-link"><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Scenario</a></li>
 								<li><a href="#sante" id="sante-link"><i class="fas fa-briefcase-medical" aria-hidden="true"></i> Santé</a></li>
-								<li><a href="#update" id="update-link"><i class="fa fa-sync" aria-hidden="true"></i> Mise à jour</a></li>
+								<li><a href="#update" id="update-link"><i class="fa fa-sync" aria-hidden="true"></i> Mise à jour<span class='count' style='display:none'>1</span></a></li>
 								<li><a href="#user" id="user-link"><i class="fas fa-user" aria-hidden="true"></i> Utilisateur</a></li>
 							</ul>
 						</li>
@@ -327,6 +327,7 @@
 		require_once('./Desktop/Template_ModalPlugins.php');
 		require_once('./Desktop/Template_ModalRoom.php');
 		require_once('./Desktop/Template_ModalEnlarge.php');
+		require_once('./Desktop/Template_ModalUpdate.php');
 	?>
 </body>
 

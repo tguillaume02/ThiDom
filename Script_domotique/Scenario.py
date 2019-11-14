@@ -290,7 +290,7 @@ def main(Name = ""):
                                         BScenarioExecute = True
                                         # sendmail(receiptmail, subject, message)
                                     else:
-                                        sql_Type_device = """SELECT Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration, widget.Name, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value                   ,Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request
+                                        sql_Type_device = """SELECT Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration, widget.Name, Device.GUID, Device.CarteID, cmd_device.DeviceID,cmd_device.Etat,cmd_device.Value                   ,Sensor_attached.value, cmd_device.DATE,cmd_device.ID, cmd_device.Request,  cmd_device.Widget_Id
                                                                 FROM cmd_device
                                                                 INNER JOIN Device on Device.ID = cmd_device.Device_ID
                                                                 INNER JOIN Module_Type ON Device.Module_Id  = Module_Type.ID
@@ -303,14 +303,16 @@ def main(Name = ""):
                                         ModuleType = result_sql_Type_device[1]
                                         ModuleConfiguration = result_sql_Type_device[2]
                                         Type_widget = result_sql_Type_device[3]
-                                        CarteID = result_sql_Type_device[4]
-                                        DeviceID = result_sql_Type_device[5]
-                                        Device_Etat = result_sql_Type_device[6]
-                                        Device_Value = result_sql_Type_device[7]
-                                        value_sensor_attached = result_sql_Type_device[8]
-                                        Last_Action_Date = result_sql_Type_device[9]
-                                        ID = result_sql_Type_device[10]
-                                        Request = result_sql_Type_device[11]
+                                        Guid = result_sql_Type_device[4]
+                                        CarteID = result_sql_Type_device[5]
+                                        DeviceID = result_sql_Type_device[6]
+                                        Device_Etat = result_sql_Type_device[7]
+                                        Device_Value = result_sql_Type_device[8]
+                                        value_sensor_attached = result_sql_Type_device[9]
+                                        Last_Action_Date = result_sql_Type_device[10]
+                                        ID = result_sql_Type_device[11]
+                                        Request = result_sql_Type_device[12]
+                                        Widget_Id = result_sql_Type_device[13]
 
                                         if ModuleType == "Communication":                   
                                             try:                                          
@@ -321,7 +323,7 @@ def main(Name = ""):
                                             
                                             if (Etat != '' and Value == ''):
                                                 if (Device_Etat != Etat):
-                                                    val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Device_Value) + ":" + str(Etat) + "\n"
+                                                    val = str(CarteID) + "/" + str(Guid) + "_" + str(Widget_Id) + "_" + str(DeviceID) + "@" + str(Device_Value) + ":" + str(Etat) + "\n"
                                             elif (Etat == '' and Value != ''):
                                                 if (Device_Value != Value):
                                                     if Type_widget == "Thermostat":
@@ -329,10 +331,10 @@ def main(Name = ""):
                                                             Device_Etat = 1
                                                         else:
                                                             Device_Etat = 0
-                                                    val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Device_Etat) + "\n"
+                                                    val = str(CarteID) + "/" + str(Guid) + "_" + str(Widget_Id) + "_" + str(DeviceID) + "@" + str(Value) + ":" + str(Device_Etat) + "\n"
                                             elif (Etat != '' and Value != ''):
                                                 if ((Device_Etat != Etat) or (Device_Value != Value)):
-                                                    val = str(CarteID) + "/" + str(DeviceID) + "@" + str(Value) + ":" + str(Etat) + "\n"
+                                                    val = str(CarteID) + "/" + str(Guid) + "_" + str(Widget_Id) + "_" + str(DeviceID) + "@" + str(Value) + ":" + str(Etat) + "\n"
 
                                             if val != "":
                                                 # #print "############################"

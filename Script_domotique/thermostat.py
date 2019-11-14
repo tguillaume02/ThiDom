@@ -32,7 +32,7 @@ while True:
         time.sleep(0.2)
         if time.time() > timeout or time.strftime('%S', time.localtime()) == '00':
             #sql = "select Etat_IO.DeviceID, Etat_IO.Value as Thermo, temp.Value, Etat_IO.Etat as status from Etat_IO inner join Etat_IO as temp on temp.ID = Etat_IO.sensor_attachID where Etat_IO.sensor_attachID <> 0 and Etat_IO.Type = 'Chauffage'"
-            sql = """SELECT cmd_device.DeviceId,  Device.CarteId, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request, Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration, Device.Configuration
+            sql = """SELECT cmd_device.DeviceId, Device.Guid, Device.CarteId, cmd_device.Widget_Id, cmd_device.Value AS Thermo, temp.Value, cmd_device.Etat AS status, cmd_device.Request, Module_Type.ModuleName, Module_Type.ModuleType, Module_Type.ModuleConfiguration, Device.Configuration
                         FROM cmd_device
                             inner join Device ON Device.Id = cmd_device.Device_Id
                             inner join cmd_device AS temp ON temp.Id = cmd_device.sensor_attachId
@@ -44,15 +44,17 @@ while True:
             timeout = time.time() + 60
             for row in cursor.fetchall():
                 DeviceID = row[0]
-                CarteId = row[1]
-                Thermo = float(row[2])
-                TempValue = float(row[3])
-                status = row[4]
-                Request = row[5]
-                ModuleName = row[6]
-                ModuleType = row[7]
-                ModuleConfiguration = row[8]
-                DeviceConfiguration = row[9]
+                GUID = row[1]
+                CarteId = row[2]
+                WidgetId = row[3]
+                Thermo = float(row[4])
+                TempValue = float(row[5])
+                status = row[6]
+                Request = row[7]
+                ModuleName = row[8]
+                ModuleType = row[9]
+                ModuleConfiguration = row[10]
+                DeviceConfiguration = row[11]
 #               print New_Status
 #               print row[4]
 #               print Nom
@@ -85,11 +87,11 @@ while True:
 
                 if mode != "manu":
                     if TempValue < Thermo-hysteresis and int(status) == 0:
-                        val = CarteId+"/"+DeviceID+"@"+str(Thermo)+":1\n"
+                        val = CarteId+"/"+GUID+"_"+WidgetId+"_"+DeviceID+"@"+str(Thermo)+":1\n"
                        # print val
                         SendDataToUsb(ModuleName, Configuration, val)
                     elif TempValue >= Thermo+hysteresis and int(status) == 1:
-                        val = CarteId+"/"+DeviceID+"@"+str(Thermo)+":0\n"
+                        val = CarteId+"/"+GUID+"_"+WidgetId+"_"+DeviceID+"@"+str(Thermo)+":0\n"
                         # print val
                         SendDataToUsb(ModuleName, Configuration, val)
             DbConnect.commit()

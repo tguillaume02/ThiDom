@@ -44,6 +44,27 @@ if (isset($_POST['Act']))
 	$act = $_POST['Act'];
 } 
 
+if ($act == "CheckUpdate")
+{
+	$version = file_get_contents('../../version.php');
+	$version = str_replace(array("<?php", "?>"), '', $version);
+	$array = explode(":", $version);
+	$localVersion = $array[1];
+
+	$version = file_get_contents(urlencode('https://raw.githubusercontent.com/tguillaume02/ThiDom/master/www/ThiDom/version.php'));
+	$version = str_replace(array("<?php", "?>"), '', $version);
+	$array = explode(":", $version);	
+	$newVersion = $array[1];
+
+	if(version_compare($newVersion,$localVersion) > 0)
+	{
+		echo '{"Status": "true"}';
+	}
+	else
+	{		
+		echo '{"Status": "false"}';
+	}
+}
 
 if ($act == "GetStatusProcessus")
 {	

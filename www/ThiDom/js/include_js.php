@@ -55,6 +55,7 @@
 		init_component();
 		getAutorisationNotification();
 		resizeMaison();
+		checkUpdate();
 	});
 
 	setInterval(function () {
@@ -91,7 +92,6 @@
 	    });
 	    return o;
 	};
-
 
 	function DeviceEvent()
 	{		
@@ -582,6 +582,7 @@
 		$('#scenario-new').off();
 		$('#scenario-delete').off();
 		$("#log-link").off();
+		$("#update-link").off();
 
 		$('#scenario-list').on('change', function(){
 			var id =  $('option:selected', this).attr('value');
@@ -651,6 +652,12 @@
 				$(".popover").popover('destroy');
 			}
 		});
+
+		$("#update-link").click(function() {			
+			$("#modal-update-thidom #result-update").html('');
+   			$('#modal-update-thidom').modal('toggle');
+			$("#result-update #iframe-update").src("Core/plugins/Function/UpdateThidom.php");
+		})
 
 		DeviceEvent();
 	}
