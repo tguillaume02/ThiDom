@@ -43,3 +43,12 @@
         # Set a default account
         account default : gmail`       
             
+# SSL
+ ### Générer les clés publique et privée
+      ssh-keygen -t rsa -b 4096
+ ### Renommer le rsa_id.pub en authorized_keys
+      cat id_rsa.pub >> authorized_keys
+ ### Transformation de la clé privée pour être utilisable avec putty/Mobaxterm ...
+ &nbsp;&nbsp;&nbsp;Copier le fichier id_rsa (la clé privée) sous Windows</br>
+ &nbsp;&nbsp;&nbsp;Utiliser Puttygen pour importer la clé </br>
+ &nbsp;&nbsp;&nbsp;Tuto => https://my.bluehost.com/hosting/help/putty
