@@ -84,7 +84,7 @@ install_dependance() {
 	sudo apt-get install python3-certbot-apache -y
 	sudo apt-get install python-opencv -y
 	sudo apt-get install python3-opencv -y
-	sudo apt-get install libcurl4-openssl-dev libssl-dev
+	sudo apt-get install libcurl4-openssl-dev libssl-dev -y
 	
 	sudo pip install --upgrade pip
 	sudo pip install -U pip 
