@@ -1342,11 +1342,12 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "", CmdDeviceC
 			DataDevice = JSON.parse('{"' + decodeURI(Device).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
 
 			info(data.msg);
-			if (DataDevice.DeviceId == "" && data.DeviceId != "")
+			if (DataDevice.DeviceId == "" && data.deviceId != "")
 			{
-				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.DeviceId+ " et pour les commandes "+data.cmddeviceId);
-				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.DeviceId, "CmdDeviceId": data.cmddeviceId };
-				data.refresh = false;
+				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
+				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				data.refresh = false;				
+				$("#ModalEquipementGeneral #device-deviceid").val(data.deviceId);
 				EditDevice(datas);
 			}
 
