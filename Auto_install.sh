@@ -466,9 +466,9 @@ echo "${VERT}********************************************************"
 echo "${msg_install_complete}"
 echo "********************************************************${NORMAL}"
 
-IP=$(ifconfig eth0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+IP=$(ifconfig eth0 | grep 'inet ' | cut -d: -f2 | awk '{print $2}')
 if  [ -z $IP ]; then
-	IP=$(ifconfig wlan0 | grep 'inet adr:' | cut -d: -f2 | awk '{print $1}')
+	IP=$(ifconfig wlan0 | grep 'inet ' | cut -d: -f2 | awk '{print $2}')
 fi
 
 if  [ -z $IP ]; then
