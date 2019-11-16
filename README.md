@@ -43,7 +43,7 @@
         # Set a default account
         account default : gmail`       
             
-# SSL
+# SSH KEY
  ### Générer les clés publique et privée
       ssh-keygen -t rsa -b 4096
  ### Renommer le rsa_id.pub en authorized_keys
