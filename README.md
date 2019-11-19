@@ -52,3 +52,7 @@
  &nbsp;&nbsp;&nbsp;Copier le fichier id_rsa (la clé privée) sous Windows</br>
  &nbsp;&nbsp;&nbsp;Utiliser Puttygen pour importer la clé </br>
  &nbsp;&nbsp;&nbsp;Tuto => https://my.bluehost.com/hosting/help/putty
+ ### Supprimer la connexion par login
+ &nbsp;&nbsp;&nbsp;`sudo nano /etc/ssh/sshd_config`   
+ &nbsp;&nbsp;&nbsp;Decommenter `#PasswordAuthentication no`</br>
+ &nbsp;&nbsp;&nbsp;Lancer la commance `sudo service ssh restart`
