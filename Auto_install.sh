@@ -440,8 +440,12 @@ sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/
 sudo cp /tmp/ThiDom/etc/init.d/* /etc/init.d/
 sudo cp /tmp/ThiDom/etc/rc.local /etc/
 sudo cp /tmp/ThiDom/etc/fail2ban/jail.local /etc/fail2ban/
+sudo cp /tmp/ThiDom/etc/fail2ban/filter.d/apache-w00tw00t.conf /etc/fail2ban/filter.d
 #cp /tmp/ThiDom/etc/ssh/sshd_config /etc/ssh
 sudo crontab -u $USER /tmp/ThiDom/crontab.txt
+
+sudo chmod +x /etc/init.d/DefaultFirewall
+sudo chmod +x /etc/fw/Firewall.fw
 
 
 echo "${VERT}********************************************************"
