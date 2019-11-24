@@ -655,9 +655,9 @@
 		});
 		
 		$("#update-link").click(function() {			
-			$("#modal-update-thidom #result-update").html('');
+			$("#modal-update-thidom #result-update #iframe-update").html('');
    			$('#modal-update-thidom').modal('toggle');
-			$("#result-update #iframe-update").src("Core/plugins/Function/UpdateThidom.php");
+			$("#result-update #iframe-update").attr("src","Core/Function/UpdateThidom.php");
 		})
 
 		DeviceEvent();

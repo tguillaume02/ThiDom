@@ -47,10 +47,10 @@ if (isset($_POST['Act']))
 if ($act == "CheckUpdate")
 {
 	$version = file_get_contents('../../version.php');
-	$localVersion = str_replace(array("<?php", "?>", '$version='), '', $version);
+	$localVersion = trim(str_replace(array("<?php", "?>", '$version='), '', $version));
 
 	$version = file_get_contents('https://raw.githubusercontent.com/tguillaume02/ThiDom/master/www/ThiDom/version.php');
-	$newVersion = str_replace(array("<?php", "?>", '$version='), '', $version);
+	$newVersion = trim(str_replace(array("<?php", "?>", '$version='), '', $version));
 
 	if(version_compare($newVersion,$localVersion) > 0)
 	{
