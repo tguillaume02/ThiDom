@@ -63,6 +63,7 @@
 				data: {
 					mode: 'Schedule',
 					deviceId: PlanningDeviceId,
+					cmddeviceId: PlanningCmdDeviceId,
 					deviceWidgetType: PlanningDeviceWidgetType,
 					status: PlanningDeviceStatus
 				}

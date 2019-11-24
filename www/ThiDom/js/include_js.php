@@ -1,4 +1,4 @@
-<script type="text/javascript" src="js/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="js/qtip2/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/Popper/popper.min.js"></script>
@@ -92,6 +92,7 @@
 	    });
 	    return o;
 	};
+
 
 	function DeviceEvent()
 	{		
@@ -652,7 +653,7 @@
 				$(".popover").popover('destroy');
 			}
 		});
-
+		
 		$("#update-link").click(function() {			
 			$("#modal-update-thidom #result-update").html('');
    			$('#modal-update-thidom').modal('toggle');

@@ -167,16 +167,16 @@ class CmdDevice
 	{		
 		$sql = 'SELECT t.*, Lieux.Nom as LieuxNom
 				FROM '.self::table_name ." as t
-				LEFT JOIN Device on Device.Id =  ".self::table_name.".Device_Id
+				LEFT JOIN Device on Device.Id =  t.Device_Id
 				LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}	
 
 	public function GetAllCmdDeviceWithLieux()
 	{		
-		$sql = "SELECT cmd_device.*, Lieux.Nom as LieuxNom
-				FROM ".self::table_name ."				
-				INNER JOIN Device on Device.Id =  ".self::table_name.".Device_Id
+		$sql = "SELECT t.*, Lieux.Nom as LieuxNom
+				FROM ".self::table_name ." as t
+				INNER JOIN Device on Device.Id =  t.Device_Id
 				INNER JOIN Lieux on Lieux.Id = Device.Lieux_Id";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
@@ -265,8 +265,8 @@ class CmdDevice
 				FROM
 					cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
-					INNER JOIN widget on widget.Id = cmd_device.Widget_Id
-				WHERE cmd_device.Widget_Id != 9 and cmd_device.Device_Id  = :Device_Id ';
+					LEFT JOIN widget on widget.Id = cmd_device.Widget_Id
+				WHERE IFNULL(cmd_device.Widget_Id,"") != 9 and cmd_device.Device_Id  = :Device_Id ';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 

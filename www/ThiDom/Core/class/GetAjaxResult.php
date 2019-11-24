@@ -140,8 +140,8 @@ if ($act == "SaveDevice")
 	if ($result =  $deviceObject->SaveDevice($Id, $CarteID, $DeviceConfiguration, $DeviceName, $DeviceVisible, $ModuleId, $LieuxId))
 	{
 		$Id = json_decode($result)->{'deviceId'};	 
-		$object = $cmdDeviceObject->InstallCmd($ModuleId, $Id);
-			//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));	
+		//$object = $cmdDeviceObject->InstallCmd($ModuleId, $Id);
+		//$dbObject->ResultToJsonArray($deviceObject->AddPlugins($DeviceName, $Configuration, $LieuxId, $TypeId,  $ModuleId, $DeviceVisible, $TypeName));	
 		
 		if (!empty($CmdDevice))
 		{
@@ -171,14 +171,23 @@ if ($act == "SaveDevice")
 		}
 		elseif (empty($CmdDeviceId))
 		{
-			$cmdDeviceObject->set_Name($DeviceName);
-			$cmdDeviceObject->set_device_Id($Id);
-			$cmdDeviceObject->set_WidgeId($TypeId);
-			$cmdDeviceObject->set_type('Action');
-			$resultCmdDevice = $cmdDeviceObject->save(); 
-			
-			$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
-			$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
+			$object = $cmdDeviceObject->InstallCmd($ModuleId, $Id);
+			if (json_decode($object)->{'cmddeviceId'})
+			{
+				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
+				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
+			}
+			else
+			{
+				$cmdDeviceObject->set_Name($DeviceName);
+				$cmdDeviceObject->set_device_Id($Id);
+				$cmdDeviceObject->set_WidgeId($TypeId);
+				$cmdDeviceObject->set_type('Action');
+				$resultCmdDevice = $cmdDeviceObject->save(); 
+				
+				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
+				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
+			}
 			$result =  json_encode($newresult);
 		}
 

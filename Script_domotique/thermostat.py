@@ -87,11 +87,11 @@ while True:
 
                 if mode != "manu":
                     if TempValue < Thermo-hysteresis and int(status) == 0:
-                        val = CarteId+"/"+GUID+"_"+WidgetId+"_"+DeviceID+"@"+str(Thermo)+":1\n"
+                        val = str(CarteId)+"/"+str(GUID)+"_"+str(WidgetId)+"_"+str(DeviceID)+"@"+str(Thermo)+":1\n"
                        # print val
                         SendDataToUsb(ModuleName, Configuration, val)
                     elif TempValue >= Thermo+hysteresis and int(status) == 1:
-                        val = CarteId+"/"+GUID+"_"+WidgetId+"_"+DeviceID+"@"+str(Thermo)+":0\n"
+                        val = str(CarteId)+"/"+str(GUID)+"_"+str(WidgetId)+"_"+str(DeviceID)+"@"+str(Thermo)+":0\n"
                         # print val
                         SendDataToUsb(ModuleName, Configuration, val)
             DbConnect.commit()

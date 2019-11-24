@@ -132,8 +132,8 @@ while True:
                         LEFT JOIN Lieux on Lieux.Id = Device.Lieux_ID
                 ) as t
                 WHERE RAZ IS NOT NULL
-                    AND now() >= t.DateToRaz 
-                    AND now() > t.DateRAZ
+                    AND now() >= IFNULL(t.DateRAZ,'') 
+                    AND now() > IFNULL(t.DateRAZ,'')
         #            AND (t.Status != t.Etat or t.widget_Id = 5)
                     AND (t.Status != t.Etat and  t.Etat != '' or JSON_EXTRACT(t.Request, '$.url') != '')
                 group by Device_ID, sRequest;"""

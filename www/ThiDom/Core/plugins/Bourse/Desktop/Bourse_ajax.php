@@ -1,0 +1,35 @@
+<?php
+header('Content-Type: application/json');
+
+include_once('../../../Security.php'); 
+require_once ('../../../ListRequire.php');
+
+$Name_Script = "Bourse";
+$Device_id = getParameter("Device_id");
+$act = getParameter('act');
+
+if ($act == "updateQuotation")
+{
+    $ListCmdDeviceByDeviceId = CmdDevice::byDevice_Id_WithCmd($Device_id);
+    foreach($ListCmdDeviceByDeviceId as $donneesDevice)
+    {
+        $cmd_name = $donneesDevice["Cmd_nom"];
+        $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=1rP".$cmd_name."&period=-1";
+        $QuotationJson = file_get_contents($urlBoursorama);
+        $Open =  (getJsonAttr($QuotationJson,"d", "")[0]['o']);
+        $Hight =  (getJsonAttr($QuotationJson,"d", "")[0]['h']);
+        $Low =  (getJsonAttr($QuotationJson,"d", "")[0]['l']);
+        $Quotation =  (getJsonAttr($QuotationJson,"d", "")[0]['c']);
+        $Variation = (getJsonAttr($QuotationJson,"d", "")[0]['v']);
+        $Close = $Quotation - $Variation;
+
+        CmdDevice::Update_Device_Value($Device_id, $Quotation, '', $cmd_name );
+
+        $row_array["Quotation"] = $Quotation;
+    }
+    
+    $JSON = array();
+    array_push($JSON,$row_array);
+    echo  json_encode($JSON);
+}
+?>

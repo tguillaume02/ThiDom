@@ -4,9 +4,10 @@ require_once dirname(__FILE__) .'/../../ListRequire.php';
 $Device_id = getParameter("deviceId");
 $WidgetName = getParameter("deviceWidgetType");
 $status = getParameter("status");
+$cmddeviceId = getParameter("cmddeviceId");
 $cmd_device_format = "";
-$min = Device::byId($Device_id)->get_Configuration("Min", "0");
-$max = Device::byId($Device_id)->get_Configuration("Max", "100");
+$min = CmdDevice::byId($cmddeviceId)->get_Request("Min", "0");
+$max = CmdDevice::byId($cmddeviceId)->get_Request("Max", "100");
 $CmdDeviceValue = $status ? $status : $min;
 
 $Pictures_device = '<div id="InfoDevice_SliderSheduler" class="img-circle img_btn_device rounded-circle  circle" value="'.$CmdDeviceValue.'" >'.$CmdDeviceValue.'</div>';

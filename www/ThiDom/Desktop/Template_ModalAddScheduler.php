@@ -196,6 +196,7 @@
 				data: {
 					mode: 'Schedule',
 					deviceId: deviceId,
+					cmddeviceId: cmddeviceId,
 					deviceWidgetType: deviceWidgetType
 				}
 			});

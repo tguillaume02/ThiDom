@@ -1081,7 +1081,7 @@ function SaveCalendar()
 		}
 		else
 		{
-			$("#modal-planning-data").modal('toggle');
+			//$("#modal-planning-data").modal('toggle');
 			info(data.msg);
 		}
 		Recup_Planning();
@@ -1346,8 +1346,7 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "", CmdDeviceC
 			{
 				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
 				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
-				data.refresh = false;				
-				$("#ModalEquipementGeneral #device-deviceid").val(data.deviceId);
+				data.refresh = false;
 				EditDevice(datas);
 			}
 
@@ -1675,6 +1674,7 @@ function DeleteCommandeDevice(Name, cmdId)
 
 				request.done(function (data) {
 					info(data.msg);
+					$("#CommandeName"+cmdId).parent().parent().remove();
 					LoadMaison();
 				});
 
