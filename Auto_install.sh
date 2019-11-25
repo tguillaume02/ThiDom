@@ -531,6 +531,10 @@ update-rc.d DefaultFirewall defaults
 
 #sudo PRUNE_MODULES=1 rpi-update
 
+##### ENABLE USER www-data TO EXECUTE ThiDom UPDATED
+sudo -i
+echo "www-data ALL=(ALL) NOPASSWD:/home/ThiDom/Script\ crontab/update_thidom.sh" >>/etc/sudoers
+
 echo "${End}"
 
 ##############################################################################################
