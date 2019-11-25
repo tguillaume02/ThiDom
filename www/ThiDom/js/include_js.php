@@ -198,7 +198,6 @@
 			
 		}*/		
 
-
 		$("#modal-manage-device #ConfigurationDevice").load(linkConfig , {device_id: data.DeviceId},
  			function() {				 
  				$("#modal-manage-device #CommandeDevice").load(linkCommande, {device_id: data.DeviceId, cmd_device_id: data.Cmd_device_Id}, function(response, status, xhr)
@@ -259,7 +258,7 @@
 					}
 
 					$('input:checkbox[name=Type]').bootstrapToggle();
-					$("#ModalEquipementConfiguration").show();
+					//$("#ModalEquipementConfiguration").show();
 					//$("#modal-manage-device #list-type").prop('disabled', true);
 					$("#modal-manage-device #list-device").prop('disabled', true);
 					$("#modal-manage-device #list-module-type").prop('disabled', true);
@@ -279,6 +278,11 @@
 						loadEquipementConsignContent($typeId, $typeName, $cmdid);
 					})
 				});
+
+				if ($("#modal-manage-device #ConfigurationDevice").html().length > 0)
+				{
+					$("#modal-manage-device #ModalEquipementConfiguration").show();
+				}
 				
 			/*	if (linkWidgetConfig != "")
 				{
