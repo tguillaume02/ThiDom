@@ -138,7 +138,7 @@ class Webcam extends Device
 			$DeviceId = $this->DeviceNewId()->get_Id();
 		}
 
-		$WebcamCmd = new WebcamCmd;
+		$WebcamCmd = new CmdDevice;
 		$WebcamCmd->set_Name('Refresh Snapshot');
 		$WebcamCmd->set_device_Id($DeviceId);
 		$WebcamCmd->set_request('url', 'plugins/Webcam/Desktop/Webcam.php');
@@ -147,7 +147,7 @@ class Webcam extends Device
 		$WebcamCmd->set_raz('');
 		$WebcamCmd->set_visible(1);
 		$WebcamCmd->set_type('Info');
-		$WebcamCmd->save();
+		return $WebcamCmd->save();
 	}
 }
 

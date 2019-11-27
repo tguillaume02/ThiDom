@@ -1,9 +1,9 @@
 <?php
 
-class Livebox extends Device
+class Livebox
 {	
 	// Variable Configuration   
-	public $Name_Script = "Livebox";
+	private $Name_Script = "Livebox";
 	private $Device_id = "";
 	private $cookieFile = "/tmp/LIVEBOX";
 	private $post = '{"parameters":{}}';
@@ -56,9 +56,9 @@ class Livebox extends Device
 
 	public function Install()
 	{ 
-		$liveboxCmd = new LiveboxCmd;
+		$liveboxCmd = new CmdDevice();
 		$liveboxCmd->set_Name('Up');
-		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_device_Id(Device::DeviceNewId()->get_Id());
 		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
 		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
 		$liveboxCmd->set_request('data', 'act=loadData');
@@ -66,11 +66,10 @@ class Livebox extends Device
 		$liveboxCmd->set_raz('');
 		$liveboxCmd->set_visible(1);
 		$liveboxCmd->set_type('Info');
-		$liveboxCmd->save();
-
-		$liveboxCmd = new LiveboxCmd();
+		$liveboxCmd->save();		
+		
 		$liveboxCmd->set_Name('Down');
-		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_device_Id(Device::DeviceNewId()->get_Id());
 		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
 		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
 		$liveboxCmd->set_request('data', 'act=loadData');
@@ -80,9 +79,8 @@ class Livebox extends Device
 		$liveboxCmd->set_type('Info');
 		$liveboxCmd->save();
 
-		$liveboxCmd = new LiveboxCmd();
 		$liveboxCmd->set_Name('Last Change');
-		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_device_Id(Device::DeviceNewId()->get_Id());
 		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
 		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
 		$liveboxCmd->set_request('data', 'act=loadData');
@@ -92,10 +90,8 @@ class Livebox extends Device
 		$liveboxCmd->set_type('Info');
 		$liveboxCmd->save();
 
-
-		$liveboxCmd = new LiveboxCmd();
 		$liveboxCmd->set_Name('Update Livebox');
-		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_device_Id(Device::DeviceNewId()->get_Id());
 		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
 		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
 		$liveboxCmd->set_request('data', 'act=loadData');
@@ -105,10 +101,8 @@ class Livebox extends Device
 		$liveboxCmd->set_type('Action');
 		$liveboxCmd->save();
 
-
-		$liveboxCmd = new LiveboxCmd();
 		$liveboxCmd->set_Name('Reboot Livebox');
-		$liveboxCmd->set_device_Id($this->DeviceNewId()->get_Id());
+		$liveboxCmd->set_device_Id(Device::DeviceNewId()->get_Id());
 		$liveboxCmd->set_request('url', 'plugins/Livebox/Desktop/Livebox.php');
 		$liveboxCmd->set_request('url_ajax', 'plugins/Livebox/Desktop/Livebox_ajax.php');
 		$liveboxCmd->set_request('data', 'act=rebootLivebox');
@@ -116,7 +110,7 @@ class Livebox extends Device
 		$liveboxCmd->set_raz('');
 		$liveboxCmd->set_visible(0);
 		$liveboxCmd->set_type('Action');
-		$liveboxCmd->save();
+		return $liveboxCmd->save();
 	}
 
 

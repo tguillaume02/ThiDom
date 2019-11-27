@@ -140,16 +140,15 @@ class CmdDevice
 		if (class_exists($ModuleName))
 		{
 			$object = new $ModuleName;
+			/*if ($ModuleType == "Plugins")
+			{*/
+				if (method_exists($object, 'Install')/* && empty($CmdDevice)*/)
+				{
+					$result = $object->Install($DeviceId);		
+				}
+			//}
+			return $result;
 		}
-
-		/*if ($ModuleType == "Plugins")
-		{*/
-			if (method_exists($object, 'Install')/* && empty($CmdDevice)*/)
-			{
-				$object->Install($DeviceId);		
-			}
-		//}
-		return $object;
 	}
 
 	public function GetCmdId($Name,$Device_Id)

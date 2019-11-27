@@ -245,6 +245,7 @@
 					else
 					{
 						$("#modal-manage-device #device-deviceid").val(data.DeviceId);
+						$("#modal-manage-device #list-room").val(data.LieuxId);
 					/*	if (data.ModuleName == "Plugins")
 						{
 							$("#ModalEquipementConfiguration #add-plugins").show();

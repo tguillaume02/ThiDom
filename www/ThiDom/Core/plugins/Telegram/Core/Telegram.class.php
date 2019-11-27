@@ -1,6 +1,6 @@
 <?php
 
-class Telegram extends Device
+class Telegram
 {	
 	private $Device_id = "";
     //private $ChannelId; 
@@ -30,7 +30,7 @@ class Telegram extends Device
     public function Install($DeviceId="")
     { 
        $DeviceId = empty($DeviceId) ? $this->DeviceNewId()->get_Id() : $DeviceId;
-       $telegramCmd = new TelegramCmd();
+       $telegramCmd = new CmdDevice();
        $telegramCmd->set_Name('SendMessage');
        $telegramCmd->set_device_Id($DeviceId);
        $telegramCmd->set_request('url', 'plugins/Telegram/Desktop/Telegram.php');
@@ -39,7 +39,7 @@ class Telegram extends Device
        $telegramCmd->set_request('ChannelId', '');
        $telegramCmd->set_visible(1);
        $telegramCmd->set_type('Action');
-       $telegramCmd->save();
+       return $telegramCmd->save();
    } 
 
    public function SendMessage($msg="", $channel_id="", $type="", $typeData="")

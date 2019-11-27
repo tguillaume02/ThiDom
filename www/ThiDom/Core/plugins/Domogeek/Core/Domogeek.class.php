@@ -4,7 +4,7 @@ class Domogeek extends Device
 {
      public function Install()
      { 
-        $domogeekCmd = new DomogeekCmd();
+        $domogeekCmd = new CmdDevice();
         $domogeekCmd->set_Name('Conditions');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -16,7 +16,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
 
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Sunset');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -28,7 +27,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Sunrise');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -40,7 +38,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Vigilancecolor');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -52,7 +49,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Vigilancerisk');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -64,7 +60,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('SchoolHolidays');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -76,7 +71,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Weekend');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -88,7 +82,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Holiday');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -100,7 +93,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('EjpToday');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -112,7 +104,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('EjpTomorrow');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -124,7 +115,6 @@ class Domogeek extends Device
         $domogeekCmd->set_type('info');
         $domogeekCmd->save();
             	
-        $domogeekCmd = new DomogeekCmd();
         $domogeekCmd->set_Name('Season');
         $domogeekCmd->set_device_Id($this->DeviceNewId()->get_Id());
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
@@ -134,7 +124,7 @@ class Domogeek extends Device
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
         $domogeekCmd->set_type('info');
-        $domogeekCmd->save();
+        return $domogeekCmd->save();
     }
 
 }

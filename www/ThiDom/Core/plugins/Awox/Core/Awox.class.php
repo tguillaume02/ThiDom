@@ -1,9 +1,9 @@
 <?php
 
-class Awox extends Device
+class Awox
 {    
 	// Variable Configuration   
-	public $Name_Script = "Awox";
+	private $Name_Script = "Awox";
     private $Device_id = "";    
 	private $port;
     
@@ -32,7 +32,7 @@ class Awox extends Device
 			$DeviceId = $this->DeviceNewId()->get_Id();
 		}
 
-		$awoxCmd = new AwoxCmd();
+		$awoxCmd = new CmdDevice();
 		$awoxCmd->set_Name('Light');
 		$awoxCmd->set_device_Id($DeviceId);
 		$awoxCmd->set_request('url', 'aw/DimmableLight_SwitchPower/control');
@@ -46,7 +46,6 @@ class Awox extends Device
 		$awoxCmd->set_type('Action');
         $awoxCmd->save();        
         
-		$awoxCmd = new AwoxCmd();
 		$awoxCmd->set_Name('Dimmer');
 		$awoxCmd->set_device_Id($DeviceId);
 		$awoxCmd->set_request('url', 'aw/DimmableLight_Dimming/control');
@@ -60,7 +59,6 @@ class Awox extends Device
 		$awoxCmd->set_type('Action');
 		$awoxCmd->save();
         
-		$awoxCmd = new AwoxCmd();
 		$awoxCmd->set_Name('Color');
 		$awoxCmd->set_device_Id($DeviceId);
 		$awoxCmd->set_request('url', 'aw/DimmableLight_SwitchPower/control');
@@ -72,7 +70,7 @@ class Awox extends Device
         $awoxCmd->set_WidgeId(3);
 		$awoxCmd->set_visible(0);
 		$awoxCmd->set_type('Action');
-		$awoxCmd->save();
+		return $awoxCmd->save();
 	}
     
     function sync()

@@ -1345,9 +1345,11 @@ function SaveDevice(Device, DeviceConfiguration = "", CmdDevice = "", CmdDeviceC
 			if (DataDevice.DeviceId == "" && data.deviceId != "")
 			{
 				console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device "+ data.deviceId+ " et pour les commandes "+data.cmddeviceId);
-				datas= { "newDevice": "true", "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				datas= { "newDevice": "true", "LieuxId":$("#list-room option:selected").val(), "Type":$("#list-device option:selected").text(), "WidgetId":$("#list-type option:selected").val(), "ModuleName":$("#list-module-type option:selected").text(), "ModuleId":$("#list-module-type option:selected").val(), "DeviceId": data.deviceId, "CmdDeviceId": data.cmddeviceId };
+				DeviceData = datas;
 				data.refresh = false;
 				EditDevice(datas);
+				LoadEquipement();
 			}
 
 			if(data.refresh == true)

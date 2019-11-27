@@ -1,25 +1,23 @@
 <?php
 
-class Bourse extends Device
+class Bourse 
 {
      public function Install()
      { 
-        $bourseCmd = new BourseCmd();
-        $bourseCmd->set_Name('Name');
-        $bourseCmd->set_device_Id($this->DeviceNewId()->get_Id());
-        $bourseCmd->set_request('url', 'plugins/Bourse/Desktop/Bourse.php');
-        $bourseCmd->set_request('url_ajax', 'plugins/Bourse/Desktop/Bourse_ajax.php');
-        $bourseCmd->set_request('data', 'act=updateQuotation');
-        $bourseCmd->set_unite('');
-        $bourseCmd->set_raz('15');
-        $bourseCmd->set_visible(1);
-        $bourseCmd->set_type('info');
-        $bourseCmd->save();
+        $BourseIntall =new CmdDevice();
+        $BourseIntall->set_Name('Name');
+        $BourseIntall->set_device_Id(Device::DeviceNewId()->get_Id());
+        $BourseIntall->set_request('url', 'plugins/Bourse/Desktop/Bourse.php');
+        $BourseIntall->set_request('url_ajax', 'plugins/Bourse/Desktop/Bourse_ajax.php');
+        $BourseIntall->set_request('data', 'act=updateQuotation');
+        $BourseIntall->set_unite('');
+        $BourseIntall->set_raz('60');
+        $BourseIntall->set_visible(1);
+        $BourseIntall->set_type('info');
+        return $BourseIntall->save();
     }
-
 }
 
 class BourseCmd extends CmdDevice
 {
-
 }

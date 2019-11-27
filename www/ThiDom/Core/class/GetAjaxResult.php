@@ -174,7 +174,7 @@ if ($act == "SaveDevice")
 			$object = $cmdDeviceObject->InstallCmd($ModuleId, $Id);
 			if (json_decode($object)->{'cmddeviceId'})
 			{
-				$CmdDeviceId = json_decode($resultCmdDevice)->{'cmddeviceId'};				
+				$CmdDeviceId = json_decode($object)->{'cmddeviceId'};				
 				$newresult = Array( "msg"=>json_decode($result)->{'msg'}, "clear"=>"on", "deviceId" => $Id , "cmddeviceId" => $CmdDeviceId , "refresh"=>true);
 			}
 			else
