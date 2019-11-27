@@ -16,7 +16,7 @@ if ($act == "updateQuotation")
         $cmd_name = $donneesDevice["Cmd_nom"];
         $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=1rP".$cmd_name."&period=-1";
         $QuotationJson = file_get_contents($urlBoursorama);
-        if (strlen(QuotationJson) > 2)
+        if (strlen($QuotationJson) > 2)
         {
             $Open =  (getJsonAttr($QuotationJson,"d", "")[0]['o']);
             $Hight =  (getJsonAttr($QuotationJson,"d", "")[0]['h']);
