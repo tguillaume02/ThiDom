@@ -186,6 +186,9 @@ while True:
 
                 if Device_Id:
                     postData.append(["Device_id", str(Device_Id)])
+                
+                if cmd_device_id:
+                    postData.append(["cmd_device_id", str(cmd_device_id)])
 
                 try:
                     full_url = requests.post(url, data=postData, verify=False)

@@ -10,6 +10,7 @@ $act = getParameter('act');
 
 if ($act == "updateQuotation")
 {
+    $row_array=[];
     $ListCmdDeviceByDeviceId = CmdDevice::byDevice_Id_WithCmd($Device_id);
     foreach($ListCmdDeviceByDeviceId as $donneesDevice)
     {
