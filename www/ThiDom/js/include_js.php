@@ -158,7 +158,7 @@
 	{
 		$("#modal-manage-device #ConfigurationDevice").html('');
 		$("#modal-manage-device #CommandeDevice").html('');
-		$("#modal-manage-device #ModalEquipementConsignContent").html('');
+		$("#modal-manage-device .ModalEquipementConsignContent").html('');
 		$("#modal-manage-device #ModalEquipementConfiguration").hide();
 		$("#modal-manage-device #ModalEquipementCommande").hide();
 		linkWidgetConfig = "";	
@@ -433,14 +433,14 @@
 		linkWidgetConfig = "Core/widgetConfig/"+name+"/"+name+"Config.php?mode=echo";
 		//if (file_exists($linkWidgetConfig))
 		//{
-			$("#modal-manage-device #ModalEquipementConsignContent[cmdid='"+cmdId+"']").load(linkWidgetConfig, {device_id: id, cmd_device_id: cmdId}, function( response, status, xhr ) {
+			$("#modal-manage-device .ModalEquipementConsignContent[cmdid='"+cmdId+"']").load(linkWidgetConfig, {device_id: id, cmd_device_id: cmdId}, function( response, status, xhr ) {
 				if ( status == "error" )
 				{
-					$("#ModalEquipementConsignContent[cmdid='"+cmdId+"']").hide();
+					$(".ModalEquipementConsignContent[cmdid='"+cmdId+"']").hide();
 				}
 				else
 				{
-					$("#ModalEquipementConsignContent[cmdid='"+cmdId+"']").show();
+					$(".ModalEquipementConsignContent[cmdid='"+cmdId+"']").show();
 				}
 			});
 		//}

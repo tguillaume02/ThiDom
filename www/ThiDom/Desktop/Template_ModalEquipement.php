@@ -178,7 +178,15 @@
 			Device = $("#form-device #ModalEquipementGeneral, #form-device #ModalEquipementConfiguration input[id='carte-id']").serialize()+"&ModuleType="+$("#list-module-type option:selected").data("moduleType");
 
 			DeviceConfiguration = JSON.stringify($("#form-device #ModalEquipementConfiguration").find("input, select, textarea").not("#carte-id, #sensorAttach").add($("#CustomIcons")).serializeObject())
-			CmdDeviceConfiguration = JSON.stringify($("#ModalEquipementConsignContent [request=1]").serializeObject());//JSON.stringify($("#ModalEquipementConsignContent").find("input, select, textarea").not("#sensorAttach, #sensorToDesactivate").serializeObject())
+			//CmdDeviceConfiguration = JSON.stringify($(".ModalEquipementConsignContent [request=1]").serializeObject());//JSON.stringify($("#ModalEquipementConsignContent").find("input, select, textarea").not("#sensorAttach, #sensorToDesactivate").serializeObject())
+			
+			data = [];
+			$(".ModalEquipementConsignContent").each(function(index){
+				data.push({'id':$(this).attr("cmdid"), 'data': $('[request=1]', this).serializeObject()});
+			});
+			CmdDeviceConfiguration = JSON.stringify(data)
+
+
 			if ($("#ModalEquipementCommande, #sensorAttach"))
 			{
 				$("#ModalEquipementCommande input:not([type='radio'],[class='toggle']), #sensorAttach").each(function( index )

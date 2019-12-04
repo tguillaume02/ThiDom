@@ -67,13 +67,22 @@ foreach($CmdOfDevice as $Cmd)
                                         </select>
                                     </div>
                                 </div>';
+                        }
+                        else
+                        {
+                            $linkWidgetConfig = "";
+                            $ModuleId = Module::byId($deviceId);                            
+                            $link = __DIR__ ."/../Core/plugins/".$ModuleId->get_ModuleName()."/Desktop/".$ModuleId->get_ModuleName()."Config.php";
+                            if (file_exists($link)) {
+                                $linkWidgetConfig = $link;
+                            }
                         }					
 
                     $Template_CmdConfiguration .='</div>';
 
                     if ($linkWidgetConfig)
                     {
-                        $Template_CmdConfiguration .='<div id="ModalEquipementConsignContent" cmdid="'.$Cmd->get_Id().'" >';
+                        $Template_CmdConfiguration .='<div id="ConsigneContent'.$Cmd->get_Id().'" class="ModalEquipementConsignContent" cmdid="'.$Cmd->get_Id().'" >';
                         $tplWidgetConfig = "";
                         include($linkWidgetConfig);
                         $Template_CmdConfiguration .=  $tplWidgetConfig;

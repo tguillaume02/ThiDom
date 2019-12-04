@@ -113,11 +113,11 @@ function getParameter($parameter)
 {
   if(filter_input(INPUT_POST, $parameter))
   {
-    return filter_input(INPUT_POST, $parameter);
+    return trim(filter_input(INPUT_POST, $parameter));
   }
   elseif(filter_input(INPUT_GET, $parameter))
   {
-    return filter_input(INPUT_GET, $parameter);
+    return trim(filter_input(INPUT_GET, $parameter));
   }
   elseif ((filter_input(INPUT_GET, $parameter) == 0 || filter_input(INPUT_POST, $parameter) == 0) && (filter_input(INPUT_GET, $parameter) != "" || filter_input(INPUT_POST, $parameter) != ""))
   {

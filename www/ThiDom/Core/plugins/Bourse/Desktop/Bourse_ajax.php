@@ -15,6 +15,7 @@ if ($act == "updateQuotation")
     foreach($ListCmdDeviceByDeviceId as $donneesDevice)
     {
         $cmd_name = $donneesDevice["Cmd_nom"];
+        $Quotation = "";
         $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=1rP".$cmd_name."&period=-1";
         $QuotationJson = file_get_contents($urlBoursorama);
         if (strlen($QuotationJson) > 2)
@@ -25,9 +26,7 @@ if ($act == "updateQuotation")
             $Quotation =  (getJsonAttr($QuotationJson,"d", "")[0]['c']);
             $Variation = (getJsonAttr($QuotationJson,"d", "")[0]['v']);
             $Close = $Quotation - $Variation;
-
             CmdDevice::Update_Device_Value($Device_id, $Quotation, '', $cmd_name );
-
             $row_array["Quotation"] = $Quotation;
         }
     }
