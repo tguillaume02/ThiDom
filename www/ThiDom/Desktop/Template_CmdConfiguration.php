@@ -71,7 +71,7 @@ foreach($CmdOfDevice as $Cmd)
                         else
                         {
                             $linkWidgetConfig = "";
-                            $ModuleId = Module::byId($deviceId);                            
+                            $ModuleId = Module::GetModuleTypeByDevice($deviceId);                            
                             $link = __DIR__ ."/../Core/plugins/".$ModuleId->get_ModuleName()."/Desktop/".$ModuleId->get_ModuleName()."Config.php";
                             if (file_exists($link)) {
                                 $linkWidgetConfig = $link;
