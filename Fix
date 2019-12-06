@@ -1,1 +1,1 @@
-cd /var/www/ThiDom && sudo rm login.php && sudo wget https://raw.githubusercontent.com/tguillaume02/ThiDom/master/www/ThiDom/login.php && sudo chmod 775 login.php && sudo www-data:www-data login.php
+cd /var/www/ThiDom && sudo rm login.php && sudo wget https://raw.githubusercontent.com/tguillaume02/ThiDom/master/www/ThiDom/login.php && sudo chmod 775 login.php && sudo chown www-data:www-data login.php
