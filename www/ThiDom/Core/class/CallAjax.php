@@ -929,56 +929,58 @@ function LoadGraph()
 
 function Recup_Planning()
 {
-	scheduler.clearAll();
-	var requestGetPlanning = $.ajax({
-		type: 'POST',
-		dataType: "json",
-		url: 'Core/class/GetAjaxResult.php',
-		data: {
-			Act: 'GetAllPlanning',
-			Property: '',
-			Lieux:'',
-			Id:'',
-			Mode:''
-		}
-	});
+	if (scheduler.getState().mode != undefined)
+	{
+		scheduler.clearAll();
+		var requestGetPlanning = $.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: 'Core/class/GetAjaxResult.php',
+			data: {
+				Act: 'GetAllPlanning',
+				Property: '',
+				Lieux:'',
+				Id:'',
+				Mode:''
+			}
+		});
 
-	requestGetPlanning.done(function (data) {
-		var events = [];
-		$.each(data, function (index, item) {	
-			var planningId = item.Id;
-			var planningCmdDeviceId = item.CmdDevice_Id;
-			var planningDeviceId = item.DeviceId;
-			var planningDate = item.Date;
-			var planningDays = item.Days;
-			var planningHours = item.Hours;
-			var planningDeviceWidget = item.Widget_Id;
-			var planningDeviceWidgetType = item.WidgetType;
-			var planningActivate = item.Activate;
-			var planningDeviceStatus = item.Status;
-			var arrayPlanningDays = planningDays.split(",");
-			var arrayPlanningHours = planningHours.split(":");
-			var planningRepeat = planningDays.length >= 1 ? true: false;
-			var planningName =  item.DeviceName+" - "+item.LieuxName+": "+item.Status;
-			var colorText =  planningActivate == 1 ? "#0E64A0": "red";
-			for (arrayIndex=0; arrayIndex <arrayPlanningDays.length;arrayIndex++)
-			{
-				var d = new moment();
-				var items= {};
-				var month = moment(scheduler.getState().date).month();
-				var year = moment(scheduler.getState().date).year();
-				if (planningRepeat == true)
+		requestGetPlanning.done(function (data) {
+			var events = [];
+			$.each(data, function (index, item) {	
+				var planningId = item.Id;
+				var planningCmdDeviceId = item.CmdDevice_Id;
+				var planningDeviceId = item.DeviceId;
+				var planningDate = item.Date;
+				var planningDays = item.Days;
+				var planningHours = item.Hours;
+				var planningDeviceWidget = item.Widget_Id;
+				var planningDeviceWidgetType = item.WidgetType;
+				var planningActivate = item.Activate;
+				var planningDeviceStatus = item.Status;
+				var arrayPlanningDays = planningDays.split(",");
+				var arrayPlanningHours = planningHours.split(":");
+				var planningRepeat = planningDays.length >= 1 ? true: false;
+				var planningName =  item.DeviceName+" - "+item.LieuxName+": "+item.Status;
+				var colorText =  planningActivate == 1 ? "#0E64A0": "red";
+				for (arrayIndex=0; arrayIndex <arrayPlanningDays.length;arrayIndex++)
 				{
-					d.set({'year': year, 'month': month});
-				}
-				else
-				{
-					tb_days = planningDate.split('-');						
-					d.set({'year': tb_days[0], 'month': tb_days[1]-1, 'date': tb_days[2]});
-				}
+					var d = new moment();
+					var items= {};
+					var month = moment(scheduler.getState().date).month();
+					var year = moment(scheduler.getState().date).year();
+					if (planningRepeat == true)
+					{
+						d.set({'year': year, 'month': month});
+					}
+					else
+					{
+						tb_days = planningDate.split('-');						
+						d.set({'year': tb_days[0], 'month': tb_days[1]-1, 'date': tb_days[2]});
+					}
 
-				d.hour(arrayPlanningHours[0]);
-				d.minute(arrayPlanningHours[1]);
+					d.hour(arrayPlanningHours[0]);
+					d.minute(arrayPlanningHours[1]);
 
 					//// RECUPERE LE PREMIER JOUR DU MOIS CORRESPONDANT AU JOUR CHOISI DANS LE PLANNING
 					///  EX: LE PREMIER MARDI DU MOIS	
@@ -991,7 +993,8 @@ function Recup_Planning()
 						} 
 					}
 
-					while (d.month() === month) {
+					while (d.month() === month)
+					{
 						items= {
 							"id":  item.Id+d.date()+d.month()+d.hour()+d.minute()+item.Status,
 							"planningId":planningId,
@@ -1023,9 +1026,10 @@ function Recup_Planning()
 					};
 				}	
 			})			
-				//console.log(events);
-				scheduler.parse(events, "json");
-			})
+			//console.log(events);
+			scheduler.parse(events, "json");
+		})
+	}
 }
 
 function LoadCalendar()

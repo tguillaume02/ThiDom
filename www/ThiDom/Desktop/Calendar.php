@@ -129,5 +129,6 @@
 			}
 			return true;
 		});
+		Recup_Planning();
 	})
 </script>

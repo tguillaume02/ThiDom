@@ -19,3 +19,6 @@ sudo chmod +x /home/ThiDom/Script_domotique/*
 chmod 775 -R /var/www
 
 sudo rm -r /tmp/ThiDom
+
+sudo wget https://localhost/ThiDom/Desktop/UpdateDB.php>/dev/null &
+sudo rm /var/www/ThiDom/Desktop/UpdateDB.php
