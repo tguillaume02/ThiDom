@@ -17,9 +17,9 @@ sudo chmod 755 /home/ThiDom/Script\ crontab/*
 sudo chmod 655 /home/ThiDom/Script\ crontab/debug/*
 sudo chmod +x /home/ThiDom/Script_domotique/*
 sudo chmod 775 -R /var/www
-sudo chown www-data:www-data /var/www
+sudo chown -R www-data:www-data /var/www
 
-sudo wget https://localhost/ThiDom/Desktop/UpdateDB.php --no-check-certificate >/dev/null &
+sudo wget https://localhost/ThiDom/Desktop/UpdateDB.php --no-check-certificate >/dev/null
 sudo rm /var/www/ThiDom/Desktop/UpdateDB.php
 
 sudo rm -r /tmp/ThiDom
