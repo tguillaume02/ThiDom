@@ -76,7 +76,7 @@
 			});
 
 
-			$("#modal-planning-data #active").prop( "checked", PlanningActivate);
+			$("#modal-planning-data #active").prop( "checked", parseInt(PlanningActivate));
 
 			/*if (PlanningDeviceWidgetType == "Binary")
 			{

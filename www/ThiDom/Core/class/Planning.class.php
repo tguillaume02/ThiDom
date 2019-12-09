@@ -18,7 +18,7 @@ class Planning
 	public function AddPlanning($planningId, $deviceId, $active, $commande, $dateheure, $eachTime, $eachPeriod, $days)
 	{   
 		$date = $hours = "";
-
+		$active = $active + 0;
 		if($dateheure)
 		{
 			$time = new DateTime($dateheure);
