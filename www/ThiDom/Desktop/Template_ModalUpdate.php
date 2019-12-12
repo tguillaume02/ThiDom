@@ -11,7 +11,7 @@
 			</div>
 
             <div id="result-update">
-                <iframe id="iframe-update">
+                <iframe id="iframe-update" style="width:100%">
                 </iframe>
             </div>
 			<div class="modal-footer">
