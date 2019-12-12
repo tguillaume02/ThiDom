@@ -43,6 +43,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=Vigilancecolor');
+        $domogeekCmd->set_WidgeId('3');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
