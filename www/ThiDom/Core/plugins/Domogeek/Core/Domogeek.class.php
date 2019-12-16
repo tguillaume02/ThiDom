@@ -55,6 +55,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=Vigilancerisk');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -66,6 +67,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=SchoolHolidays');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -77,6 +79,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=Weekend');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -88,6 +91,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=Holiday');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -99,6 +103,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=EjpToday');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -110,6 +115,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url', 'plugins/Domogeek/Desktop/Domogeek.php');
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=EjpTomorrow');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_unite('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
@@ -122,6 +128,7 @@ class Domogeek extends Device
         $domogeekCmd->set_request('url_ajax', 'plugins/Domogeek/Desktop/Domogeek_ajax.php');
         $domogeekCmd->set_request('data', 'act=Season');
         $domogeekCmd->set_unite('');
+        $domogeekCmd->set_WidgeId('');
         $domogeekCmd->set_raz('3600');
         $domogeekCmd->set_visible(1);
         $domogeekCmd->set_type('info');
