@@ -180,12 +180,13 @@ class CmdDevice
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
-	public function GetValueSensorAttached($PinId, $Carte_Id)
+	public function GetValueSensorAttached($PinId, $Carte_Id, $cmdDevice_Id)
 	{
 
 		$values = array(
 			':PinId' => $PinId,
-			':Carte_Id' => $Carte_Id
+			':Carte_Id' => $Carte_Id,
+			':cmdDevice_Id' => $cmdDevice_Id
 			);
 
 		$sql = "SELECT Value 
@@ -193,7 +194,7 @@ class CmdDevice
 				WHERE Id= (select sensor_attachID 
 							FROM ".self::table_name."
 							INNER JOIN Device on Device.Id = ".self::table_name.".Device_ID  
-							WHERE DeviceId = :PinId and CarteId= :Carte_Id  and sensor_attachId <> -1
+							WHERE DeviceId = :PinId and CarteId= :Carte_Id and ".self::table_name.".Id= :cmdDevice_Id and sensor_attachId <> -1
 							)";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ROW, PDO::FETCH_CLASS, __CLASS__);
 	}	

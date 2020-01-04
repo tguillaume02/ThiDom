@@ -46,7 +46,7 @@ class NRF24 extends Device
                     {
                         if ($WidgetType == "Thermostat" && $defaultVal != "undefined" && $mode != "manu")
                         {
-                            $ResultFectAll = CmdDevice::GetValueSensorAttached($pinID, $carte_id);
+                            $ResultFectAll = CmdDevice::GetValueSensorAttached($pinID, $carte_id, $cmdDevice_Id);
                             $temp = $ResultFectAll->get_value();
                             $Value = $defaultVal;
 
