@@ -26,6 +26,7 @@ def SendDataToUsb(moduleName, moduleConfirmation, data):
 
 timeout = 0
 hysteresis = 0
+Configuration = {}
 
 while True:
     try:
