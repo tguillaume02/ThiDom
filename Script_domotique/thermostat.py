@@ -73,7 +73,7 @@ while True:
                     pass
                 
                 try:
-                    conf = json.loads(DeviceConfiguration)
+                    conf = json.loads(Request) # json.loads(DeviceConfiguration)
                     hysteresis = float(conf["Hysteresis"])
                     pass
                 except:
