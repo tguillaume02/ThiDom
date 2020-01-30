@@ -666,6 +666,8 @@
 			$("#result-update #iframe-update").attr("src","Core/Function/UpdateThidom.php");
 		})
 
+		$("#modal-update-thidom").on('hidden.bs.modal', function(e){checkUpdate()});
+
 		DeviceEvent();
 	}
 

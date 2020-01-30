@@ -71,7 +71,7 @@ class CmdDevice
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
 		WHERE Device_Id=:Device_Id
-		ORDER BY WidgetId';
+		ORDER BY Widget_Id';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
 	}
 
