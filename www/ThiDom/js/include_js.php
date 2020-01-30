@@ -56,6 +56,7 @@
 		getAutorisationNotification();
 		resizeMaison();
 		checkUpdate();
+		LoadGraph();
 	});
 
 	setInterval(function () {
