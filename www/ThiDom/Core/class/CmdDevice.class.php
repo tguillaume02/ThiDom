@@ -70,7 +70,8 @@ class CmdDevice
 			);
 		$sql = 'SELECT ' . db::getColumnName(self::table_name) . '
 		FROM '.self::table_name.'
-		WHERE Device_Id=:Device_Id';
+		WHERE Device_Id=:Device_Id
+		ORDER BY WidgetId';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL, PDO::FETCH_CLASS, __CLASS__);
 	}
 
@@ -266,7 +267,8 @@ class CmdDevice
 					cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
 					LEFT JOIN widget on widget.Id = cmd_device.Widget_Id
-				WHERE IFNULL(cmd_device.Widget_Id,"") != 9 and cmd_device.Device_Id  = :Device_Id ';
+				WHERE IFNULL(cmd_device.Widget_Id,"") != 9 and cmd_device.Device_Id  = :Device_Id 
+				ORDER BY WidgetId';
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
 
