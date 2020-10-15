@@ -429,7 +429,7 @@ def main(Name = ""):
                     elif (int(IsExecuted) == 1):
                         cursor.execute("UPDATE Scenario set IsExecuted=%s where ID=%s", (0, ScenarioID))                
                 except Exception as e: 
-                    print ("####### SCENARIO - sql - sql_check_etat #######" + time.strftime('%A %d. %B %Y  %H:%M:%S', time.localtime()) +" #######" + sql_check_etat + " Error => "+ e)
+                    print ("####### SCENARIO - sql - sql_check_etat #######" + time.strftime('%A %d. %B %Y  %H:%M:%S', time.localtime()) +" #######" + sql_check_etat)
                     pass
         # ############  SI MEME SCENARIO ###############
         #elif XmlID == Old_XmlID:

@@ -17,17 +17,25 @@ if ($act == "updateQuotation")
         $cmd_name = $donneesDevice["Cmd_nom"];
         $Quotation = "";
         $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=1rP".$cmd_name."&period=-1";
-        $QuotationJson = file_get_contents($urlBoursorama);
-        if (strlen($QuotationJson) > 2)
+        $QuotationJson = @file_get_contents($urlBoursorama);
+        
+        if($QuotationJson !== FALSE)
         {
-            $Open =  (getJsonAttr($QuotationJson,"d", "")[0]['o']);
-            $Hight =  (getJsonAttr($QuotationJson,"d", "")[0]['h']);
-            $Low =  (getJsonAttr($QuotationJson,"d", "")[0]['l']);
-            $Quotation =  (getJsonAttr($QuotationJson,"d", "")[0]['c']);
-            $Variation = (getJsonAttr($QuotationJson,"d", "")[0]['v']);
-            $Close = $Quotation - $Variation;
-            CmdDevice::Update_Device_Value($Device_id, $Quotation, '', $cmd_name );
-            $row_array["Quotation"] = $Quotation;
+            if (strlen($QuotationJson) > 2)
+            {
+                $Open =  (getJsonAttr($QuotationJson,"d", "")[0]['o']);
+                $Hight =  (getJsonAttr($QuotationJson,"d", "")[0]['h']);
+                $Low =  (getJsonAttr($QuotationJson,"d", "")[0]['l']);
+                $Quotation =  (getJsonAttr($QuotationJson,"d", "")[0]['c']);
+                $Variation = (getJsonAttr($QuotationJson,"d", "")[0]['v']);
+                $Close = $Quotation - $Variation;
+                CmdDevice::Update_Device_Value($Device_id, $Quotation, '', $cmd_name );
+                $row_array["Quotation"] = $Quotation;
+            }
+        }
+        else
+        {
+            $row_array["Quotation"] = '-';
         }
     }
     

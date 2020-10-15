@@ -7,7 +7,9 @@ require_once ('../../../ListRequire.php');
 $type = 8;
 $Name_Script = "Domogeek";
 $urldomogeek = "http://domogeek.entropialux.com/";
-$urlmeteofrance = "http://www.meteofrance.com/mf3-rpc-portlet/rest/";
+$tokenMeteoFrance = "token=__Wj7dVSTjV9YGu1guveLyDq0g7S7TfTjaHBTPTpO0kj8__";
+$urlmeteofrance = "https://rpcache-aa.meteofrance.com/internet2018client/2.0/ephemeris?".$tokenMeteoFrance;//"http://www.meteofrance.com/mf3-rpc-portlet/rest/";
+$meteofranceSearchCountry = "https://meteofrance.com/search/all?term=";
 $urlvigilance = "http://vigilance.meteofrance.com/data/NXFR34_LFPW_.xml";
 $urlvigilanceRisk = "http://vigilance.meteofrance.com/data/NXFR33_LFPW_.xml";
 $Sunrise = "";
@@ -108,35 +110,43 @@ if($Device_id)
 
 /*  ##############   GET SUNRISE / SUNSET ######## */
 
-if ($departement != "" and ($act == "Sunrise" or $act == "Sunset" or $act == ""))
+if (/*$departement != "" */$city!="" and ($act == "Sunrise" or $act == "Sunset" or $act == ""))
 {
-	$SunSatus = file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement);
-	//$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
+	$searchCountry = file_get_contents($meteofranceSearchCountry.$city);
+	if (is_json($searchCountry))
+	{
+		$res = getJsonAttr($searchCountry,'',"")[0];
+		$lat = $res["lat"];
+		$lng = $res["lng"];
+		$insee = $res["insee"];
+	}
 	
+	$SunSatus = file_get_contents($urlmeteofrance.'&lat='.$lat.'&lon='.$lng);
+	//$SunSatus = file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement.'&'.$tokenMeteoFrance);
+	//$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
 	if (is_json($SunSatus))
 	{
 		if ($act == "Sunrise" or $act == "")
 		{
-			$Sunrise = getJsonAttr($SunSatus,"heureLeveSoleil", "");// $SunSatus->{'heureLeveSoleil'};
+			$Sunrise = getJsonAttr($SunSatus,"properties", "")["ephemeris"]["sunrise_time"];// getJsonAttr($SunSatus,"heureLeveSoleil", "");// $SunSatus->{'heureLeveSoleil'};
 			$Sunrise = str_replace("h", ":", $Sunrise);	
 			$Sunrise = date("H:i:s", strtotime($Sunrise));	
-		}
-		
+		}		
 		if  ($act == "Sunset" or $act == "")
 		{
-			$Sunset = getJsonAttr($SunSatus, "heureCoucheSoleil","");//$SunSatus->{'heureCoucheSoleil'};
+			$Sunset = getJsonAttr($SunSatus,"properties", "")["ephemeris"]["sunset_time"];//getJsonAttr($SunSatus, "heureCoucheSoleil","");//$SunSatus->{'heureCoucheSoleil'};
 			$Sunset = str_replace("h", ":", $Sunset);
 			$Sunset = date("H:i:s", strtotime($Sunset));
 
 		}
 	}
-	else if ($city != "" )
+	else if ($city != "" && ($Sunrise == "" or $Sunset == "") )
 	{
 		$SunSatus = file_get_contents($urldomogeek.'sun/'.$city."/all/now");
 
 		if ($act == "Sunrise" or $act == "")
 		{
-			$Sunrise = getJsonAttr($SunSatus,"sunrise", "");// $SunSatus->{'heureLeveSoleil'};
+			$Sunrise = getJsonAttr($SunSatus,"properties", "")[0]["ephemeris"]["sunrise_time"];// $SunSatus->{'heureLeveSoleil'};
 			$Sunrise = str_replace("h", ":", $Sunrise);	
 			$Sunrise = date("H:i:s", strtotime($Sunrise));	
 		}
@@ -155,7 +165,7 @@ if ($departement != "" and ($act == "Sunrise" or $act == "Sunset" or $act == "")
 
 if($insee != "" and ($act == "rain" or $act == ""))
 {
-	$RainStatus = file_get_contents($urlmeteofrance.'pluie/'.$insee);
+	$RainStatus = file_get_contents($urlmeteofrance.'pluie/'.$insee.'&'.$tokenMeteoFrance);
 	$niveauPluieText = getJsonAttr($RainStatus,"niveauPluieText", "");//$RainStatus->{"niveauPluieText"};
 
 }
