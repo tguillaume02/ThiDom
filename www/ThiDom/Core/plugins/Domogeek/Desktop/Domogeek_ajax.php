@@ -7,8 +7,8 @@ require_once ('../../../ListRequire.php');
 $type = 8;
 $Name_Script = "Domogeek";
 $urldomogeek = "http://domogeek.entropialux.com/";
-$tokenMeteoFrance = "token=__Wj7dVSTjV9YGu1guveLyDq0g7S7TfTjaHBTPTpO0kj8__/";
-$urlmeteofrance = "https://rpcache-aa.meteofrance.com/internet2018client/2.0/ephemeris?".$tokenMeteoFrance;//"http://www.meteofrance.com/mf3-rpc-portlet/rest/";
+$tokenMeteoFrance = "token=__Wj7dVSTjV9YGu1guveLyDq0g7S7TfTjaHBTPTpO0kj8__";
+$urlmeteofrance = "https://rpcache-aa.meteofrance.com/internet2018client/2.0/";//"http://www.meteofrance.com/mf3-rpc-portlet/rest/";
 $meteofranceSearchCountry = "https://meteofrance.com/search/all?term=";
 $urlvigilance = "http://vigilance.meteofrance.com/data/NXFR34_LFPW_.xml";
 $urlvigilanceRisk = "http://vigilance.meteofrance.com/data/NXFR33_LFPW_.xml";
@@ -121,7 +121,7 @@ if (/*$departement != "" */$city!="" and ($act == "Sunrise" or $act == "Sunset" 
 		$insee = $res["insee"];
 	}
 	
-	$SunSatus = file_get_contents($urlmeteofrance.'&lat='.$lat.'&lon='.$lng);
+	$SunSatus = file_get_contents($urlmeteofrance.'ephemeris?'.$tokenMeteoFrance.'&lat='.$lat.'&lon='.$lng);
 	//$SunSatus = file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement.'&'.$tokenMeteoFrance);
 	//$SunSatus = json_decode(file_get_contents($urlmeteofrance.'ephemerides/DEPT'.$departement));
 	if (is_json($SunSatus))
@@ -165,8 +165,8 @@ if (/*$departement != "" */$city!="" and ($act == "Sunrise" or $act == "Sunset" 
 
 if($insee != "" and ($act == "rain" or $act == ""))
 {
-	$RainStatus = file_get_contents($urlmeteofrance.'pluie/'.$insee);
-	$niveauPluieText = getJsonAttr($RainStatus,"niveauPluieText", "");//$RainStatus->{"niveauPluieText"};
+	//$RainStatus = file_get_contents($urlmeteofrance.'pluie?'.$tokenMeteoFrance.'&lat='.$lat.'&lon='.$lng.'/'.$insee);
+	//$niveauPluieText = getJsonAttr($RainStatus,"niveauPluieText", "");//$RainStatus->{"niveauPluieText"};
 
 }
 
