@@ -1607,8 +1607,8 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
 						{								
 							this.xAxis[0].setExtremes(
-								Date.UTC(1988, new Date().getMonth()-1, 1, 0, 0, 0),
-								Date.UTC(1988, new Date().getMonth()+1, 31, 0, 0, 0)
+								Date.UTC(moment().format("Y"),moment().format("M")-1, 1, 0, 0, 0),
+								Date.UTC(moment().format("Y"),moment().format("M"), 31, 0, 0, 0)
 							);			
 							$("#Min"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMin.toFixed(2))
 							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2)) 		
@@ -1685,7 +1685,7 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 				dateTimeLabelFormats: 
 				{ // don't display the dummy year
 					month: '%b',
-                  	year	: '%b'
+                  	year	:'%b'
 				},
 				/*min: new Date().getTime()- 48 * 3600 * 1000,
 				max: new Date().getTime() +1  * 3600 *1000,*/			
@@ -1702,6 +1702,7 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 				}
 			},
 			tooltip: {
+        		xDateFormat: '%d %B %H:%M',
 				pointFormat: '<span style=\"color:{series.color}\">{series.name}</span>: <b>{point.y}</b><br/>',
 				//crosshairs: true,
 				shared: true,

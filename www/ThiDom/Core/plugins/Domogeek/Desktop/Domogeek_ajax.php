@@ -7,7 +7,7 @@ require_once ('../../../ListRequire.php');
 $type = 8;
 $Name_Script = "Domogeek";
 $urldomogeek = "http://domogeek.entropialux.com/";
-$tokenMeteoFrance = "token=__Wj7dVSTjV9YGu1guveLyDq0g7S7TfTjaHBTPTpO0kj8__";
+$tokenMeteoFrance = "token=__Wj7dVSTjV9YGu1guveLyDq0g7S7TfTjaHBTPTpO0kj8__/";
 $urlmeteofrance = "https://rpcache-aa.meteofrance.com/internet2018client/2.0/ephemeris?".$tokenMeteoFrance;//"http://www.meteofrance.com/mf3-rpc-portlet/rest/";
 $meteofranceSearchCountry = "https://meteofrance.com/search/all?term=";
 $urlvigilance = "http://vigilance.meteofrance.com/data/NXFR34_LFPW_.xml";
@@ -165,7 +165,7 @@ if (/*$departement != "" */$city!="" and ($act == "Sunrise" or $act == "Sunset" 
 
 if($insee != "" and ($act == "rain" or $act == ""))
 {
-	$RainStatus = file_get_contents($urlmeteofrance.'pluie/'.$insee.'&'.$tokenMeteoFrance);
+	$RainStatus = file_get_contents($urlmeteofrance.'pluie/'.$insee);
 	$niveauPluieText = getJsonAttr($RainStatus,"niveauPluieText", "");//$RainStatus->{"niveauPluieText"};
 
 }

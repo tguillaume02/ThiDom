@@ -133,10 +133,7 @@ class Webcam extends Device
 
 	public function Install($DeviceId="")
 	{ 
-		if ($DeviceId == "")
-		{
-			$DeviceId = $this->DeviceNewId()->get_Id();
-		}
+		$DeviceId = empty($DeviceId) ? $this->DeviceNewId()->get_Id() : $DeviceId;
 
 		$WebcamCmd = new CmdDevice;
 		$WebcamCmd->set_Name('Refresh Snapshot');

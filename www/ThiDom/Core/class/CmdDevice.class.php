@@ -293,14 +293,22 @@ class CmdDevice
 	{
 		$values = array(
 			":DeviceId" => $DeviceId,
-			':Value' => $Value,
-			':Etat' => $Etat,
 			':Name1' => $Name1
 			);	
 
-		$req = "UPDATE cmd_device INNER JOIN Device on Device.Id = cmd_device.Device_Id  SET cmd_device.Value =:Value , cmd_device.Etat =:Etat, cmd_device.Date =now() WHERE cmd_device.Device_Id = :DeviceId and cmd_device.Nom = :Name1";
-		db::execQuery($req, $values);
+		$sql = 'SELECT cmd_device.Id FROM cmd_device where Device_Id =:DeviceId and Nom=:Name1';
+		$result = db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
+		$cmdId = $result[0]["Id"];
 
+		$values = array(
+			':Value' => $Value,
+			':Etat' => $Etat,
+			":cmdId" => $cmdId
+			);	
+
+		$req = "UPDATE cmd_device INNER JOIN Device on Device.Id = cmd_device.Device_Id  SET cmd_device.Value =:Value , cmd_device.Etat =:Etat, cmd_device.Date =now() WHERE cmd_device.Id = :cmdId";
+		db::execQuery($req, $values);
+		History::AddLog($cmdId, $Etat, $Value);
 		/*if ($type == 8) // PLUGINS
 		{*/
 		/*	$values1 = array(

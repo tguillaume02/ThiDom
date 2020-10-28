@@ -14,9 +14,10 @@ if ($act == "updateQuotation")
     $ListCmdDeviceByDeviceId = CmdDevice::byDevice_Id_WithCmd($Device_id);
     foreach($ListCmdDeviceByDeviceId as $donneesDevice)
     {
+        $ref = getJsonAttr($donneesDevice["Request"],"ref","");
         $cmd_name = $donneesDevice["Cmd_nom"];
         $Quotation = "";
-        $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=1rP".$cmd_name."&period=-1";
+        $urlBoursorama = "https://www.boursorama.com/bourse/action/graph/ws/UpdateCharts?symbol=".$ref."&period=-1";
         $QuotationJson = @file_get_contents($urlBoursorama);
         
         if($QuotationJson !== FALSE)

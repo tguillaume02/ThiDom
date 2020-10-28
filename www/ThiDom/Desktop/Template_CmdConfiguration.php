@@ -35,7 +35,7 @@ foreach($CmdOfDevice as $Cmd)
                         <div class="form-group" style="display:none">
                             <label for="device-id" class="col-sm-5 col-xs-6 col-md-5 col-lg-2 control-label">Identifiant de l\'appareil :</label>						
                             <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
-                                <input class="form-control" id="device-id"  name="DeviceId" cmdid="'.$Cmd->get_Id().'" placeholder="Identifiant de l\'appareil:" value="'.$Cmd->get_DeviceId().'" required disabled>
+                                <input class="form-control" id="device-id'.$Cmd->get_Id().'"  name="DeviceId" cmdid="'.$Cmd->get_Id().'" placeholder="Identifiant de l\'appareil:" value="'.$Cmd->get_DeviceId().'" required disabled>
                             </div>
                         </div>';					
                         if ($displayCategorie != "false")			
@@ -91,7 +91,7 @@ foreach($CmdOfDevice as $Cmd)
 
                     $request = $Cmd->get_Request();
                     $json_data = json_decode($request, true);
-                    if ($json_data["cmd"])
+                    if (isset($json_data["cmd"]))
                     {
                         $cmdList = '<div class="form-group grouplistType">
                                         <label for="list-cmd" class="col-sm-5 col-xs-6 col-md-5 col-lg-2 control-label">Commande</label>
@@ -125,13 +125,13 @@ foreach($CmdOfDevice as $Cmd)
                             <div class="form-group">
                                 <label class="col-sm-5 col-xs-6 col-md-5 col-lg-2 control-label">Remise à Zero / màj : </label>
                                 <div class="col-sm-6 col-xs-5 col-md-5 col-lg-5">
-                                    <input type="time" class="form-control" id="raz-value" step="1" name="RAZ" placeholder="Remise à zero apres: HH:MM:SS" cmdid ="'.$Cmd->get_Id().'" value="'.gmdate("H:i:s", $Cmd->get_RAZ()).'">
+                                    <input type="time" class="form-control" id="raz-value'.$Cmd->get_Id().'" step="1" name="RAZ" placeholder="Remise à zero apres: HH:MM:SS" cmdid ="'.$Cmd->get_Id().'" value="'.gmdate("H:i:s", $Cmd->get_RAZ()).'">
                                 </div>	
                             </div>															
                             <div class="form-group">
                                 <label for="unite-value" class="col-sm-5 col-xs-6 col-md-5 col-lg-2 control-label">Unité : </label>
                                 <div class="col-sm-6 col-xs-5 col-md-5 col-lg-5">
-                                    <input class="form-control" id="cmddevice-unit" name="unite" cmdid ="'.$Cmd->get_Id().'" value="'.$Cmd->get_Unite().'" placeholder="°c, °f, MW, Mb , %, ...">
+                                    <input class="form-control" id="cmddevice-unit'.$Cmd->get_Id().'" name="unite" cmdid ="'.$Cmd->get_Id().'" value="'.$Cmd->get_Unite().'" placeholder="°c, °f, MW, Mb , %, ...">
                                 </div>
                             </div>';
                     }
@@ -144,13 +144,13 @@ foreach($CmdOfDevice as $Cmd)
                     <div class="form-inline">
                         <div class="form-group">
                             <label class="btn btn-success">
-                                <input type="checkbox" name="Visible" id="cmddevice-visible" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_Visible() ? "checked" : "").'>Visible
+                                <input type="checkbox" name="Visible" id="cmddevice-visible'.$Cmd->get_Id().'" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_Visible() ? "checked" : "").'>Visible
                             </label>	
                             <label class="btn btn-success">
-                                <input type="checkbox" name="History" id="cmddevice-historiser" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_History()? "checked" : "").'>Historiser
+                                <input type="checkbox" name="History" id="cmddevice-historiser'.$Cmd->get_Id().'" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_History()? "checked" : "").'>Historiser
                             </label>
                             <label class="btn btn-success">
-                                <input type="checkbox" name="Notification" id="cmddevice-notification" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_Notification() ? "checked" : "").'>Notifications
+                                <input type="checkbox" name="Notification" id="cmddevice-notification'.$Cmd->get_Id().'" cmdid="'.$Cmd->get_Id().'" '.($Cmd->get_Notification() ? "checked" : "").'>Notifications
                             </label>
                             ';
                             if ($toggleValue != "")
