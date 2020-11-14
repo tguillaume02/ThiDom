@@ -121,7 +121,7 @@ class Device
 		GROUP BY Device.Id, cmd_device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T where (T.WidgetId is null or T.WidgetId  != 9)
-		ORDER BY Id, Position, Lieux, Nom";
+		ORDER BY Id, Position, Cmd_device_Id, Lieux, Nom";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 
 	}
@@ -143,7 +143,7 @@ class Device
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T 
-		ORDER BY Id, Position, Lieux, Nom";
+		ORDER BY Id, Position, Cmd_device_Id, Lieux, Nom";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}
 
@@ -172,7 +172,7 @@ class Device
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
 		) as T WHERE T.LieuxId= :LieuxId  and (T.WidgetId is null or T.WidgetId  != 9)
-		GROUP BY Id, Position, Lieux, Nom
+		GROUP BY Id, Position, Cmd_device_Id, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
@@ -216,7 +216,7 @@ class Device
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
 		) as T WHERE T.WidgetId= :WidgetId
-		GROUP BY Id, Position, Lieux, Nom
+		GROUP BY Id, Position, Cmd_device_Id, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
@@ -241,7 +241,7 @@ class Device
 		GROUP BY Device.Id, cmd_device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
 		) as T 
-		ORDER BY Id, Position, Lieux, Nom";
+		ORDER BY Id, Position, Cmd_device_Id, Lieux, Nom";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 
 	}

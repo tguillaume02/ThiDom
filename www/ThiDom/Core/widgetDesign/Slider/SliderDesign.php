@@ -13,7 +13,7 @@ if (getParameter("mode") == "Schedule")
 $min = $CmdDeviceData->get_Request("Min", "0");
 $max = $CmdDeviceData->get_Request("Max", "100");
 
-$Pictures_device = '<div id="InfoDevice_'.$cmd_device_format.'" class="img-circle img_btn_device rounded-circle  circle" value="'.$CmdDeviceValue.'" >'.$CmdDeviceValue.'</div>';
+$Pictures_device = '<div id="InfoDevice_'.$cmd_device_format.'" class="img-circle img_btn_device circle" value="'.$CmdDeviceValue.'" >'.$CmdDeviceValue.'</div>';
 
 if ($WidgetName == "Dimmer")
 {
@@ -56,7 +56,7 @@ echo  '<div id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd">
             <table class="table table-borderless text-center WidgetContent">
                 <tr>
                     <td>
-                        <div class="div_btn_device Corner" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" data-mode="manu">'.$Pictures_device.'
+                        <div class="div_btn_device img-circle transparent" name="'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'" id="'.$cmd_device_format.'" Cmd_device_Id="'.$Cmd_device_Id.'" device_id ="'.$Device_id.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" data-mode="manu">'.$Pictures_device.'
                         </div>
                     </td>
                     <td class="WidgetStatus-left">

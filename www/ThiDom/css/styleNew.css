@@ -226,6 +226,11 @@ legend
   min-width: 45vh;
 }
 
+.transparent
+{
+  background: transparent !important
+}
+
 #Content-desktop .Device_title
 {
   background: lightseagreen; /*cornflowerblue;*/ 
@@ -266,13 +271,14 @@ legend
     background: white;
 }
 
-.div_btn_device .img-circle
+.div_btn_device.img-circle
 {	
   /*border-radius: 32px;*/
-  /*width: 53px;*/
+  width: 53px;
   height: 53px;
   background: rgba(100, 171, 167, 0.83);/*rgba(0, 0, 0, 0.458824);*/
   text-align: center;
+  display: inline-block;
 }
 
 input[type="color"]
@@ -338,9 +344,18 @@ input[type="color"]::-webkit-color-swatch-wrapper
   border-radius: 1.1em;
 }
 
+.dataTable tr.odd
+{
+  background: #f9f9f9 !important;
+}
+
 .dataTable tr.even
 {
-  background: white;
+  background: white !important;
+}
+
+.table-striped>tbody>tr.child {
+  background: #fefefe !important;
 }
 
 .bar

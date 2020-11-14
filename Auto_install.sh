@@ -503,7 +503,12 @@ echo ""
 
 ###### MYSQL #######
 # mettre en commentaire dans /etc/mysql/my.cnf la ligne bind-address		= 127.0.0.1
+# mettre en commentaire dans /etc/mysql/mariadb.conf.d/50-server.cnf la ligne bind-address= 127.0.0.1 ou mettre 0.0.0.0
 sudo sed -e '/bind-address/ s/^#*/#/' -i /etc/mysql/my.cnf
+sudo sed -e '/bind-address/ s/^#*/#/' -i /etc/mysql/mariadb.conf.d/50-server.cnf
+sudo systemctl restart mysql
+#Pour authoriser la connexion à partir d'une machine local à mysql
+	# GRANT ALL ON *.* TO 'user'@'192.168.1.%' IDENTIFIED BY 'thepassword';
 
 
 ##### ADD IPTABLES RULES ON START

@@ -335,7 +335,15 @@ if ($act == "AllDeviceAndCmd")
 
 if ($act == "Etat")
 {
-	$dbObject->ResultToJsonArray($deviceObject->getAllDeviceAndCmd());
+	$CmdDeviceId = getParameter('CmdDeviceid');
+	if (empty($CmdDeviceId))
+	{
+		$dbObject->ResultToJsonArray($deviceObject->getAllDeviceAndCmd());
+	}
+	else
+	{
+		$dbObject->ResultToJsonArray($deviceObject->getAllDeviceAndCmdByCmdId($CmdDeviceId));
+	}
 }
 
 if ($act == "AllLog")

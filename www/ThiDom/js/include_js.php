@@ -1,4 +1,4 @@
-<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.5.1.min.js"></script>
 <script type="text/javascript" src="js/qtip2/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/Popper/popper.min.js"></script>
@@ -8,8 +8,8 @@
 <script type="text/javascript" src="js/Bootstrap/bootbox.min.js"></script>
 
 <script type="text/javascript" src="js/jquery.base64.js"></script>
-<script type="text/javascript" src="js/DataTable/V1.10.16/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="js/DataTable/V1.10.16/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="js/DataTable/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/DataTable/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript" src="js/DataTable/dataTables.responsive.min.js"></script>
 <script type="text/javascript" src="js/DataTable/responsive.bootstrap.min.js"></script>
 
@@ -48,6 +48,7 @@
 			}
 		});
 
+		initDataTable();
 		showTabFromHash();
 		//resizeWhenChangeTab();
 		$(window).on('hashchange', showTabFromHash);
@@ -927,7 +928,43 @@
 	}
 
 	function resizeMaison()
-	{
+	{		
+		if (window.innerWidth > 991){
+			$(".DeviceContainer").show();
+			$(".DeviceContent").show();
+			if ($("#Content-mobile").is(":visible"))
+			{
+				$("#Content-desktop").attr('style', 'display: block !important;');
+				$("#Content-mobile").attr('style', 'display: none !important;');				
+			}
+
+			$("#data-maison div.content-secondary, #data-maison div.content-primary").each(function() {
+				if ($(this).attr('mod') == $(this.nextSibling).attr('mod')){
+					if ($(this.nextSibling).height() <= $(this).height())
+					{
+						$(this.nextSibling).height($(this).height());
+						$(this.nextSibling).children("ul").height($(this).children("ul").height());
+						$($(this.nextSibling).children("ul").children("li")[0]).height($($(this).children("ul").children("li")[0]).height());
+						$($(this.nextSibling).children("ul").children("li")[1]).height($($(this).children("ul").children("li")[1]).height());
+					}
+					else if  ($(this.nextSibling).height() > $(this).height())
+					{
+						$(this).height($(this.nextSibling).height());
+						$(this).children("ul").height($(this.nextSibling).children("ul").height());
+						$($(this).children("ul").children("li")[0]).height($($(this.nextSibling).children("ul").children("li")[0]).height());
+						$($(this).children("ul").children("li")[1]).height($($(this.nextSibling).children("ul").children("li")[1]).height());
+
+					}
+				}
+			});
+		}
+		else
+		{
+			$("#data-maison div.content-secondary, #data-maison div.content-primary").each(function() {
+				$(this).height("auto");
+			})
+		}
+
 		Nb_DeviceContainer = $(".DeviceContainer").length;
 		$(".SubContainer, .ContentLieux, .widget").height("auto");
 		posX = 0;
@@ -996,34 +1033,6 @@
 			}
 
 			//i = i+1;
-		}
-
-		if (window.innerWidth > 1200){
-			$("#data-maison div.content-secondary, #data-maison div.content-primary").each(function() {
-				if ($(this).attr('mod') == $(this.nextSibling).attr('mod')){
-					if ($(this.nextSibling).height() <= $(this).height())
-					{
-						$(this.nextSibling).height($(this).height());
-						$(this.nextSibling).children("ul").height($(this).children("ul").height());
-						$($(this.nextSibling).children("ul").children("li")[0]).height($($(this).children("ul").children("li")[0]).height());
-						$($(this.nextSibling).children("ul").children("li")[1]).height($($(this).children("ul").children("li")[1]).height());
-					}
-					else if  ($(this.nextSibling).height() > $(this).height())
-					{
-						$(this).height($(this.nextSibling).height());
-						$(this).children("ul").height($(this.nextSibling).children("ul").height());
-						$($(this).children("ul").children("li")[0]).height($($(this.nextSibling).children("ul").children("li")[0]).height());
-						$($(this).children("ul").children("li")[1]).height($($(this.nextSibling).children("ul").children("li")[1]).height());
-
-					}
-				}
-			});
-		}
-		else
-		{
-			$("#data-maison div.content-secondary, #data-maison div.content-primary").each(function() {
-				$(this).height("auto");
-			})
 		}
 	}
 
@@ -1625,7 +1634,7 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 						};
 					},					
 				},
-				zoomType: false
+				zoomType: "xz"
 			},
 			rangeSelector: {
 				buttons : [{

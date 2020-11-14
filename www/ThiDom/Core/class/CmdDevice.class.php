@@ -165,10 +165,11 @@ class CmdDevice
 
 	public function GetAllCmdDevice()
 	{		
-		$sql = 'SELECT t.*, Lieux.Nom as LieuxNom
+		$sql = 'SELECT t.*, Lieux.Nom as LieuxNom, widget.Name as WidgetName
 				FROM '.self::table_name ." as t
 				LEFT JOIN Device on Device.Id =  t.Device_Id
-				LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id";
+				LEFT JOIN Lieux on Lieux.Id = Device.Lieux_Id
+				LEFT JOIN widget on widget.Id = t.Widget_Id";
 		return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 	}	
 

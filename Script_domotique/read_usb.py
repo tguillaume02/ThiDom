@@ -255,8 +255,9 @@ def getModuleType(port):
                         FROM Module_Type """)
         if cursor.rowcount > 0:
             for row in cursor.fetchall():
-                if os.path.realpath(json.loads(row[1])['com']) == os.path.realpath(port):
-                    return row[0]
+                if row[1] != "":
+                    if os.path.realpath(json.loads(row[1])['com']) == os.path.realpath(port):
+                        return row[0]
     except:
         setError("getModuleType")
         pass

@@ -15,7 +15,7 @@ if (typeof (EventSource) !== "undefined")
 
 			if (type.lastTypeupdate == "UpdateDeviceDetected")
 			{
-				Recup_Etat();
+				Recup_Etat(type.cmd_deviceId);
 				if (type.Notification == 1)
 				{
 					notif = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");

@@ -66,7 +66,8 @@ while True:
 #               print status
 
                 try:
-                    mode = Request["mode"]
+                    conf = json.loads(Request)
+                    mode = conf["mode"]
                     pass
                 except:
                     mode = ""

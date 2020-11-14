@@ -53,7 +53,11 @@ $tplWidgetConfig = '
 								{
 									$isDefined = "selected";
 								}
-								$tplWidgetConfig.= "<option value='" . $donneesCmdDevice["Id"] . "' ".$isDefined.">" . $donneesCmdDevice["Nom"] . " - ". $donneesCmdDevice["LieuxNom"] ."</option>"; 
+								if ($donneesCmdDevice["WidgetName"] != "")
+								{
+									$widgetName = "(". $donneesCmdDevice["WidgetName"] .")";
+								}
+								$tplWidgetConfig.= "<option value='" . $donneesCmdDevice["Id"] . "' ".$isDefined.">" . $donneesCmdDevice["Nom"] . " - ". $donneesCmdDevice["LieuxNom"] . $widgetName." </option>"; 
 							}
 		$tplWidgetConfig.= '</select>
 					</div>
