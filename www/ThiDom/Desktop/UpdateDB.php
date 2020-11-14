@@ -7,10 +7,4 @@ $sql = 'ALTER TABLE Planning CHANGE COLUMN Days Days VARCHAR(100) NULL DEFAULT N
 return db::execQuery($sql, [], db::FETCH_TYPE_ALL);
 
 
-shell_exec('sudo a2enmod expires');
-shell_exec('sudo a2enmod http2');
-shell_exec('sudo a2enmod headers');
-
-
-
 ?>
