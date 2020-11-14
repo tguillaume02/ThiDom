@@ -5,7 +5,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title text-center">Manage User <span id="user-name"></span></h4>
+				<h4 class="modal-title text-center">Manage User <!--<span id="user-name"></span>--></h4>
 			</div>
 
 			<form class="white_text form_user form-horizontal" id="form-user">

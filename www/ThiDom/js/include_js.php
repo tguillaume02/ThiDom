@@ -30,9 +30,9 @@
 <script type="text/javascript"  src="js/moment/moment.js"></script>
 
 <script src="js/scheduler/dhtmlxscheduler.js" type="text/javascript"></script>
-<script src="js/fontawesome/fontawesome.min.js" type="text/javascript"></script>
+<!--<script src="js/fontawesome/fontawesome.min.js" type="text/javascript"></script>
 <script src="js/fontawesome/fa-regular.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="js/fontawesome/fa-solid.min.js"></script>
+<script type="text/javascript" src="js/fontawesome/fa-solid.min.js"></script>-->
 
 
 <script>
@@ -1730,12 +1730,14 @@ $("#pencilEdit").click(function()
 	if ($("#pencilEdit").attr("edit"))
 	{
 		$("#pencilEdit").removeAttr('edit');		
-		$("#pencilEdit path").css("fill","currentcolor");
+		//$("#pencilEdit path").css("fill","currentcolor");
+		$("#pencilEdit i").css("color","currentcolor");
 	}
 	else
 	{
 		$("#pencilEdit").attr('edit', 'enabled');
-		$("#pencilEdit path").css("fill","lightseagreen");
+		//$("#pencilEdit path").css("fill","lightseagreen");
+		$("#pencilEdit i").css("color","lightseagreen");
 	}	
 	DragAndDrop();
 })

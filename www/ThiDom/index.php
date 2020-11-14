@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="Description" content="Home automation ThiDom by T.GUILLAUME">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 	<meta name="google" content="notranslate">
 	<meta name="mobile-web-app-capable" content="yes">
@@ -334,7 +335,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     console.log("Will the service worker register?");
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('../service-worker.js')
       .then(function(reg){
         console.log("Yes, it did.");
       }).catch(function(err) {

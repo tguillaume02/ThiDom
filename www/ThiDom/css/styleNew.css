@@ -57,6 +57,11 @@ html, body
   width: 100%;
 }*/
 
+.tab-pane
+{  
+  padding-top: 5px;
+}
+
 .modal-dialog.modal-lg
 {
   width: 90%;
@@ -104,6 +109,11 @@ html, body
     z-index: 99998;
 }
 
+.navbar-default .navbar-nav>li>a
+{
+  color: black;
+}
+
 ul.navbar-nav li
 {  
   cursor: pointer;
@@ -111,7 +121,7 @@ ul.navbar-nav li
 
 #Container
 {
-  min-height :96.7%;
+  min-height :96%;
 }
 
 main div[role="tabpanel"]

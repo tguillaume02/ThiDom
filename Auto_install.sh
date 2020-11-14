@@ -431,6 +431,9 @@ sudo openssl req -x509 -nodes -days 3095 -newkey rsa:2048 -out /etc/apache2/ssl/
 sudo a2enmod ssl
 sudo a2ensite default-ssl
 sudo a2enmod rewrite
+sudo a2enmod expires
+sudo a2enmod http2
+sudo a2enmod headers
 sudo systemctl restart apache2
 sudo systemctl reload apache2
 sudo systemctl restart apache2

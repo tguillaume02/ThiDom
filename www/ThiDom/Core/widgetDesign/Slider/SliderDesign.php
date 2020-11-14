@@ -63,7 +63,9 @@ echo  '<div id="Contentcmd_'.$Cmd_device_Id.'" class="ContentCmd">
                         <table style="width:100%">
                             <tr>
                                 <td class="WidgetStatus-left">
-                                    <input class="'.$class.'" value="'.$CmdDeviceValue.'" type="range" step="0.5" min="'.$min.'" max="'.$max.'" style="margin-top: 7px;" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" name="Range_'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'"  id="Range_'.$cmd_device_format.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" oninput="$(InfoDevice_'.$cmd_device_format.').html(this.value);$(InfoDevice_'.$cmd_device_format.').attr(\'value\',this.value)"/>
+                                    <label style="width:100%">
+                                        <input class="'.$class.'" value="'.$CmdDeviceValue.'" type="range" step="0.5" min="'.$min.'" max="'.$max.'" style="margin-top: 7px;" Cmd_device_Id="'.$Cmd_device_Id.'" device_id="'.$Device_id.'" name="Range_'.$NomWithoutSpace.'_'.$LieuxWithoutSpace.'"  id="Range_'.$cmd_device_format.'" data-type="'.$Cmd_type.'" data-role="'.$WidgetType.'" oninput="$(InfoDevice_'.$cmd_device_format.').html(this.value);$(InfoDevice_'.$cmd_device_format.').attr(\'value\',this.value)"/>
+                                    </label>
                                 </td>
                             </tr>
                             <tr>

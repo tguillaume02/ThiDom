@@ -6,32 +6,38 @@
     {  
       "src": "Core/pic/home72.png",  
       "sizes": "72x72",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"    
     },  
     {  
       "src": "Core/pic/home96.png",  
       "sizes": "96x96",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"    
     },  
     {  
       "src": "Core/pic/home128.png",  
       "sizes": "128x128",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"    
     },    
     {  
       "src": "Core/pic/home144.png",  
       "sizes": "144x144",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"    
     },  
     {  
       "src": "Core/pic/home192.png",  
       "sizes": "192x192",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"    
     },  
     {  
       "src": "Core/pic/home512.png",  
       "sizes": "512x512",  
-      "type": "image/png"  
+      "type": "image/png",
+      "purpose": "any maskable"  
     }
   ],  
   "background_color": "#FFFFFF",
