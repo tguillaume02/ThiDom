@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v7.1.2 (2019-06-03)
+ * @license Highcharts JS v8.2.2 (2020-10-22)
  *
  * (c) 2009-2019 Torstein Honsi
  *
@@ -26,19 +26,19 @@
             obj[path] = fn.apply(null, args);
         }
     }
-    _registerModule(_modules, 'themes/dark-blue.js', [_modules['parts/Globals.js']], function (Highcharts) {
+    _registerModule(_modules, 'Extensions/Themes/DarkBlue.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
         /* *
          *
-         *  (c) 2010-2019 Torstein Honsi
+         *  (c) 2010-2020 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  Dark blue theme for Highcharts JS
          *
+         *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
          * */
-
-
-
+        var setOptions = U.setOptions;
         Highcharts.theme = {
             colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
                 '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -85,7 +85,6 @@
                         fontWeight: 'bold',
                         fontSize: '12px',
                         fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-
                     }
                 }
             },
@@ -144,6 +143,7 @@
                 }
             },
             legend: {
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 itemStyle: {
                     font: '9pt Trebuchet MS, Verdana, sans-serif',
                     color: '#A0A0A0'
@@ -153,6 +153,11 @@
                 },
                 itemHiddenStyle: {
                     color: '#444'
+                },
+                title: {
+                    style: {
+                        color: '#C0C0C0'
+                    }
                 }
             },
             credits: {
@@ -165,11 +170,9 @@
                     color: '#CCC'
                 }
             },
-
             navigation: {
                 buttonOptions: {
                     symbolStroke: '#DDDDDD',
-                    hoverSymbolStroke: '#FFFFFF',
                     theme: {
                         fill: {
                             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -182,7 +185,6 @@
                     }
                 }
             },
-
             // scroll charts
             rangeSelector: {
                 buttonTheme: {
@@ -235,7 +237,6 @@
                     color: 'silver'
                 }
             },
-
             navigator: {
                 handles: {
                     backgroundColor: '#666',
@@ -248,7 +249,6 @@
                     lineColor: '#A6C7ED'
                 }
             },
-
             scrollbar: {
                 barBackgroundColor: {
                     linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -276,18 +276,10 @@
                     ]
                 },
                 trackBorderColor: '#666'
-            },
-
-            // special colors for some of the
-            legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-            background2: 'rgb(35, 35, 70)',
-            dataLabelsColor: '#444',
-            textColor: '#C0C0C0',
-            maskColor: 'rgba(255,255,255,0.3)'
+            }
         };
-
         // Apply the theme
-        Highcharts.setOptions(Highcharts.theme);
+        setOptions(Highcharts.theme);
 
     });
     _registerModule(_modules, 'masters/themes/dark-blue.src.js', [], function () {

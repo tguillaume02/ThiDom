@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v7.1.2 (2019-06-03)
+ * @license Highcharts JS v8.2.2 (2020-10-22)
  *
  * (c) 2009-2019 Torstein Honsi
  *
@@ -26,19 +26,19 @@
             obj[path] = fn.apply(null, args);
         }
     }
-    _registerModule(_modules, 'themes/skies.js', [_modules['parts/Globals.js']], function (Highcharts) {
+    _registerModule(_modules, 'Extensions/Themes/Skies.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
         /* *
          *
-         *  (c) 2010-2019 Torstein Honsi
+         *  (c) 2010-2020 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  Skies theme for Highcharts JS
          *
+         *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
          * */
-
-
-
+        var setOptions = U.setOptions;
         Highcharts.theme = {
             colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
                 '#82914E', '#86777F', '#42A07B'],
@@ -46,9 +46,9 @@
                 className: 'skies',
                 borderWidth: 0,
                 plotShadow: true,
-                plotBackgroundImage: 'https://www.highcharts.com/demo/gfx/skies.jpg',
+                plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg',
                 plotBackgroundColor: {
-                    linearGradient: [0, 0, 250, 500],
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
                     stops: [
                         [0, 'rgba(255, 255, 255, 1)'],
                         [1, 'rgba(255, 255, 255, 0)']
@@ -84,7 +84,7 @@
                     style: {
                         color: '#666',
                         font: '12px Lucida Grande, Lucida Sans Unicode,' +
-                        ' Verdana, Arial, Helvetica, sans-serif'
+                            ' Verdana, Arial, Helvetica, sans-serif'
                     }
                 }
             },
@@ -103,7 +103,7 @@
                     style: {
                         color: '#666',
                         font: '12px Lucida Grande, Lucida Sans Unicode,' +
-                        ' Verdana, Arial, Helvetica, sans-serif'
+                            ' Verdana, Arial, Helvetica, sans-serif'
                     }
                 }
             },
@@ -125,9 +125,8 @@
                 }
             }
         };
-
         // Apply the theme
-        Highcharts.setOptions(Highcharts.theme);
+        setOptions(Highcharts.theme);
 
     });
     _registerModule(_modules, 'masters/themes/skies.src.js', [], function () {

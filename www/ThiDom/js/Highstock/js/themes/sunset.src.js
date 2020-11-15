@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v7.1.2 (2019-06-03)
+ * @license Highcharts JS v8.2.2 (2020-10-22)
  *
  * (c) 2009-2019 Highsoft AS
  *
@@ -26,10 +26,10 @@
             obj[path] = fn.apply(null, args);
         }
     }
-    _registerModule(_modules, 'themes/sunset.js', [_modules['parts/Globals.js']], function (Highcharts) {
+    _registerModule(_modules, 'Extensions/Themes/Sunset.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
-         *  (c) 2010-2019 Highsoft AS
+         *  (c) 2010-2020 Highsoft AS
          *
          *  Author: Øystein Moseng
          *
@@ -38,24 +38,21 @@
          *  Accessible high-contrast theme for Highcharts. Considers colorblindness and
          *  monochrome rendering.
          *
+         *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
          * */
-
-
-
-        Highcharts.theme = {
+        var setOptions = U.setOptions;
+        H.theme = {
             colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
-
             colorAxis: {
                 maxColor: '#60042E',
                 minColor: '#FDD089'
             },
-
             plotOptions: {
                 map: {
                     nullColor: '#fefefc'
                 }
             },
-
             navigator: {
                 series: {
                     color: '#FF7F79',
@@ -63,9 +60,8 @@
                 }
             }
         };
-
         // Apply the theme
-        Highcharts.setOptions(Highcharts.theme);
+        setOptions(H.theme);
 
     });
     _registerModule(_modules, 'masters/themes/sunset.src.js', [], function () {

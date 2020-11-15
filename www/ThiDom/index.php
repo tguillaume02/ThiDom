@@ -40,16 +40,16 @@
 				</div>
 				<div class="collapse navbar-collapse" id="header-navbar" >
 					<ul class="nav navbar-nav" role="tablist">		
-						<li class="active"><a href="#home" id="home-link"><i class="fas fa-home"></i> Maison</a></li>
-						<li><a href="#calendar" id="calendar-link"><i class="fas fa-calendar-alt"></i> Calendrier</a></li>
-						<li class="dropdown"><a id="analyse" data-toggle="dropdown"><i class="fas fa-wrench"></i> Analyse <span class="caret"></span></a>
-							<ul class="dropdown-menu" aria-labelledby="analyse">  	
+						<li role="tab" class="active" tabindex="0"><a href="#home" id="home-link"><i class="fas fa-home"></i> Maison</a></li>
+						<li role="tab"tabindex="-1"><a href="#calendar" id="calendar-link"><i class="fas fa-calendar-alt"></i> Calendrier</a></li>
+						<li role="tab"tabindex="-1" id='analyse-tab' class="dropdown" aria-controls="analyse-panel" ><a id="analyse" data-toggle="dropdown"><i class="fas fa-wrench"></i> Analyse <span class="caret"></span></a>
+							<ul role="tabpanel" id="analyse-panel" tabindex="0" class="dropdown-menu" aria-labelledby="analyse-tab">  	
 								<li><a href="#graph" id="graphic-link"><i class="fas fa-chart-area"></i> Graphique</a></li>
 								<li><a href="#log" id="log-link"><i class="fas fa-file" aria-hidden="true"></i> Log</a></li>
 							</ul>
 						</li>
-						<li class="dropdown"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span><span class='count' style='display:none'>1</span></a>
-							<ul class="dropdown-menu" aria-labelledby="tools">  	
+						<li role="tab" id="tools-tab" class="dropdown" aria-controls="tools-panel" tabindex="-1"><a id="tools" data-toggle="dropdown"><i class="fas fa-wrench"></i> Outils <span class="caret"></span><span class='count' style='display:none'>1</span></a>
+							<ul role="tabpanel" id="tools-panel" tabindex="0" class="dropdown-menu" aria-labelledby="tools-tab">  	
 								<li><a href="#manage-plugins" id="manage-plugins-link"> Plugins </a></li>
 								<li><a href="#manage-equipement"  id="manage-equipement-link"> Manage Equipement</a></li>
 								<li><a href="#manage-room" id="manage-room-link"> Manage Piece</a></li>
@@ -61,10 +61,10 @@
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right" role="tablist">		
-						<li><a href="#"><span id="pencilEdit"><i class="fas fa-pencil-alt"></i></span></a></li>
-						<li><a href="#"><span id="hour"><?php echo date('H:i:s');?></span></a></li>
+						<li role="tab" tabindex="-1"><a href="#"><span id="pencilEdit"><i class="fas fa-pencil-alt"></i></span></a></li>
+						<li role="tab" tabindex="-1"><a href="#"><span id="hour"><?php echo date('H:i:s');?></span></a></li>
 						<!--<li><img id="icons-weather" src="" ></li>-->
-						<li><a href="logout.php" id="disconnect">Deconnection <i class="fas fa-sign-out-alt"></i></a></li>
+						<li role="tab" tabindex="-1"><a href="logout.php" id="disconnect">Deconnection <i class="fas fa-sign-out-alt"></i></a></li>
 					</ul>
 				</div>
 			</div>
