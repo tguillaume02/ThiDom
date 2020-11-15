@@ -485,7 +485,7 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 				Lieux: '',
 				Id: '',
 				Mode: '',
-				cmd_deviceId: cmd_deviceId
+				CmdDeviceid: cmd_deviceId
 			}
 		});
 

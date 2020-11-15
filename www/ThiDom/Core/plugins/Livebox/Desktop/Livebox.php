@@ -9,14 +9,14 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		<tbody>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>" style="vertical-align: middle;">
-					<img src="Core/pic/temp_up.png"/>
+					<img src="Core/pic/temp_up.png" alt="tempup"/>
 					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Up',$Device_id)->get_Id()?>"></span>
 				</td>
 				<td>
-					<img id="Livebox_pic" src="Core/plugins/Livebox/pic/Livebox.png">
+					<img id="Livebox_pic" src="Core/plugins/Livebox/pic/Livebox.png" alt="Livebox">
 				</td>
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>" style="vertical-align: middle;">
-					<img src="Core/pic/temp_down.png"/>
+					<img src="Core/pic/temp_down.png" alt="tempdown"/>
 					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Down',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
@@ -26,7 +26,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		<tbody>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Last Change',$Device_id)->get_Id()?>">	
-					<img src="Core/pic/Synchronize.png"/>
+					<img src="Core/pic/Synchronize.png" alt="Synchronize"/>
 					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Last Change',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>

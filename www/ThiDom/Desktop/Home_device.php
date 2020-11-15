@@ -224,7 +224,7 @@ function LoadTemplate()
 					//$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 					if ($Vcc != null)
 					{
-						$AddBattery = '<span  id="Battery_'.$cmd_device_format.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i><tspan>'.$Vcc.'</tspan> V</span>';
+						$AddBattery = '<span  id="Battery_'.$cmd_device_format.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i> <tspan>'.$Vcc.'</tspan> V</span>';
 					}
 
 					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." ModuleType=".$ModuleName." >";
@@ -279,14 +279,14 @@ function LoadTemplate()
 			$data .="<div class='SubContainer ShortcutMobile' Type='Lieux' id='".$LieuxId."'>";
 			$data .="<div class='ContentLieux col-xs-12 col-sm-12' style='height: auto;''>";
 			$data .="<center>";
-			$data .="<div class='div_btn_device Corner' id='Lieux_".$LieuxId."' Lieuxid='".$LieuxId."'>";
+			$data .="<div class='div_btn_device img-circle' id='Lieux_".$LieuxId."' Lieuxid='".$LieuxId."'>";
 			if ($LieuxIcon != "")
 			{
-				$data .="<img class='img-circle img_btn_device rounded-circle ' alt='icon".$LieuxName."' src='".$LieuxIcon."'>";
+				$data .="<img class='img-circle img_btn_device ' alt='icon".$LieuxName."' src='".$LieuxIcon."'>";
 			}
 			else
 			{				
-				$data .="<img class='img-circle img_btn_device rounded-circle ' alt='icon".$LieuxName."' src='//:0'>";
+				$data .="<img class='img-circle img_btn_device ' alt='icon".$LieuxName."' src='//:0'>";
 			}
 			$data .="</div>";
 			$data .="</center>";
@@ -302,8 +302,8 @@ function LoadTemplate()
 		$data .="<div class='SubContainer ShortcutMobile' Type='Lieux'>";
 		$data .="<div class='ContentLieux col-xs-12 col-sm-12' style='height: auto;''>";
 		$data .="<center>";
-		$data .="<div class='div_btn_device Corner' id='Lieux_All' Lieuxid='ALL'>";
-		$data .="<img class='img-circle img_btn_device rounded-circle ' alt='iconHouse' src='Core/pic/House1.png'>";
+		$data .="<div class='div_btn_device img-circle' id='Lieux_All' Lieuxid='ALL'>";
+		$data .="<img class='img-circle img_btn_device' alt='iconHouse' src='Core/pic/House1.png'>";
 		$data .="</div>";
 		$data .="</center>";
 		$data .= "</div>";
@@ -349,8 +349,8 @@ function LoadTemplate()
 			$data .="<div class='SubContainer ShortcutMobile' type='Widget'  id='".$WidgetName."'>";
 			$data .="<div class='ContentLieux col-xs-12 col-sm-12' style='height: auto;''>";
 			$data .="<center>";
-			$data .="<div class='div_btn_device Corner' id='widget_".$WidgetName."' Widgetid='".$WidgetId."'>";
-			$data .="<img class='img-circle img_btn_device rounded-circle ' alt='iconWidget".$IconsWidget."' src='Core/pic/Widget/".$IconsWidget."'>";
+			$data .="<div class='div_btn_device img-circle' id='widget_".$WidgetName."' Widgetid='".$WidgetId."'>";
+			$data .="<img class='img-circle img_btn_device' alt='iconWidget".$IconsWidget."' src='Core/pic/Widget/".$IconsWidget."'>";
 			$data .="</div>";
 			$data .="</center>";
 			$data .= "</div>";

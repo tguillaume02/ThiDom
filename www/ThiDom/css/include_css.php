@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/font-awesome/5.0.13/fontawesome.min.css"/>
 <link rel="stylesheet" href="css/font-awesome/5.0.13/fa-regular.min.css"/>
 <link rel="stylesheet" href="css/font-awesome/5.0.13/fa-solid.min.css"/>
-<link rel="stylesheet" href="css/datatables/DataTables.bootstrap.min.css" />
+<link rel="stylesheet" href="css/datatables/dataTables.bootstrap.min.css" />
 <!--<link rel="stylesheet" href="css/datatables/jquery.dataTables.min.css" />-->
 <link rel="stylesheet" href="css/datatables/responsive.bootstrap.min.css" />
 <link rel="stylesheet" href="palette-couleur/css/farbtastic.css"/>

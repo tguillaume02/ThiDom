@@ -172,7 +172,7 @@ class Device
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
 		) as T WHERE T.LieuxId= :LieuxId  and (T.WidgetId is null or T.WidgetId  != 9)
-		GROUP BY Id, Position, Cmd_device_Id, Lieux, Nom
+		GROUP BY Id, Position, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}
@@ -216,7 +216,7 @@ class Device
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
 		) as T WHERE T.WidgetId= :WidgetId
-		GROUP BY Id, Position, Cmd_device_Id, Lieux, Nom
+		GROUP BY Id, Position, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);
 	}

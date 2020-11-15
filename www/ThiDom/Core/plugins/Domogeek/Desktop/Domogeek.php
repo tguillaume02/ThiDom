@@ -7,11 +7,11 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		<tbody>
 			<tr class="WidgetStatus-center">
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Sunrise',$Device_id)->get_Id()?>">
-					<img src="Core/pic/Sunrise.png" style="width: 28px;">
+					<img src="Core/pic/Sunrise.png" style="width: 28px;" alt="sunrise">
 					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Sunrise',$Device_id)->get_Id()?>"></span>
 				</td>
 				<td id="Contentcmd_<?php echo CmdDevice::GetCmdId('Sunset',$Device_id)->get_Id()?>">
-					<img src="Core/pic/Sunset.png" style="width: 28px;">
+					<img src="Core/pic/Sunset.png" style="width: 28px;" alt="sunset">
 					<span id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Sunset',$Device_id)->get_Id()?>"></span>
 				</td>
 			</tr>
@@ -83,7 +83,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 							<tr>
 								<td style="text-align: center; width: 29%; vertical-align:middle;">
 									<span id="Contentcmd_<?php echo CmdDevice::GetCmdId('Vigilancecolor',$Device_id)->get_Id()?>">
-										<img id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Vigilancecolor',$Device_id)->get_Id() ?>" src="Core/plugins/Domogeek/Desktop/weatherwarning.png" class="img-circle rounded-circle" style="width: 40px;">
+										<img id="InfoDevice_<?php echo $LieuxWithoutSpace ?>_<?php echo CmdDevice::GetCmdId('Vigilancecolor',$Device_id)->get_Id() ?>" src="Core/plugins/Domogeek/Desktop/weatherwarning.png" class="img-circle rounded-circle" style="width: 40px;" alt="vigilancecolor">
 									</span>
 								</td>
 								<td style="text-align: left">
