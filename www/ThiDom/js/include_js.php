@@ -1612,13 +1612,13 @@ function GenerateGraph(GraphId, Lieux, unite, data)
 				type: 'spline',
 				renderTo: 'History_'+GraphId,
 				events: {
-					load: function(chart) {						
-						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
-						{								
+					load: function(chart) {							
 							this.xAxis[0].setExtremes(
 								Date.UTC(moment().format("Y"),moment().format("M")-1, 1, 0, 0, 0),
 								Date.UTC(moment().format("Y"),moment().format("M"), 31, 0, 0, 0)
-							);			
+							);						
+						if (this.yAxis[0].getExtremes().dataMin !=null && this.yAxis[0].getExtremes().dataMax !=null)
+						{				
 							$("#Min"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMin.toFixed(2))
 							$("#Max"+GraphId).html("Min: " + this.yAxis[0].getExtremes().dataMax.toFixed(2)) 		
 						};
