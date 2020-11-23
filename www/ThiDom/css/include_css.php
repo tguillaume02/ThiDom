@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="palette-couleur/css/farbtastic.css"/>
 <link rel="stylesheet" href="js/scheduler/dhtmlxscheduler.css"/>
 <link rel='stylesheet' href='font/sofia/stylesheet.css'>
-<link rel="stylesheet" href="css/styleNew.css?v1.02" />
+<link rel="stylesheet" href="css/styleNew.min.css?v1.02" />
 
 <!--<link rel="stylesheet"  href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/ui-darkness/jquery-ui.css" />
 <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.1/jquery.qtip.min.css" />

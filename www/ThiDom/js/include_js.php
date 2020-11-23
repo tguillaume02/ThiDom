@@ -36,6 +36,9 @@
 
 
 <script>
+
+	LoadPluginsData = [];
+
 	$.extend( $.fn.dataTable.defaults, {
 		responsive: true
 	} );

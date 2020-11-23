@@ -23,7 +23,7 @@ echo  '<div class="">
             <table class="table table-borderless text-center WidgetContent">
             <tr>
                 <td style="width: 15%;">
-                    <div class="div_btn_device Corner" data-mode="manu">'.$Pictures_device.'
+                    <div class="div_btn_device img-circle" data-mode="manu">'.$Pictures_device.'
                     </div>
                 </td>
                 <td class="WidgetStatus-left">

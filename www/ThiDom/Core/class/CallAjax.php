@@ -3,7 +3,7 @@ require_once dirname(__FILE__)  . '/../Security.php';
 require_once dirname(__FILE__) . '/../ListRequire.php';
 ?>
 <script>
-	function initDataTable(table_name = '') {
+	function initDataTable(table_name = 'empty') {
 		//region datatable equipement
 		if (table_name == '' || table_name == 'Equipement') {
 			if ($.fn.DataTable.isDataTable("#table-content-equipement")) {
@@ -470,7 +470,7 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 			})
 			.done(function(msg) {})
 	}
-
+	
 	function Recup_Etat(cmd_deviceId) {
 		if (cmd_deviceId == undefined) {
 			cmd_deviceId = '';
@@ -547,8 +547,13 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 					Value = Value + " " + Unite;
 				}
 
-				if (Vcc != null) {
+				/*if (Vcc != null || (Widget_Name!=null?Widget_Name.toLowerCase():Widget_Name) == "vcc") {
 					$("#Battery_" + cmd_device_format + " tspan").html(Vcc);
+				}*/
+
+				if ((Widget_Name!=null?Widget_Name.toLowerCase():Widget_Name) == "vcc")
+				{
+					$("#Battery_" + cmd_device_format + " tspan").html(Value);
 				}
 
 				if (Widget_Type == "Text") // Numeric
@@ -1267,18 +1272,21 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 				temperatures = [];
 				$.each(data, function(index, item) {
 					if (item.Nom == "Temperature") {
-						temperatures.push([item.Cmd_nom + "_" + item.Lieux, item.Cmd_device_Id]);
+						name = encodeURI(item.Cmd_nom + "_" + item.Lieux)
+						temperatures.push([name, item.Cmd_device_Id]);
 					} else {
 						device = item.Nom == item.Cmd_nom ? item.Nom : item.Nom + "_" + item.Cmd_nom
 
+						name = encodeURI(device + '( ' + item.Lieux + ')')
+
 						if ("abcdef".indexOf(item.Nom.charAt(0).toLowerCase()) > -1) {
-							switchesAF.push([device + '( ' + item.Lieux + ')', item.Cmd_device_Id]);
+							switchesAF.push([name, item.Cmd_device_Id]);
 						} else if ("ghijkl".indexOf(item.Nom.charAt(0).toLowerCase()) > -1) {
-							switchesGL.push([device + '( ' + item.Lieux + ')', item.Cmd_device_Id]);
+							switchesGL.push([name, item.Cmd_device_Id]);
 						} else if ("mnopqr".indexOf(item.Nom.charAt(0).toLowerCase()) > -1) {
-							switchesMR.push([device + '( ' + item.Lieux + ')', item.Cmd_device_Id]);
+							switchesMR.push([name, item.Cmd_device_Id]);
 						} else if ("stuvwxyz".indexOf(item.Nom.charAt(0).toLowerCase()) > -1) {
-							switchesSZ.push([device + '( ' + item.Lieux + ')', item.Cmd_device_Id]);
+							switchesSZ.push([name, item.Cmd_device_Id]);
 						} else {}
 					}
 				});

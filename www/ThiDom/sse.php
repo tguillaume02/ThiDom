@@ -11,6 +11,8 @@ $Date_temp = "";
 $lastdate_temp="";
 $lastdate_Etat = "";
 $lastdate_Sun = "";
+$lastcmd_deviceId = "";
+$res = "";
 
 while(1)
 {
@@ -30,7 +32,7 @@ while(1)
 	LEFT join Lieux on Lieux.Id = Device.Lieux_Id
 	LEFT join Module_Type on Device.Module_Id = Module_Type.Id
 	WHERE  (temp_update_time.TABLE_SCHEMA = 'thidom') AND (temp_update_time.TABLE_NAME = 'Temperature_Temp')
-	group by update_temp, update_etat";
+	group by update_temp, update_etat, cmd_device.Id";
 
 	$result = db::execQuery($req,[]);
 
@@ -63,13 +65,23 @@ while(1)
 			echo "\n\n";
 		}*/
 
-		if($Date_Etat != $lastdate_Etat)
+		if($Date_Etat != $lastdate_Etat && $lastcmd_deviceId != $cmd_deviceId)
 		{
 			$info = "UpdateDeviceDetected";
-			$lastdate_Etat = $Date_Etat;
-			echo 'data:{"cmd_deviceId":"'.$cmd_deviceId.'", "lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Module_Type.'", "Notification":"'.$Notification.'"}';
-			echo "\n\n";
+			$lastcmd_deviceId= $cmd_deviceId;
+			$res .= ',{"cmd_deviceId":"'.$cmd_deviceId.'", "lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Module_Type.'", "Notification":"'.$Notification.'"}';
+
+			//echo 'data:{"cmd_deviceId":"'.$cmd_deviceId.'", "lastTypeupdate" :"'.$info.'", "deviceNom" : "'.$cmd_deviceNom.'", "deviceValue" : "'.$cmd_deviceValue.'", "deviceEtat" : "'.$cmd_deviceEtat.'", "LieuxNom": "'.$LieuxNom.'", "DeviceType" : "'.$Module_Type.'", "Notification":"'.$Notification.'"}';
+			//echo "\n\n";
 		}
+	}
+
+	if ($res != "")
+	{
+		$lastdate_Etat = $Date_Etat;
+		echo 'data:{"lastTypeupdate" :"'.$info.'","device":['.substr($res, 1).']}';
+		echo "\n\n";
+		$res ="";
 	}
 	ob_flush();
 	flush();

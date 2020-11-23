@@ -48,7 +48,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 
 <script>
 
-	function loadData($deviceId)
+	function LoadLiveboxData($deviceId)
 	{
 		var request = $.ajax({
 			dataType: "json",
@@ -92,9 +92,9 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 	})
 
 	$("#UpdateLivebox").click(function(){
-		loadData($(this).attr("deviceId"));
+		LoadLiveboxData($(this).attr("deviceId"));
 	})
 
-	loadData(<?php echo $Device_id?>);
+	LoadPluginsData.push("LoadLiveboxData(<?php echo $Device_id?>)");
 
 </script>

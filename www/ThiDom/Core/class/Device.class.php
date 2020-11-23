@@ -153,7 +153,7 @@ class Device
 			':LieuxId' => $LieuxId
 			);
 		$sql = "SELECT *
-				, (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where GUID = T.GUID AND CarteId = T.CarteId  ) as Vcc 
+				/*, (SELECT Value from Device inner join cmd_device on cmd_device.Device_Id = Device.Id and cmd_device.Widget_Id=9 where GUID = T.GUID AND CarteId = T.CarteId  ) as Vcc */
 			FROM 
 		(
 		SELECT Device.GUID  AS GUID, Device.Id  AS Id, Device.Nom AS Nom, cmd_device.Id as Cmd_device_Id, cmd_device.deviceid AS PinId, Device.CarteId AS CarteId, cmd_device.Request as Request, cmd_device.Nom as Cmd_nom, Device.History,
@@ -161,17 +161,20 @@ class Device
 			Module_Type.ModuleName, Module_Type.Id as ModuleId, widget.Id as WidgetId, widget.Name as WidgetName, widget.Type as WidgetType, Lieux.Img, Lieux.Backgd AS Backgd, Device.Configuration, cmd_device.Date
 			, COUNT( Activate ) AS CountPlanning
 			,IFNULL(Device.Position,999) as DevicePosition  
+			,t1.Value as Vcc
+			,t1.Id as VccId
 		FROM Lieux
 		LEFT JOIN Device on Device.Lieux_ID= Lieux.Id
 		LEFT JOIN cmd_device on cmd_device.Device_ID = Device.Id
 		LEFT JOIN Planning ON Planning.Cmddevice_Id = cmd_device.Id AND Planning.Activate =1 	
 		LEFT JOIN widget on cmd_device.Widget_Id = widget.Id
         LEFT JOIN Module_Type on Module_Type.Id = Device.Module_Id
+		LEFT JOIN cmd_device as t1 on t1.Device_Id = Device.Id and t1.Widget_Id=9
 		WHERE Lieux.visible=1 AND Device.Id IS NOT NULL AND Device.visible = 1 /*AND cmd_device.visible = 1*/
 		GROUP BY Device.Id, cmd_device.deviceid, Device.CarteId, cmd_device.Request,  Device.Nom, Device.History,  cmd_device.Type, Value, cmd_device.Etat, cmd_device.Unite, Lieux.Nom, Lieux.Position, 
         WidgetId, WidgetName, WidgetType, Lieux.Img, Lieux.Backgd
         ORDER BY cmd_device.Id 
-		) as T WHERE T.LieuxId= :LieuxId  and (T.WidgetId is null or T.WidgetId  != 9)
+		) as T WHERE T.LieuxId= :LieuxId /* and (T.WidgetId is null or T.WidgetId  != 9)*/
 		GROUP BY Id, Position, Lieux, Nom
 		ORDER BY  DevicePosition asc ";
 		return db::execQuery($sql, $values, db::FETCH_TYPE_ALL);

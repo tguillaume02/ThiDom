@@ -161,6 +161,7 @@ install_php() {
 	sudo apt-get install php7.3-ssh2 -y
 	sudo apt-get install php7.3-calendar -y
 	sudo apt-get install php7.3-intl -y
+	sudo apt-get install php-fpm
 	if [ $? -ne 0 ]; then
 		sudo apt-get install php7.0 -y 
 		sudo apt-get install php7.0-common -y
@@ -434,6 +435,13 @@ sudo a2enmod rewrite
 sudo a2enmod expires
 sudo a2enmod http2
 sudo a2enmod headers
+
+sudo a2dismod mpm_prefork
+sudo a2enmod mpm_event
+
+sudo a2enconf php*
+sudo a2enmod proxy_fcgi setenvif
+
 sudo systemctl restart apache2
 sudo systemctl reload apache2
 sudo systemctl restart apache2

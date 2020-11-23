@@ -15,23 +15,26 @@ if (typeof (EventSource) !== "undefined")
 
 			if (type.lastTypeupdate == "UpdateDeviceDetected")
 			{
-				Recup_Etat(type.cmd_deviceId);
-				if (type.Notification == 1)
+				$(type['device']).each(function()
 				{
-					notif = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
-
-					if (notif != old_notification )
+					Recup_Etat(this.cmd_deviceId);
+					if (this.Notification == 1)
 					{
-						var options =
+						notif = "Notification "+this.deviceNom+" "+this.LieuxNom+","+ this.deviceValue+" - "+(parseInt(this.deviceEtat)?"on":"off");
+
+						if (notif != old_notification )
 						{
-							body: type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"),
-							icon: 'Core/pic/home.png'
+							var options =
+							{
+								body: this.deviceValue+" - "+(parseInt(this.deviceEtat)?"on":"off"),
+								icon: 'Core/pic/home.png'
+							}
+							new Notification(this.deviceNom+" "+this.LieuxNom, options);
+							//console.log("Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"));
+							old_notification = "Notification "+this.deviceNom+" "+this.LieuxNom+","+ this.deviceValue+" - "+(parseInt(this.deviceEtat)?"on":"off");
 						}
-						new Notification(type.deviceNom+" "+type.LieuxNom, options);
-						//console.log("Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off"));
-						old_notification = "Notification "+type.deviceNom+" "+type.LieuxNom+","+ type.deviceValue+" - "+(parseInt(type.deviceEtat)?"on":"off");
 					}
-				}
+				})
 			}
 	};
 }

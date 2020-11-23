@@ -121,7 +121,7 @@ require_once dirname(__FILE__) .'/../../../ListRequire.php';
 		});
 	}
 
-	LoadDomogeekData(<?php echo $Device_id?>);
+	LoadPluginsData.push("LoadDomogeekData(<?php echo $Device_id?>)");
 
 
 </script>
