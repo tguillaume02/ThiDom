@@ -148,26 +148,42 @@ if ($act == "SaveDevice")
 			$CmdDevice = json_decode($CmdDevice);
 			foreach($CmdDevice as $v)
 			{
-				if (!property_exists($v, "cmdRequest"))
+				/*if (!property_exists($v, "cmdRequest"))
 				{
 					$v->cmdRequest = "0";
 				}
 
 				if ($v->cmdRequest == "1")
-				{					
+				{				
+					var_dump($Colonne)	;
 					$CmdId = $v->id;
 					$Colonne = $v->cmdname;
 					$Value = $v->value;	
 					$cmdDeviceObject->Update_Request($CmdId, $Colonne, $Value);
 				}
 				else
+				{*/
+					if ($v->cmdname)
+					{
+						$CmdId = $v->id;
+						$Colonne = $v->cmdname;
+						$Value = $v->value;
+						$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
+					}
+				/*}*/
+			}
+
+			if (!empty($CmdDeviceConfiguration))
+			{
+				$CmdDeviceConfiguration = json_decode($CmdDeviceConfiguration);
+				foreach($CmdDeviceConfiguration as $v)
 				{
 					$CmdId = $v->id;
-					$Colonne = $v->cmdname;
-					$Value = $v->value;
+					$Colonne = "Request";
+					$Value = json_encode($v->data);
 					$cmdDeviceObject->Update_Any_Value_By_id($CmdId, $Colonne, $Value);
 				}
-			}	
+			}
 		}
 		elseif (empty($CmdDeviceId))
 		{

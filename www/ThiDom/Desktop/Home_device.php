@@ -225,7 +225,7 @@ function LoadTemplate()
 					//$AddDate = '<span  id="Date_'.$cmd_device_format.'" class="WidgetDate">'.DateDifferenceToString($Date).'</span>';
 					if ($Vcc != null)
 					{
-						$AddBattery = '<span  id="Battery_'.$LieuxWithoutSpace.'_'.$VccId.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i> <tspan>'.$Vcc.'</tspan> V</span>';
+						$AddBattery = '<span  id="Battery_'.$LieuxWithoutSpace.'_'.$VccId.'" class="WidgetDate"><i class="fas fa-battery-three-quarters"></i> <tspan>'.$Vcc.'</tspan></span>';
 					}
 
 					$data .= "<div id='ContentDevice_".$cmd_device_format."' class='DeviceContent Corner col-xs-12 col-lg-4 col-md-6 col-sm-6' device_id='".$Device_id."' WidgetId=".$WidgetName." ModuleType=".$ModuleName." >";

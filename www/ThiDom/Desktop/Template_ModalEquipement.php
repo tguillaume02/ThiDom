@@ -182,8 +182,14 @@
 			
 			data = [];
 			$(".ModalEquipementConsignContent").each(function(index){
-				data.push({'id':$(this).attr("cmdid"), 'data': $('[request=1]', this).serializeObject()});
+				cmdEvent = $(".cmdEvent .form-control", this).serializeObject();
+				data.push({'id':$(this).attr("cmdid"), 'data': $('[request=1]', this).serializeObject()});	
+				if (Object.keys(cmdEvent).length > 0)			
+				{
+					data[index].data.cmd= $(".cmdEvent .form-control", this).serializeObject()
+				}
 			});
+			
 			CmdDeviceConfiguration = JSON.stringify(data)
 
 

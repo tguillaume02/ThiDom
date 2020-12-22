@@ -161,7 +161,7 @@ install_php() {
 	sudo apt-get install php7.3-ssh2 -y
 	sudo apt-get install php7.3-calendar -y
 	sudo apt-get install php7.3-intl -y
-	sudo apt-get install php-fpm
+	#sudo apt-get install php-fpm
 	if [ $? -ne 0 ]; then
 		sudo apt-get install php7.0 -y 
 		sudo apt-get install php7.0-common -y
@@ -436,15 +436,19 @@ sudo a2enmod expires
 sudo a2enmod http2
 sudo a2enmod headers
 
-sudo a2dismod mpm_prefork
-sudo a2enmod mpm_event
+#sudo a2dismod mpm_prefork
+#sudo a2enmod mpm_event
 
-sudo a2enconf php*
-sudo a2enmod proxy_fcgi setenvif
+#sudo a2enconf php*
+#sudo a2enmod proxy_fcgi setenvif
+
+#sudo sed -i 's/pm = dynamic/pm = ondemand /g' /etc/php/7.*/fpm/pool.d/www.conf > /dev/null 2>&1 
+#sudo sed -i 's/pm.max_children = [^"]*/pm.max_children = 500/g' /etc/php/7.*/fpm/pool.d/www.conf > /dev/null 2>&1
 
 sudo systemctl restart apache2
 sudo systemctl reload apache2
 sudo systemctl restart apache2
+
 
 sudo mkdir /etc/fw
 sudo cp /tmp/ThiDom/etc/fw/* /etc/fw/

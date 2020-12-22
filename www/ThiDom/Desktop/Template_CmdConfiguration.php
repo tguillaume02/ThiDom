@@ -93,7 +93,7 @@ foreach($CmdOfDevice as $Cmd)
                     $json_data = json_decode($request, true);
                     if (isset($json_data["cmd"]))
                     {
-                        $cmdList = '<div class="form-group grouplistType">
+                    /*   $cmdList = '<div class="form-group grouplistType">
                                         <label for="list-cmd" class="col-sm-5 col-xs-6 col-md-5 col-lg-2 control-label">Commande</label>
                                         <div class="control-group">
                                             <div class="controls form-inline">
@@ -117,7 +117,7 @@ foreach($CmdOfDevice as $Cmd)
                                         </div>
                                             </div>
                                                 </div>';
-                        $Template_CmdConfiguration .=  $cmdList;
+                        $Template_CmdConfiguration .=  $cmdList;*/
                     }
                     else
                     {

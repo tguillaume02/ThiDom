@@ -18,6 +18,18 @@ if (typeof (EventSource) !== "undefined")
 				$(type['device']).each(function()
 				{
 					Recup_Etat(this.cmd_deviceId);
+
+					if (this.History == 1)
+					{
+						charts = $('#History_'+this.LieuxNom+this.cmd_deviceId).highcharts();
+						if (charts != undefined)
+						{
+							serieIndex = charts.series.find(x => x.name == (new Date).getFullYear()).index;
+							timestamp = $.now();
+							charts.series[serieIndex].addPoint([timestamp, parseFloat(this.deviceValue)], true, true);
+						}
+					}
+
 					if (this.Notification == 1)
 					{
 						notif = "Notification "+this.deviceNom+" "+this.LieuxNom+","+ this.deviceValue+" - "+(parseInt(this.deviceEtat)?"on":"off");

@@ -14,10 +14,10 @@ class Scenario
 
 	public function SaveScenario($id, $name, $update, $xmlscenario, $status, $logicArray )
 	{
+		
 		if ($id-1 == -1)
 		{
 			$sql = "select COALESCE(max(Id)+1,1) as max from Scenario_Xml";
-
 			$IdMaxScenario = db::execQuery($sql,[]);
 
 			foreach($IdMaxScenario as $donnees)
@@ -25,7 +25,6 @@ class Scenario
 				$id = $donnees['max'];
 			}
 		}
-
 		$SequenceNo = 1;
 		$error = 0;
 		$obj_LogiArray = json_decode( $logicArray, true);
@@ -63,10 +62,10 @@ class Scenario
 			    	//echo"insert into Scenario (XmlID, Conditions, Actions,SequenceNo ) values((select MAX(Id) from Scenario_Xml), '$conditions', '$actions','$SequenceNo')";
 					if ($update == "false")
 					{
-						$sql = "INSERT INTO Scenario (XmlID, Conditions, Actions,SequenceNo ) VALUES (:id, :conditions, :actions, :SequenceNo);" ;
-						$nbScenarioInsert = db::execQuery($sql, $valuesScenario);
 						$sql = "INSERT INTO Scenario_Xml(Id,Name,XML,Status) VALUES( :id, :name, :xmlscenario, :status )" ;
 						$nbScenarioXmlInsert = db::getNbResult($sql,$valuesScenarioXML);
+						$sql = "INSERT INTO Scenario (XmlID, Conditions, Actions,SequenceNo ) VALUES (:id, :conditions, :actions, :SequenceNo);" ;
+						$nbScenarioInsert = db::execQuery($sql, $valuesScenario);
 
 						if ($nbScenarioXmlInsert > 0 && $nbScenarioInsert > 0 && $error == 0)
 						{
@@ -86,10 +85,10 @@ class Scenario
 							$sql = "DELETE from Scenario where xmlID = :id;";
 							db::execQuery($sql,  array(':id' => $id));
 						}
-						$sql = "INSERT INTO Scenario (XmlID, Conditions, Actions,SequenceNo ) values (:id, :conditions, :actions, :SequenceNo);";
-						$nbScenarioInsert = db::getNbResult($sql,$valuesScenario);
 						$sql = "UPDATE Scenario_Xml set XML = :xmlscenario ,Status = :status, Name=:name where Id = :id; " ;
 						$nbScenarioXmlUpdate = db::getNbResult($sql,$valuesScenarioXML);
+						$sql = "INSERT INTO Scenario (XmlID, Conditions, Actions,SequenceNo ) values (:id, :conditions, :actions, :SequenceNo);";
+						$nbScenarioInsert = db::getNbResult($sql,$valuesScenario);
 						if ($nbScenarioXmlUpdate > 0 || $nbScenarioInsert > 0)
 						{
 							$msg = "Scenario mis à jour";

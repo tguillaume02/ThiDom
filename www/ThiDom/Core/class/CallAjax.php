@@ -445,6 +445,10 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 			} else {
 				$("#tools .count").hide();
 				$("#update-link .count").hide();
+				$("#update-link").css( "pointer-events","none"); 
+				$("#update-link").css( "opacity","0.6"); 
+				$("#update-link").css( "cursor","not-allowed"); 
+				$("#update-link").parent().css( "cursor","not-allowed"); 
 			}
 		})
 	}
@@ -656,7 +660,7 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 		var request = $.ajax({
 			type: "POST",
 			url: 'Desktop/Home_device.php?mode=' + mode,
-			cache: false
+			cache: false, async: false
 		});
 
 		request.done(function(data) {
@@ -1272,12 +1276,14 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 				temperatures = [];
 				$.each(data, function(index, item) {
 					if (item.Nom == "Temperature") {
-						name = encodeURI(item.Cmd_nom + "_" + item.Lieux)
+						name = item.Cmd_nom  + "(" + item.Lieux + " "+ item.WidgetName +")";
+						name  = name.replace(" ", "_");
 						temperatures.push([name, item.Cmd_device_Id]);
 					} else {
 						device = item.Nom == item.Cmd_nom ? item.Nom : item.Nom + "_" + item.Cmd_nom
 
-						name = encodeURI(device + '( ' + item.Lieux + ')')
+						name = device + "(" + item.Lieux + " "+ item.WidgetName + ")";
+						name  = name.replace(" ", "_");
 
 						if ("abcdef".indexOf(item.Nom.charAt(0).toLowerCase()) > -1) {
 							switchesAF.push([name, item.Cmd_device_Id]);

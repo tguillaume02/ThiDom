@@ -152,7 +152,9 @@ def ReadArduino():
                         #                        cursor.execute("UPDATE Etat_IO SET Value=%s, Etat=%s, Date=%s where DeviceID=%s and Carte_Id=0", (value,status,date,pinID))
                                                 cursor.execute(
                                                     "UPDATE cmd_device, Device SET Value=%s, Etat=%s, Date=%s WHERE Device.GUID=%s and Device.CarteId=0  and cmd_device.DeviceId = %s and cmd_device.widget_Id=%s and cmd_device.Device_ID = Device.ID", (value, status, getDate(), guid, pinID, widget_Id))
-                                            setHistory(guid, SlaveCarteId, pinID, value, status)
+
+                                            if bHistory == 1:
+                                                setHistory(guid, SlaveCarteId, pinID, value, status, widget_Id)
 
                                             if status == 0 or status == "0":
                                                 sstatus = "off"
@@ -267,12 +269,12 @@ def getDate():
     return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
-def setHistory(guid, CarteId, pinId, value, etat):
+def setHistory(guid, CarteId, pinId, value, etat, widgetId):
     cursor.execute(""" SELECT cmd_device.History, cmd_device.Id, Device.Lieux_Id, widget.Type FROM cmd_device
                         INNER JOIN Device on Device.Id = cmd_device.Device_Id
                         INNER JOIN widget ON cmd_device.Widget_Id = widget.Id
-                        WHERE Device.guid=%s and Device.CarteId = %s and DeviceId = %s """,
-                   (guid, CarteId, pinId)
+                        WHERE Device.guid=%s and Device.CarteId = %s and DeviceId = %s and Widget_Id=%s """,
+                   (guid, CarteId, pinId, widgetId)
                    )
     result = cursor.fetchone()
     if result:

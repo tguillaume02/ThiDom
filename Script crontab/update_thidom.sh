@@ -4,6 +4,7 @@ cd /tmp
 sudo rm -fr ThiDom
 git clone https://github.com/tguillaume02/ThiDom
 cd ThiDom
+sudo rm Script\ crontab/debug/*
 sudo rm Script_domotique/msql.py
 sudo rm www/ThiDom/Core/class/db.class.php
 sudo mv Script\ crontab/update_thidom.sh Script\ crontab/update_thidom_new.sh

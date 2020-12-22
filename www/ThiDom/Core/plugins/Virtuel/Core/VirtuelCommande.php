@@ -9,8 +9,11 @@ $cmd_device_visible = $cmd_device->get_Visible();
 $cmd_device_history = $cmd_device->get_History();
 $cmd_device_notification = $cmd_device->get_Notification();
 $cmd_device_Type = $cmd_device->get_Type();
-?>
 
+
+CmdDevice::showCommandeListHtml(getParameter("device_id"), true);
+?>
+<!--
 <div class="form-group">
 	<label for="raz-value" class="col-lg-1 col-md-5 col-sm-5 col-xs-5 control-label">Remise à zero apres: HH:MM:SS : </label>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -36,4 +39,4 @@ $cmd_device_Type = $cmd_device->get_Type();
 		</div>	
 
 	</div>
-</div>
+</div>-->

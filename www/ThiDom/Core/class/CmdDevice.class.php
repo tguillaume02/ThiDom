@@ -284,6 +284,17 @@ class CmdDevice
 		db::execQuery($req,$values);
 	}
 
+	public function Update_Status_By_CmdId($Id,$value,$Etat)
+	{
+		$values = array(
+			':Id' => $Id,
+			':value' => $value,
+			':Etat' => $Etat
+			);	
+		$req = "UPDATE cmd_device set Value=:value, Etat=:Etat WHERE Id=:Id" ;
+		db::execQuery($req,$values);
+	}
+
 	public function Update_CmdDeviceName()
 	{
 		$req = "UPDATE cmd_device INNER JOIN Device ON Device.Id = cmd_device.Device_Id SET cmd_device.Nom = Device.Nom  WHERE cmd_device.Nom = 'New Device';";

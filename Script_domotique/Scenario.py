@@ -53,7 +53,9 @@ def SendDataToUsb(moduleName, moduleConfirmation, data):
 # ############## REPLACE STRING TO SQL DATA #########################
 def ReplaceStrToSQL(Str, row_id, ScenarioID):
 #    Str = Str.replace("timeofday", "(HOUR(now())*60+MINUTE(now())+SECOND(now())) ")\
-    Str = Str.replace("timeofday", "(HOUR(now())*3600+MINUTE(now())*60+SECOND(now())) ")\
+#	Str.replace("timeofday", "(HOUR(now())*3600+MINUTE(now())*60+SECOND(now())) ")\
+
+    Str = Str.replace("timeofday", "(HOUR(now())*3600+MINUTE(now())*60) ")\
         .replace("timeofsun", "(select DATE_FORMAT(now(), '%H:%i')) ")\
         .replace("INTERVAL", "select now() - INTERVAL")\
         .replace("&&", "and")\
@@ -229,6 +231,7 @@ def main(Name = ""):
                 #else:
                 #    if "ControlCalling" not in conditions_Where:
                 sql_check_etat = "SELECT COUNT(*) as result from cmd_device " + Conditions_SQL + " " + conditions_Where + ";"
+		# print(sql_check_etat)
                 #    else:
                 #        sql_check_etat = " SELECT 0;"
                 try:
