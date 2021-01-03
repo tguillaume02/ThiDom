@@ -43,7 +43,7 @@ try:
         AND widget.Type != "Text"
         """)
 
-    cursor.execute("SELECT *, UNIX_TIMESTAMP(date) as unixtimestmamp FROM Temperature WHERE Temperature.Date BETWEEN (SELECT DATE_FORMAT(now(), concat('%Y-%m-%d %H:',(select case  when DATE_FORMAT(now(), '%i') < 15 then '00:00' when DATE_FORMAT(now(), '%i') < 30 then '15:00' when DATE_FORMAT(now(), '%i') < 45 then '30:00'  when DATE_FORMAT(now(), '%i') = 0 then '45:00' end)))) AND (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) ORDER BY Cmd_device_id, Lieux_Id, Date  ")
+    cursor.execute("SELECT *, UNIX_TIMESTAMP(DATE_FORMAT(date, '1987-%m-%d %H:%i:%s')) as unixtimestamp FROM Temperature WHERE Temperature.Date BETWEEN (SELECT DATE_FORMAT(now(), concat('%Y-%m-%d %H:',(select case  when DATE_FORMAT(now(), '%i') < 15 then '00:00' when DATE_FORMAT(now(), '%i') < 30 then '15:00' when DATE_FORMAT(now(), '%i') < 45 then '30:00'  when DATE_FORMAT(now(), '%i') = 0 then '45:00' end)))) AND (select DATE_FORMAT(now(), '%Y-%m-%d %H:%i:00')) ORDER BY Cmd_device_id, Lieux_Id, Date  ")
     
     oldyear = -99
     oldCmdDevice = -99
