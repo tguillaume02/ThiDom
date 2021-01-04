@@ -25,7 +25,9 @@ if (typeof (EventSource) !== "undefined")
 						if (charts != undefined)
 						{
 							serieIndex = charts.series.find(x => x.name == (new Date).getFullYear()).index;
-							timestamp = $.now();
+							$date = new Date();
+							$date.setFullYear(1987);
+							timestamp = $date.getTime();
 							charts.series[serieIndex].addPoint([timestamp, parseFloat(this.deviceValue)], true, true);
 						}
 					}
