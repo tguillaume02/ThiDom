@@ -183,7 +183,11 @@
 			data = [];
 			$(".ModalEquipementConsignContent").each(function(index){
 				cmdEvent = $(".cmdEvent .form-control", this).serializeObject();
-				data.push({'id':$(this).attr("cmdid"), 'data': $('[request=1]', this).serializeObject()});	
+				cmdid = $(this).attr("cmdid");
+				cmddata = $('[request=1]', this).serializeObject();
+				icons = $("#CustomIcons_"+cmdid).serializeObject();
+				cmddata = Object.assign(cmddata, icons);
+				data.push({'id':cmdid, 'data': cmddata});	
 				if (Object.keys(cmdEvent).length > 0)			
 				{
 					data[index].data.cmd= $(".cmdEvent .form-control", this).serializeObject()

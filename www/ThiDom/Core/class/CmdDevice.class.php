@@ -263,7 +263,8 @@ class CmdDevice
 					Request,
 					widget.Name AS WidgetName,
 					widget.Type AS WidgetType,
-					Widget_Id AS WidgetId
+					Widget_Id AS WidgetId,
+					cmd_device.Visible AS cmd_visible
 				FROM
 					cmd_device 
 					INNER JOIN Device on Device.Id = cmd_device.Device_Id 
@@ -553,11 +554,18 @@ class CmdDevice
 		return $this->Type;
 	}
 
-	public function get_Request($RequestName="")
+	public function get_Request($RequestName="", $DefaultName ="")
 	{
 		if ($RequestName != "")
 		{
-			return json_decode($this->Request)->$RequestName;
+			if (json_decode($this->Request)->$RequestName == "")
+			{
+				return $DefaultName;
+			}
+			else
+			{
+				return json_decode($this->Request)->$RequestName;
+			}
 		}
 		else
 		{

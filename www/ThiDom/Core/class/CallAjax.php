@@ -1341,32 +1341,42 @@ require_once dirname(__FILE__) . '/../ListRequire.php';
 		});
 
 		request.done(function(data) {
-			if (data.status == "error") {
+			if (data.status == "error")
+			{
 				ErrorLoading(data.msg);
 				return false;
-			} else {
-				DataDevice = JSON.parse('{"' + decodeURI(Device).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+			} else 
+			{
+				try
+				{
+					DataDevice = JSON.parse('{"' + decodeURI(Device).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
 
-				info(data.msg);
-				if (DataDevice.DeviceId == "" && data.deviceId != "") {
-					console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device " + data.deviceId + " et pour les commandes " + data.cmddeviceId);
-					datas = {
-						"newDevice": "true",
-						"LieuxId": $("#list-room option:selected").val(),
-						"Type": $("#list-device option:selected").text(),
-						"WidgetId": $("#list-type option:selected").val(),
-						"ModuleName": $("#list-module-type option:selected").text(),
-						"ModuleId": $("#list-module-type option:selected").val(),
-						"DeviceId": data.deviceId,
-						"CmdDeviceId": data.cmddeviceId
-					};
-					DeviceData = datas;
-					data.refresh = false;
-					EditDevice(datas);
-					LoadEquipement();
+					info(data.msg);
+					if (DataDevice.DeviceId == "" && data.deviceId != "") {
+						console.log("j'ai enregistré et je peux essayer de recharger les commandes pour device " + data.deviceId + " et pour les commandes " + data.cmddeviceId);
+						datas = {
+							"newDevice": "true",
+							"LieuxId": $("#list-room option:selected").val(),
+							"Type": $("#list-device option:selected").text(),
+							"WidgetId": $("#list-type option:selected").val(),
+							"ModuleName": $("#list-module-type option:selected").text(),
+							"ModuleId": $("#list-module-type option:selected").val(),
+							"DeviceId": data.deviceId,
+							"CmdDeviceId": data.cmddeviceId
+						};
+						DeviceData = datas;
+						data.refresh = false;
+						EditDevice(datas);
+						LoadEquipement();
+					}
+				}
+				catch (error)
+				{
+  					console.error(error);
 				}
 
-				if (data.refresh == true) {
+				if (data.refresh == true)
+				{
 					//$("#modal-manage-device").modal('hide');
 					LoadMaison();
 					LoadEquipement();

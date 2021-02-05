@@ -12,6 +12,7 @@ require_once '../Core/ListRequire.php';
 	$temp_year_old = 0;
 	$temp_year = 0; 
 	$unite = "";
+	$Lieux_id_old = "";
 /*
 $rows = array();
 while($r = $TemperatureData) {
